@@ -52,6 +52,11 @@ android {
         resourceConfigurations += setOf("en")
     }
 
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+    
     signingConfigs {
         if (hasReleaseKeystore) {
             create("release") {

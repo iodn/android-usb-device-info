@@ -13,19 +13,13 @@ import 'usb_ids_db.dart';
 import 'usb_ids_db_meta.dart';
 
 final List<Uri> _usbIdsGzUris = <Uri>[
-  Uri.parse('https://raw.githubusercontent.com/iodn/android-usb-device-info/main/assets/db_src/usbids.sqlite.gz'),
-  Uri.parse('https://raw.githubusercontent.com/iodn/android-usb-device-info/master/assets/db_src/usbids.sqlite.gz'),
-  Uri.parse('https://github.com/iodn/android-usb-device-info/raw/master/assets/db_src/usbids.sqlite.gz'),
-  Uri.parse('https://cdn.jsdelivr.net/gh/iodn/android-usb-device-info@main/assets/db_src/usbids.sqlite.gz'),
-  Uri.parse('https://cdn.jsdelivr.net/gh/iodn/android-usb-device-info@master/assets/db_src/usbids.sqlite.gz'),
+  Uri.parse('https://github.com/iodn/android-usb-device-info/releases/latest/download/usbids.sqlite.gz'),
+  Uri.parse('https://github.com/iodn/android-usb-device-info/releases/download/v1.0.0/usbids.sqlite.gz'),
 ];
 
 final List<Uri> _usbIdsShaUris = <Uri>[
-  Uri.parse('https://raw.githubusercontent.com/iodn/android-usb-device-info/main/assets/db_src/usbids.sqlite.gz.sha256'),
-  Uri.parse('https://raw.githubusercontent.com/iodn/android-usb-device-info/master/assets/db_src/usbids.sqlite.gz.sha256'),
-  Uri.parse('https://github.com/iodn/android-usb-device-info/raw/master/assets/db_src/usbids.sqlite.gz.sha256'),
-  Uri.parse('https://cdn.jsdelivr.net/gh/iodn/android-usb-device-info@main/assets/db_src/usbids.sqlite.gz.sha256'),
-  Uri.parse('https://cdn.jsdelivr.net/gh/iodn/android-usb-device-info@master/assets/db_src/usbids.sqlite.gz.sha256'),
+  Uri.parse('https://github.com/iodn/android-usb-device-info/releases/latest/download/usbids.sqlite.gz.sha256'),
+  Uri.parse('https://github.com/iodn/android-usb-device-info/releases/download/v1.0.0/usbids.sqlite.gz.sha256'),
 ];
 
 const _kAutoCheckEnabled = 'usbids_auto_check_enabled_v3';
