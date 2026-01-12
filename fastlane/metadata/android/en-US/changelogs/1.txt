@@ -38,4 +38,4 @@
 - InputManager-based devices may not provide full USB descriptor access (shown as input devices).
 
 
-USB Descriptor Explorer is open source, check out our GitHub repository at https://github.com/KaijinLab/android-usb-device-info if you want to contribute.
+USB Descriptor Explorer is open source, check out our GitHub repository at https://github.com/iodn/android-usb-device-info if you want to contribute.
