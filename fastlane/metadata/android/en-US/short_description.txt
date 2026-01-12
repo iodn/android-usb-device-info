@@ -1,0 +1,1 @@
+Inspect USB devices with full descriptor and HID details

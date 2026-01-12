@@ -1,0 +1,41 @@
+## Changelogs notes
+
+### Added
+- USB device discovery and live "devices changed" updates (attach/detach).
+- Unified device list including:
+  - Standard USB devices (via `UsbManager`)
+  - External keyboards/mice detected as input devices (via `InputManager`)
+- Device details screen with a structured, readable layout:
+  - Identity (VID/PID, vendor/product names, serial)
+  - USB specification (version, speed, class/subclass/protocol)
+  - Location (device path, Android deviceId, port number)
+  - Configurations, interfaces, and endpoints with clear summaries
+- Permission flow for per-device USB access (required for advanced reads).
+
+### Advanced USB inspection (when permission is granted)
+- Raw device descriptor parsing (bcdUSB, bcdDevice, EP0 packet size, string indexes).
+- Descriptor tree parsing from raw descriptors (bLength/bDescriptorType walk).
+- String descriptor retrieval:
+  - Language IDs + preferred language selection
+  - Manufacturer / Product / Serial
+  - Interface strings (iInterface) when present
+- Device state probing via control transfers:
+  - GET_CONFIGURATION / GET_STATUS / GET_INTERFACE (alt settings)
+- HID report descriptor extraction (GET_DESCRIPTOR 0x22) with basic report summary.
+
+### History
+- Automatic history recording of viewed devices.
+- History entry detail screen aligned with live device detail presentation.
+- “Open live device info” action when the device is currently connected.
+
+### UI/UX
+- Clean card-based layout with expandable sections for technical blocks.
+- Auto-hiding of empty/unsupported sections to reduce clutter.
+- Copy-friendly key/value rows for IDs and fields.
+
+### Notes / Limitations
+- Some advanced fields depend on device support and Android USB stack behavior; not all devices expose raw descriptors or HID report descriptors reliably.
+- InputManager-based devices may not provide full USB descriptor access (shown as input devices).
+
+
+USB Descriptor Explorer is open source, check out our GitHub repository at https://github.com/KaijinLab/android-usb-device-info if you want to contribute.

@@ -1,0 +1,25 @@
+USBDevInfo (USB Descriptor Explorer) is an utility for inspecting USB devices with clear, structured details—built for debugging, validation, and reverse-engineering.
+
+Connect a device and view:
+
+	- Vendor/Product IDs (VID/PID) with resolved names (when available)
+
+	- USB version, speed, class/subclass/protocol
+
+	- Configurations, interfaces, and endpoint breakdowns
+
+	- Power hints (max power)
+
+	- Input peripherals (keyboard/mouse) via Android InputManager
+
+With per-device permission granted, USBDevInfo can also retrieve advanced data such as:
+
+	- String descriptors (manufacturer, product, serial, interface strings)
+
+	- Descriptor tree parsed from raw descriptors
+
+	- Device state (GET_STATUS / GET_CONFIGURATION / GET_INTERFACE where supported)
+
+	- HID report descriptors and a readable summary
+
+Designed to be fast, privacy-friendly, and practical for daily troubleshooting.
