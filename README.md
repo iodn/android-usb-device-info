@@ -1,5 +1,9 @@
 # USBDevInfo - USB Device Inspector for Android
 
+<a href="https://play.google.com/store/apps/details?id=org.kaijinlab.usbdevinfo">
+  <img width="256" height="256" src="https://github.com/user-attachments/assets/7fc70d56-965e-4b10-ba35-9c4ee594dffd" alt="USB Device Inspector">
+</a><br>
+
 **USBDevInfo** is an Android application for discovering, inspecting, and analyzing USB devices connected to your phone or tablet.  
 It exposes the same low-level USB information that Android sees, but presents it in a clear, structured, and human-readable way.
 
