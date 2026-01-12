@@ -55,3 +55,6 @@ android/app/debug-info/
 android/.gradle/
 android/app/build/
 android/build/
+# USB IDs update artifacts (hosted in GitHub Releases)
+assets/db_src/usbids.sqlite.gz
+assets/db_src/usbids.sqlite.gz.sha256
