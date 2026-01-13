@@ -201,6 +201,14 @@ Or download the latest APK from the Releases section.
 
 Previously connected devices remain available in the History view.
 
+##ScreeShots
+
+<img width="180" height="400" alt="1" src="https://github.com/user-attachments/assets/7838f3c6-0d38-48e6-8c12-97bf501fc813" />
+<img width="180" height="400" alt="2" src="https://github.com/user-attachments/assets/572f194e-2859-4762-819e-03aabe22704b" />
+<img width="180" height="400" alt="3" src="https://github.com/user-attachments/assets/89c07279-a80b-4ca7-9409-a3aa6be4f39a" />
+<img width="180" height="400" alt="4" src="https://github.com/user-attachments/assets/96d156e2-33af-434c-8af3-03e0ee2f74ae" />
+<img width="180" height="400" alt="5" src="https://github.com/user-attachments/assets/97cc02dc-696a-465f-b5f8-9cca3533e2c5" />
+
 ## Contributing
 
 Contributions are welcome.
@@ -208,11 +216,8 @@ Contributions are welcome.
 If you:
 
 -   Find a bug
-    
 -   Have a feature request
-    
 -   Want to improve UI, parsing, or USB coverage
-    
 
 Open an issue or submit a pull request.
 
