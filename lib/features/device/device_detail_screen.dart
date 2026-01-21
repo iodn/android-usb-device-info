@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/utils/formatters.dart';
@@ -30,7 +31,6 @@ class _DeviceDetailScreenState extends ConsumerState<DeviceDetailScreen> {
     super.initState();
     void recordView(UsbDeviceDetailViewData data) {
       _lastView = data;
-      // If we already have raw, upsert with raw; otherwise save enriched snapshot now
       final raw = _lastRaw;
       ref.read(deviceHistoryControllerProvider.notifier).recordFromView(data, raw: raw);
     }
@@ -200,7 +200,7 @@ class _DeviceDetailBody extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        if (needsPermission) _PermissionBanner(deviceName: s.deviceName),
+        if (needsPermission) _PermissionBanner(deviceName: s.deviceName, vendorId: s.vendorId, productId: s.productId),
         if (needsPermission) const SizedBox(height: 12),
         _identitySection(context),
         const SizedBox(height: 12),
@@ -607,11 +607,22 @@ class _DeviceDetailBody extends StatelessWidget {
 }
 
 class _PermissionBanner extends ConsumerWidget {
-  const _PermissionBanner({required this.deviceName});
+  static const EventChannel _events = EventChannel('usbdevinfo/events');
+  static const MethodChannel _methods = MethodChannel('usbdevinfo/methods');
+
+  const _PermissionBanner({required this.deviceName, required this.vendorId, required this.productId});
+  final int vendorId;
+  final int productId;
+
+  static Stream<Map<String, dynamic>> _eventStream() => _events.receiveBroadcastStream().map((e) {
+        if (e is Map) return e.cast<String, dynamic>();
+        return <String, dynamic>{};
+      });
   final String deviceName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final events = _eventStream();
     final theme = Theme.of(context);
     return Card(
       elevation: 0,
@@ -639,13 +650,38 @@ class _PermissionBanner extends ConsumerWidget {
               style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onErrorContainer),
             ),
             const SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton.icon(
-                onPressed: () async {
+            StreamBuilder<Map<String, dynamic>>(
+              stream: events,
+              builder: (context, snapshot) {
+                final data = snapshot.data ?? const {};
+                final type = (data['type'] as String?) ?? '';
+                final instanceChanged = type == 'permission_instance_changed' && (data['originalName'] == deviceName);
+                final timeoutFailed = type == 'permission_timeout_failed';
+                final showHint = instanceChanged || timeoutFailed;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    if (showHint) ...[
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          instanceChanged
+                              ? 'The device reconnected as a new instance. Please grant permission again.'
+                              : 'Permission broadcast was missed. Retrying can help after the device stabilizes.',
+                          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onErrorContainer),
+                        ),
+                      ),
+                    ],
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: FilledButton.icon(
+                        onPressed: () async {
+                          // Ensure Android runtime mic permission for USB Audio devices
+                          try { await _methods.invokeMethod('requestRecordAudioPermission'); } catch (_) {}
+                          await Future.delayed(const Duration(milliseconds: 50));
                   await ref.read(usbIdsDbProvider.future);
                   final repo = ref.read(usbRepositoryProvider);
-                  final ok = await repo.requestPermission(deviceName);
+                  final ok = await repo.requestPermission(deviceName, vendorId: vendorId, productId: productId);
                   if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(ok ? 'Permission granted' : 'Permission not granted')),
@@ -655,9 +691,13 @@ class _PermissionBanner extends ConsumerWidget {
                     ref.invalidate(deviceDetailRawControllerProvider(deviceName));
                   }
                 },
-                icon: const Icon(Icons.vpn_key_rounded),
-                label: const Text('Grant permission'),
-              ),
+                        icon: const Icon(Icons.vpn_key_rounded),
+                        label: const Text('Grant permission'),
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ),

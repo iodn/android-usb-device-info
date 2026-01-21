@@ -63,7 +63,7 @@ class UsbRepository {
     return out;
   }
 
-  Future<bool> requestPermission(String deviceName) => _platform.requestPermission(deviceName);
+  Future<bool> requestPermission(String deviceName, {int? vendorId, int? productId}) => _platform.requestPermission(deviceName, vendorId: vendorId, productId: productId);
 
   Future<UsbDeviceDetailViewData> getDeviceDetailsEnriched(String deviceName) async {
     final db = await _dbFuture();

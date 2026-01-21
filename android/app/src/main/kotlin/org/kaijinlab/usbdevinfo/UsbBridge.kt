@@ -1,12 +1,13 @@
 package org.kaijinlab.usbdevinfo
 
+import android.Manifest
+
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.ComponentName
-import android.content.pm.PackageManager
 import android.hardware.input.InputManager
 import android.hardware.usb.UsbConfiguration
 import android.hardware.usb.UsbConstants
@@ -18,8 +19,11 @@ import android.hardware.usb.UsbManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import android.util.Log
 import android.view.InputDevice
+import android.content.pm.PackageManager
 import androidx.annotation.MainThread
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.plugin.common.BinaryMessenger
@@ -43,10 +47,28 @@ class UsbBridge(
   private val methodChannel = MethodChannel(messenger, "usbdevinfo/methods")
   private val eventChannel = EventChannel(messenger, "usbdevinfo/events")
   private var eventSink: EventChannel.EventSink? = null
-  private val permissionResults = ConcurrentHashMap<String, MethodChannel.Result>()
+  private data class PendingPerm(
+    val originalName: String,
+    val vid: Int,
+    val pid: Int,
+    val result: MethodChannel.Result,
+    @Volatile var completed: Boolean = false
+  )
+  private val permissionByName = ConcurrentHashMap<String, PendingPerm>()
+  private val permissionByVidPid = ConcurrentHashMap<String, PendingPerm>()
   private val permissionAction = "${ctx.packageName}.USB_PERMISSION"
 
   private val receiver = object : BroadcastReceiver() {
+
+    private fun hasAudioClass(dev: UsbDevice): Boolean {
+      if (dev.deviceClass == UsbConstants.USB_CLASS_AUDIO) return true
+      for (i in 0 until dev.interfaceCount) {
+        try { if (dev.getInterface(i).interfaceClass == UsbConstants.USB_CLASS_AUDIO) return true } catch (_: Throwable) {}
+      }
+      return false
+    }
+    private fun needsRecordAudioFor(dev: UsbDevice): Boolean = hasAudioClass(dev)
+
     override fun onReceive(context: Context, intent: Intent) {
       when (intent.action) {
         UsbManager.ACTION_USB_DEVICE_ATTACHED, UsbManager.ACTION_USB_DEVICE_DETACHED -> {
@@ -61,13 +83,43 @@ class UsbBridge(
         }
         permissionAction -> {
           val device: UsbDevice? = intent.getParcelableExtraCompat(UsbManager.EXTRA_DEVICE, UsbDevice::class.java)
-          val granted = intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
-          val name = device?.deviceName
-          if (name != null) {
-            permissionResults.remove(name)?.success(granted)
+          var granted = intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
+          val newName = device?.deviceName
+          val vid = device?.vendorId ?: -1
+          val pid = device?.productId ?: -1
+          val key = if (vid >= 0 && pid >= 0) "$vid:$pid" else null
+
+          var pending: PendingPerm? = null
+          if (newName != null) pending = permissionByName.remove(newName)
+          if (pending == null && key != null) pending = permissionByVidPid.remove(key)
+
+          // If it's an audio-class device, ensure RECORD_AUDIO runtime permission first
+          if (granted && device != null && needsRecordAudioFor(device)) {
+            val audioOk = ensureRecordAudioPermission()
+            if (!audioOk) granted = false
           }
-          emitEvent(mapOf("type" to "permission_result", "deviceName" to name, "granted" to granted))
-          emitEvent(mapOf("type" to "devices_changed", "reason" to "permission_result", "deviceName" to name))
+
+          // Re-check actual hasPermission on any current instance of this VID:PID after runtime perms
+          if (granted && vid >= 0 && pid >= 0) {
+            val anyOk = try { usbManager.deviceList.values.any { it.vendorId == vid && it.productId == pid && usbManager.hasPermission(it) } } catch (_: Throwable) { false }
+            if (!anyOk) granted = false
+          }
+
+          if (pending != null) {
+            if (newName != null && newName != pending.originalName) {
+              emitEvent(mapOf(
+                "type" to "permission_instance_changed",
+                "originalName" to pending.originalName,
+                "newName" to newName,
+                "vid" to pending.vid,
+                "pid" to pending.pid
+              ))
+            }
+            completePending(pending, granted)
+          }
+
+          emitEvent(mapOf("type" to "permission_result", "deviceName" to newName, "granted" to granted))
+          emitEvent(mapOf("type" to "devices_changed", "reason" to "permission_result", "deviceName" to newName))
         }
       }
     }
@@ -156,13 +208,24 @@ class UsbBridge(
     eventSink = null
   }
 
+  private fun completePending(p: PendingPerm, granted: Boolean) {
+    p.completed = true
+    try { p.result.success(granted) } catch (_: Throwable) {}
+  }
+
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     try {
       when (call.method) {
+        "requestRecordAudioPermission" -> {
+          val ok = ensureRecordAudioPermission()
+          result.success(ok)
+        }
         "listDevices" -> result.success(listDevices())
         "requestPermission" -> {
           val deviceName = call.argument<String>("deviceName") ?: ""
-          requestPermission(deviceName, result)
+          val vid = call.argument<Int>("vendorId")
+          val pid = call.argument<Int>("productId")
+          requestPermission(deviceName, result, vid, pid)
         }
         "getDeviceDetails" -> {
           val deviceName = call.argument<String>("deviceName") ?: ""
@@ -191,6 +254,18 @@ class UsbBridge(
     } catch (t: Throwable) {
       Log.e(tag, "Method failed: ${call.method}", t)
       result.error("error", t.message, null)
+    }
+  }
+
+  private fun ensureRecordAudioPermission(): Boolean {
+    return try {
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true
+      val granted = ContextCompat.checkSelfPermission(ctx, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+      if (granted) return true
+      ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.RECORD_AUDIO), 10087)
+      false
+    } catch (_: Throwable) {
+      false
     }
   }
 
@@ -227,12 +302,25 @@ class UsbBridge(
     return out
   }
 
-  private fun requestPermission(deviceName: String, result: MethodChannel.Result) {
+  private fun requestPermission(deviceName: String, result: MethodChannel.Result, vidArg: Int?, pidArg: Int?) {
+    fun hasAudioClass(dev: UsbDevice): Boolean {
+      if (dev.deviceClass == UsbConstants.USB_CLASS_AUDIO) return true
+      for (i in 0 until dev.interfaceCount) {
+        try { if (dev.getInterface(i).interfaceClass == UsbConstants.USB_CLASS_AUDIO) return true } catch (_: Throwable) {}
+      }
+      return false
+    }
+    fun needsRecordAudioFor(dev: UsbDevice): Boolean = hasAudioClass(dev)
+
     if (isInputKey(deviceName)) {
       result.success(true)
       return
     }
-    val device = findUsbByName(deviceName)
+    var device = findUsbByName(deviceName)
+    if (device == null && (vidArg != null && pidArg != null && vidArg > 0 && pidArg > 0)) {
+      // Fallback: pick any device with matching VID:PID (handles re-enumeration)
+      device = try { usbManager.deviceList.values.firstOrNull { it.vendorId == vidArg && it.productId == pidArg } } catch (_: Throwable) { null }
+    }
     if (device == null) {
       result.success(false)
       return
@@ -241,12 +329,43 @@ class UsbBridge(
       result.success(true)
       return
     }
-    permissionResults[deviceName] = result
+
+    val vid = device.vendorId
+    val pid = device.productId
+    val key = "$vid:$pid"
+
+    // Replace any existing pending entries for this device
+    permissionByName.remove(deviceName)?.let { /* drop */ }
+    permissionByVidPid.remove(key)?.let { /* drop */ }
+
+    val pending = PendingPerm(deviceName, vid, pid, result)
+    permissionByName[deviceName] = pending
+    permissionByVidPid[key] = pending
+
     val baseFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0
     val flags = baseFlags or PendingIntent.FLAG_UPDATE_CURRENT
     val intent = Intent(permissionAction).setPackage(ctx.packageName)
-    val pending = PendingIntent.getBroadcast(ctx, deviceName.hashCode(), intent, flags)
-    usbManager.requestPermission(device, pending)
+    val pendingIntent = PendingIntent.getBroadcast(ctx, deviceName.hashCode(), intent, flags)
+    usbManager.requestPermission(device, pendingIntent)
+
+    // Fallback timeout: if broadcast is lost or device re-enumerates, re-check hasPermission shortly
+    mainHandler.postDelayed({
+      if (pending.completed) return@postDelayed
+      val still = permissionByVidPid.remove(key)
+      if (still != null && !still.completed) {
+        // Look for any connected device with the same VID:PID that already has permission
+        val match = usbManager.deviceList.values.firstOrNull { it.vendorId == vid && it.productId == pid && usbManager.hasPermission(it) }
+        val ok = match != null
+        permissionByName.remove(still.originalName)
+        completePending(still, ok)
+        emitEvent(mapOf(
+          "type" to if (ok) "permission_timeout_granted" else "permission_timeout_failed",
+          "originalName" to still.originalName,
+          "vid" to vid,
+          "pid" to pid
+        ))
+      }
+    }, 1500L)
   }
 
   private fun getDeviceDetails(deviceName: String): Map<String, Any?> {

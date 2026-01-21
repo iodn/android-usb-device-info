@@ -26,9 +26,11 @@ class UsbPlatformService {
         .toList();
   }
 
-  Future<bool> requestPermission(String deviceName) async {
+  Future<bool> requestPermission(String deviceName, {int? vendorId, int? productId}) async {
     final ok = await _method.invokeMethod<bool>('requestPermission', {
       'deviceName': deviceName,
+      if (vendorId != null) 'vendorId': vendorId,
+      if (productId != null) 'productId': productId,
     });
     return ok ?? false;
   }
