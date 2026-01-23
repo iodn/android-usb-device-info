@@ -189,5 +189,6 @@ This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)**
 | **[USBDevInfo](https://github.com/iodn/android-usb-device-info)** | Inspect USB device details and behavior to understand what's really connected. |
 | **[GadgetFS](https://github.com/iodn/gadgetfs)**          | Experiment with USB gadget functionality (hardware-adjacent, low-level).       |
 | **[TapDucky](https://github.com/iodn/tap-ducky)**                  | A security/testing tool for controlled keystroke injection workflows.          |
-| **[HIDWiggle](https://github.com/iodn/hid-wiggle)**                | A mouse jiggler built with reliability and clean UX in mind.                   |
+| **[HIDWiggle](https://github.com/iodn/hid-wiggle)**                | A mouse jiggler built with USB gadget functionalities.           
+| **[AKTune (Android Kernel Tweaker)](https://github.com/iodn/android-kernel-tweaker)**                | Adaptive Android kernel auto-tuner for CPU/GPU/scheduler/memory/I-O. (Magisk Module).|      
 
