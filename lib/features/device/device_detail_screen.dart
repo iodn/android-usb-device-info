@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +11,9 @@ import '../../data/usb/models.dart';
 import '../../data/usb/providers.dart';
 import '../../data/usb/usb_repository.dart';
 import '../history/controllers/device_history_controller.dart';
+import '../history/models/device_history_entry.dart';
 import 'controllers/device_detail_controller.dart';
+import 'permission_state_logic.dart';
 
 class DeviceDetailScreen extends ConsumerStatefulWidget {
   const DeviceDetailScreen({super.key, required this.deviceName});
@@ -25,6 +29,8 @@ class _DeviceDetailScreenState extends ConsumerState<DeviceDetailScreen> {
   ProviderSubscription<AsyncValue<Map<String, dynamic>>>? _rawSub;
   UsbDeviceDetailViewData? _lastView;
   Map<String, dynamic>? _lastRaw;
+  bool _microphonePermissionWasGranted = false;
+  bool _cameraPermissionWasGranted = false;
 
   @override
   void initState() {
@@ -79,8 +85,39 @@ class _DeviceDetailScreenState extends ConsumerState<DeviceDetailScreen> {
   Widget build(BuildContext context) {
     final async = ref.watch(deviceDetailControllerProvider(widget.deviceName));
     final rawAsync = ref.watch(deviceDetailRawControllerProvider(widget.deviceName));
+    final exportView = async.asData?.value;
+    final exportRaw = rawAsync.asData?.value;
     return Scaffold(
-      appBar: AppBar(title: const Text('Device info')),
+      appBar: AppBar(
+        title: const Text('Device info'),
+        actions: [
+          IconButton(
+            tooltip: 'Advanced raw view',
+            onPressed: exportView == null
+                ? null
+                : () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => _AdvancedRawViewScreen(
+                          view: exportView,
+                          raw: exportRaw,
+                        ),
+                      ),
+                    ),
+            icon: const Icon(Icons.developer_mode_rounded),
+          ),
+          IconButton(
+            tooltip: 'Export raw dump',
+            onPressed: exportView == null
+                ? null
+                : () => _showRawDumpExportSheet(
+                      context,
+                      view: exportView,
+                      raw: exportRaw,
+                    ),
+            icon: const Icon(Icons.ios_share_rounded),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: async.when(
           data: (data) => rawAsync.when(
@@ -115,13 +152,26 @@ class _ErrorBody extends StatelessWidget {
   }
 }
 
-class _DeviceDetailBody extends StatelessWidget {
+class _DeviceDetailBody extends ConsumerStatefulWidget {
   const _DeviceDetailBody({required this.view, required this.raw});
   final UsbDeviceDetailViewData view;
   final Map<String, dynamic>? raw;
 
   @override
+  ConsumerState<_DeviceDetailBody> createState() => _DeviceDetailBodyState();
+}
+
+class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
+  bool _microphonePermissionWasGranted = false;
+  bool _cameraPermissionWasGranted = false;
+
+  UsbDeviceDetailViewData get view => widget.view;
+  Map<String, dynamic>? get raw => widget.raw;
+
+  @override
   Widget build(BuildContext context) {
+    final view = widget.view;
+    final raw = widget.raw;
     final s = view.details.summary;
     final theme = Theme.of(context);
 
@@ -129,12 +179,28 @@ class _DeviceDetailBody extends StatelessWidget {
     final subtitle = view.vendorName ?? s.manufacturerName ?? 'Unknown vendor';
 
     final isInput = s.isInputDevice;
-    final needsPermission = !isInput && !s.hasPermission;
+    final needsPermission = !isInput && !s.isHiddenDevice && !s.hasPermission;
+    final isAudio = _hasUsbClass(s, view.details.interfaces, 1);
+    final isVideo = _hasUsbClass(s, view.details.interfaces, 14);
 
     final tree = _asList(raw?['descriptorTree']);
     final strings = _asMap(raw?['strings']);
     final hidReports = _asList(raw?['hidReports']);
     final deviceState = _asMap(raw?['deviceState']);
+    final audio = _asMap(raw?['audio']);
+    final midi = _asMap(raw?['midi']);
+    final topology = _asMap(raw?['topology']);
+    final availabilityIssues = _asList(raw?['availabilityIssues'])
+        .map(_asMap)
+        .where((issue) => issue.isNotEmpty)
+        .toList(growable: false);
+    final frameworkLimitations = _collectFrameworkLimitations(
+      summary: s,
+      availabilityIssues: availabilityIssues,
+      audio: audio,
+      midi: midi,
+    );
+    final classSections = _buildClassDescriptorSections(tree);
 
     final langs = _asList(strings['languageIds']).map((e) => _asInt(e)).whereType<int>().toList(growable: false);
     final devStrings = _asMap(strings['device']);
@@ -148,6 +214,34 @@ class _DeviceDetailBody extends StatelessWidget {
     final hasStrings = langs.isNotEmpty || devStrings.isNotEmpty || ifStrings.isNotEmpty;
     final hasTree = tree.isNotEmpty;
     final hasHid = hidReports.isNotEmpty;
+    final hasAudio = audio.isNotEmpty && (audio['isUsbAudioClass'] == true || _asList(audio['matchedEndpoints']).isNotEmpty);
+    final hasMidi = midi.isNotEmpty && (midi['probableUsbMidi'] == true || _asList(midi['matchedDevices']).isNotEmpty);
+    final needsMicrophonePermission = deviceNeedsMicrophonePermission(
+      isAudioClass: isAudio,
+      audio: audio,
+    );
+    final diagnosticsArgs = (
+      deviceName: s.deviceName,
+      vendorId: s.vendorId,
+      productId: s.productId,
+      isAudioClass: isAudio,
+      needsMicrophonePermission: needsMicrophonePermission,
+      isVideo: isVideo,
+      isInputDevice: s.isInputDevice,
+      isHiddenDevice: s.isHiddenDevice,
+      deviceClass: s.deviceClass,
+      hasUsbPermission: s.hasPermission,
+    );
+    final diagnosticsAsync = ref.watch(runtimePermissionDiagnosticsProvider(diagnosticsArgs));
+    final diagnostics = diagnosticsAsync.asData?.value ?? const <String, dynamic>{};
+    if (runtimePermissionIsGranted(_asMap(diagnostics['microphone']))) {
+      _microphonePermissionWasGranted = true;
+    }
+    if (runtimePermissionIsGranted(_asMap(diagnostics['camera']))) {
+      _cameraPermissionWasGranted = true;
+    }
+    final historyItems = ref.watch(deviceHistoryControllerProvider).asData?.value ?? const <DeviceHistoryEntry>[];
+    final historyMatch = _findMatchingHistoryEntry(s, historyItems);
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -200,15 +294,59 @@ class _DeviceDetailBody extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        if (needsPermission) _PermissionBanner(deviceName: s.deviceName, vendorId: s.vendorId, productId: s.productId),
+        if (needsPermission)
+          _PermissionBanner(
+            deviceName: s.deviceName,
+            vendorId: s.vendorId,
+            productId: s.productId,
+            serialNumber: s.serialNumber,
+            physicalLocationKey: s.physicalLocationKey,
+            interfaceFingerprint: s.interfaceFingerprint,
+            stableIdentityKey: s.stableIdentityKey,
+            needsMicrophonePermission: needsMicrophonePermission,
+            isVideo: isVideo,
+            diagnosticsArgs: diagnosticsArgs,
+            microphoneWasGranted: _microphonePermissionWasGranted,
+            cameraWasGranted: _cameraPermissionWasGranted,
+          ),
         if (needsPermission) const SizedBox(height: 12),
-        _identitySection(context),
+        _permissionDiagnosticsSection(
+          context,
+          diagnostics,
+          availabilityIssues: availabilityIssues,
+          needsMicrophonePermission: needsMicrophonePermission,
+          isVideo: isVideo,
+          microphoneWasGranted: _microphonePermissionWasGranted,
+          cameraWasGranted: _cameraPermissionWasGranted,
+        ),
         const SizedBox(height: 12),
+        if (frameworkLimitations.isNotEmpty) ...[
+          _frameworkLimitationsSection(context, frameworkLimitations),
+          const SizedBox(height: 12),
+        ],
+        _identitySection(context, historyMatch),
+        const SizedBox(height: 12),
+        if (historyMatch != null && _hasReconnectBaseline(historyMatch)) ...[
+          _reconnectDiffSection(context, historyMatch),
+          const SizedBox(height: 12),
+        ],
         _usbSpecSection(context),
         const SizedBox(height: 12),
         _locationSection(context),
         const SizedBox(height: 12),
+        if (topology.isNotEmpty) ...[
+          _topologySection(context, topology),
+          const SizedBox(height: 12),
+        ],
         if (!isInput) ...[
+          if (hasAudio) ...[
+            _audioSection(context, audio),
+            const SizedBox(height: 12),
+          ],
+          if (hasMidi) ...[
+            _midiSection(context, midi),
+            const SizedBox(height: 12),
+          ],
           _descriptorSection(context),
           const SizedBox(height: 12),
           _powerSection(context),
@@ -216,6 +354,56 @@ class _DeviceDetailBody extends StatelessWidget {
           _configurationsSection(context),
           const SizedBox(height: 12),
           _interfacesSection(context),
+          if (classSections.audio.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _classDescriptorSection(
+              context,
+              title: 'Audio class descriptors',
+              subtitle: '${classSections.audio.length} descriptor(s)',
+              icon: Icons.headset_rounded,
+              descriptors: classSections.audio,
+            ),
+          ],
+          if (classSections.video.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _classDescriptorSection(
+              context,
+              title: 'Video class descriptors',
+              subtitle: '${classSections.video.length} descriptor(s)',
+              icon: Icons.videocam_rounded,
+              descriptors: classSections.video,
+            ),
+          ],
+          if (classSections.cdc.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _classDescriptorSection(
+              context,
+              title: 'CDC / serial descriptors',
+              subtitle: '${classSections.cdc.length} descriptor(s)',
+              icon: Icons.settings_ethernet_rounded,
+              descriptors: classSections.cdc,
+            ),
+          ],
+          if (classSections.hub.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _classDescriptorSection(
+              context,
+              title: 'Hub descriptors',
+              subtitle: '${classSections.hub.length} descriptor(s)',
+              icon: Icons.hub_rounded,
+              descriptors: classSections.hub,
+            ),
+          ],
+          if (classSections.bos.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _classDescriptorSection(
+              context,
+              title: 'BOS & capabilities',
+              subtitle: '${classSections.bos.length} descriptor(s)',
+              icon: Icons.extension_rounded,
+              descriptors: classSections.bos,
+            ),
+          ],
           if (hasState) ...[
             const SizedBox(height: 12),
             _advancedStatusSection(context, deviceState),
@@ -239,13 +427,21 @@ class _DeviceDetailBody extends StatelessWidget {
     );
   }
 
-  Widget _identitySection(BuildContext context) {
+  Widget _identitySection(BuildContext context, DeviceHistoryEntry? historyMatch) {
     final s = view.details.summary;
     final vendor = view.vendorName ?? s.manufacturerName;
     final product = view.productName ?? s.productName;
+    final stableIdentityKey = (s.stableIdentityKey ?? '').trim();
+    final chipsetFamily = view.chipsetFamily;
+    final likelyFunction = view.likelyFunction;
+    final knownPaths = <String>[
+      ...(historyMatch?.knownDevicePaths ?? const <String>[]),
+      s.deviceName,
+    ].where((p) => p.trim().isNotEmpty).toSet().toList(growable: false);
+    final previousPaths = knownPaths.where((p) => p != s.deviceName).toList(growable: false);
     return SectionCard(
       title: 'Identity',
-      subtitle: 'IDs, vendor/product strings',
+      subtitle: 'IDs, vendor/product strings, and continuity',
       leading: const Icon(Icons.badge_outlined),
       child: Column(
         children: [
@@ -253,7 +449,39 @@ class _DeviceDetailBody extends StatelessWidget {
           KeyValueRow(label: 'Product ID', value: Fmt.decAndHex16(s.productId)),
           KeyValueRow(label: 'Vendor', value: Fmt.formatNullable(vendor)),
           KeyValueRow(label: 'Product', value: Fmt.formatNullable(product)),
+          KeyValueRow(
+            label: 'Chipset family',
+            value: chipsetFamily == null
+                ? 'Unknown'
+                : '${chipsetFamily.family} (${chipsetFamily.confidence})',
+          ),
+          if (chipsetFamily != null)
+            KeyValueRow(label: 'Chipset basis', value: chipsetFamily.reason),
+          KeyValueRow(
+            label: 'Likely function',
+            value: likelyFunction == null
+                ? 'Unknown'
+                : '${likelyFunction.label} (${likelyFunction.confidence})',
+          ),
+          if (likelyFunction != null)
+            KeyValueRow(label: 'Function basis', value: likelyFunction.reason),
           KeyValueRow(label: 'Serial', value: Fmt.formatNullable(s.serialNumber)),
+          KeyValueRow(label: 'Stable identity', value: stableIdentityKey.isEmpty ? 'Unavailable' : stableIdentityKey),
+          KeyValueRow(label: 'Identity confidence', value: _identityConfidenceLabel(s.identityConfidence)),
+          KeyValueRow(label: 'Identity strategy', value: _identityStrategyLabel(s.identityStrategy)),
+          KeyValueRow(label: 'Physical location', value: _formatNullableString(s.physicalLocationKey)),
+          KeyValueRow(label: 'Interface fingerprint', value: _formatNullableString(s.interfaceFingerprint)),
+          KeyValueRow(
+            label: 'Path continuity',
+            value: previousPaths.isEmpty
+                ? 'No previous device path recorded'
+                : 'Re-enumerated across ${previousPaths.length + 1} known path(s)',
+          ),
+          if (previousPaths.isNotEmpty)
+            KeyValueRow(
+              label: 'Previous paths',
+              value: previousPaths.join('\n'),
+            ),
         ],
       ),
     );
@@ -292,9 +520,68 @@ class _DeviceDetailBody extends StatelessWidget {
           KeyValueRow(label: 'Port number', value: s.portNumber == null ? 'Unknown' : '${s.portNumber}'),
           KeyValueRow(
             label: 'Type',
-            value: s.isInputDevice ? 'Input device (keyboard/mouse via InputManager)' : 'USB device (UsbManager)',
+            value: s.isInputDevice
+                ? 'Input device (keyboard/mouse via InputManager)'
+                : s.isHiddenDevice
+                    ? 'USB topology entry (sysfs)'
+                    : 'USB device (UsbManager)',
             allowCopy: false,
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _topologySection(BuildContext context, Map<String, dynamic> topology) {
+    final children = _asList(topology['children']).whereType<String>().toList(growable: false);
+    final siblings = _asList(topology['siblings']).whereType<String>().toList(growable: false);
+    final portChain = _asList(topology['portChain']).map(_asInt).whereType<int>().toList(growable: false);
+    final busNumber = _asInt(topology['busNumber']);
+    final treeDepth = _asInt(topology['treeDepth']);
+    final upstreamHub = topology['upstreamHub'] as String?;
+    final portChainLabel = portChain.isEmpty ? 'Unknown' : portChain.join(' → ');
+    final topologyPath = _buildTopologyPath(busNumber, portChain);
+    return SectionCard(
+      title: 'Topology',
+      subtitle: 'Bus layout, chain, parent and siblings',
+      leading: const Icon(Icons.account_tree_rounded),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          KeyValueRow(label: 'Source', value: _formatNullableString(topology['source'] as String?)),
+          KeyValueRow(label: 'Sysfs name', value: _formatNullableString(topology['sysfsName'] as String?)),
+          KeyValueRow(label: 'Sysfs path', value: _formatNullableString(topology['sysfsPath'] as String?)),
+          KeyValueRow(label: 'Device node', value: _formatNullableString(topology['devPath'] as String?)),
+          KeyValueRow(label: 'Parent', value: _formatNullableString(topology['parentSysfsName'] as String?)),
+          KeyValueRow(label: 'Upstream hub', value: _formatNullableString(upstreamHub)),
+          KeyValueRow(label: 'Bus number', value: _asInt(topology['busNumber'])?.toString() ?? 'Unknown'),
+          KeyValueRow(label: 'Device number', value: _asInt(topology['deviceNumber'])?.toString() ?? 'Unknown'),
+          KeyValueRow(label: 'Tree depth', value: treeDepth?.toString() ?? 'Unknown'),
+          KeyValueRow(label: 'Port chain', value: portChainLabel),
+          KeyValueRow(label: 'Devpath', value: _formatNullableString(topology['devpath'] as String?)),
+          KeyValueRow(label: 'Authorized', value: _asInt(topology['authorized'])?.toString() ?? 'Unknown'),
+          KeyValueRow(label: 'Removable', value: _formatNullableString(topology['removable'] as String?)),
+          KeyValueRow(label: 'Max child', value: _asInt(topology['maxChild'])?.toString() ?? 'Unknown'),
+          if (topologyPath != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Path',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            _TopologyPath(path: topologyPath),
+          ],
+          if (siblings.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _TopologyList(title: 'Sibling devices', values: siblings),
+          ],
+          if (children.isNotEmpty)
+            ...[
+              const SizedBox(height: 12),
+              _TopologyList(title: 'Downstream children', values: children),
+            ],
         ],
       ),
     );
@@ -322,6 +609,104 @@ class _DeviceDetailBody extends StatelessWidget {
             KeyValueRow(label: 'iSerialNumber', value: d.iSerialNumber == null ? 'Unknown' : '${d.iSerialNumber}'),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _audioSection(BuildContext context, Map<String, dynamic> audio) {
+    final theme = Theme.of(context);
+    final matched = _asList(audio['matchedEndpoints']);
+    final connectedCount = _asInt(audio['connectedUsbAudioEndpointCount']) ?? matched.length;
+    final matchedCount = _asInt(audio['matchedEndpointCount']) ?? matched.length;
+    final platformAvailable = audio['platformAvailable'] != false;
+    final isUsbAudioClass = audio['isUsbAudioClass'] == true;
+    final availabilityNote = (audio['availabilityNote'] as String?)?.trim();
+    return SectionCard(
+      title: 'USB audio',
+      subtitle: 'AudioManager / AudioDeviceInfo endpoint metadata',
+      leading: const Icon(Icons.headset_rounded),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          KeyValueRow(label: 'USB audio class', value: isUsbAudioClass ? 'Yes' : 'No'),
+          KeyValueRow(label: 'Platform audio API', value: platformAvailable ? 'Available' : 'Unavailable'),
+          KeyValueRow(label: 'Connected USB audio endpoints', value: '$connectedCount'),
+          KeyValueRow(label: 'Matched endpoints', value: '$matchedCount'),
+          if (!platformAvailable) ...[
+            const SizedBox(height: 8),
+            Text(
+              availabilityNote?.isNotEmpty == true
+                  ? availabilityNote!
+                  : 'AudioManager data is not available on this Android version or device.',
+              style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            ),
+          ] else if (matched.isEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              availabilityNote?.isNotEmpty == true
+                  ? availabilityNote!
+                  : isUsbAudioClass
+                      ? 'No AudioDeviceInfo endpoint could be matched to this USB device yet.'
+                      : 'Android does not report a matched USB audio endpoint for this device.',
+              style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            ),
+          ] else ...[
+            const SizedBox(height: 8),
+            for (int i = 0; i < matched.length; i++) ...[
+              if (i > 0) const Divider(height: 24),
+              _AudioEndpointBlock(endpoint: _asMap(matched[i]), index: i),
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _midiSection(BuildContext context, Map<String, dynamic> midi) {
+    final theme = Theme.of(context);
+    final matched = _asList(midi['matchedDevices']);
+    final connectedCount = _asInt(midi['connectedMidiDeviceCount']) ?? matched.length;
+    final matchedCount = _asInt(midi['matchedDeviceCount']) ?? matched.length;
+    final probable = midi['probableUsbMidi'] == true;
+    final platformAvailable = midi['platformAvailable'] != false;
+    final availabilityNote = (midi['availabilityNote'] as String?)?.trim();
+    return SectionCard(
+      title: 'USB MIDI',
+      subtitle: 'MidiManager device and port metadata',
+      leading: const Icon(Icons.piano_rounded),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          KeyValueRow(label: 'Probable USB MIDI interface', value: probable ? 'Yes' : 'No'),
+          KeyValueRow(label: 'Platform MIDI API', value: platformAvailable ? 'Available' : 'Unavailable'),
+          KeyValueRow(label: 'Connected MIDI devices', value: '$connectedCount'),
+          KeyValueRow(label: 'Matched MIDI devices', value: '$matchedCount'),
+          if (!platformAvailable) ...[
+            const SizedBox(height: 8),
+            Text(
+              availabilityNote?.isNotEmpty == true
+                  ? availabilityNote!
+                  : 'MidiManager data is not available on this Android version or device.',
+              style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            ),
+          ] else if (matched.isEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              availabilityNote?.isNotEmpty == true
+                  ? availabilityNote!
+                  : probable
+                      ? 'The USB descriptors look like MIDI, but Android did not expose a matching MidiManager device.'
+                      : 'Android does not report a matched MIDI device for this USB device.',
+              style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            ),
+          ] else ...[
+            const SizedBox(height: 8),
+            for (int i = 0; i < matched.length; i++) ...[
+              if (i > 0) const Divider(height: 24),
+              _MidiDeviceBlock(device: _asMap(matched[i]), index: i),
+            ],
+          ],
+        ],
       ),
     );
   }
@@ -424,6 +809,266 @@ class _DeviceDetailBody extends StatelessWidget {
                         ),
                       ),
                     ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _availabilityIssuesSection(BuildContext context, List<Map<String, dynamic>> issues) {
+    return SectionCard(
+      title: 'Why Data Is Unavailable',
+      subtitle: 'Exact Android or device-side limitation for hidden fields',
+      leading: const Icon(Icons.info_outline_rounded),
+      child: Column(
+        children: [
+          for (int i = 0; i < issues.length; i++) ...[
+            if (i > 0) const Divider(height: 24),
+            _AvailabilityIssueTile(issue: issues[i]),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _frameworkLimitationsSection(
+    BuildContext context,
+    List<_FrameworkLimitation> limitations,
+  ) {
+    final theme = Theme.of(context);
+    return SectionCard(
+      title: 'Android framework limitations',
+      subtitle: 'The device is present, but Android is hiding or not exposing part of it',
+      leading: const Icon(Icons.visibility_off_rounded),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${limitations.length} framework-related limitation${limitations.length == 1 ? '' : 's'} detected for this device.',
+            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+          ),
+          const SizedBox(height: 12),
+          for (int i = 0; i < limitations.length; i++) ...[
+            if (i > 0) const Divider(height: 24),
+            _FrameworkLimitationTile(limitation: limitations[i]),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _permissionDiagnosticsSection(
+    BuildContext context,
+    Map<String, dynamic> diagnostics, {
+    required List<Map<String, dynamic>> availabilityIssues,
+    required bool needsMicrophonePermission,
+    required bool isVideo,
+    required bool microphoneWasGranted,
+    required bool cameraWasGranted,
+  }) {
+    final theme = Theme.of(context);
+    if (diagnostics.isEmpty) {
+      return SectionCard(
+        title: 'Permission diagnostics',
+        subtitle: 'Manifest, runtime, USB state, Android behavior, and last failure',
+        leading: const Icon(Icons.admin_panel_settings_rounded),
+        child: Text(
+          'Loading diagnostics…',
+          style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+        ),
+      );
+    }
+    final device = _asMap(diagnostics['device']);
+    final usb = _asMap(diagnostics['usb']);
+    final android = _asMap(diagnostics['android']);
+    final lastFailure = _asMap(diagnostics['lastFailure']);
+    final statuses = buildPermissionDiagnosticStatuses(
+      diagnostics: diagnostics,
+      needsMicrophonePermission: needsMicrophonePermission,
+      isVideo: isVideo,
+      microphoneWasGranted: microphoneWasGranted,
+      cameraWasGranted: cameraWasGranted,
+    );
+    final behaviorNotes = _stringList(android['behaviorNotes']);
+    final lastFailureReason = (lastFailure['reasonCode'] as String?)?.trim();
+    final lastFailureMessage = (lastFailure['message'] as String?)?.trim();
+    final lastFailureTime = _asInt(lastFailure['timestampMs']);
+    final diagnosticsTitle = availabilityIssues.isEmpty
+        ? 'Show permission diagnostics'
+        : 'Show permission diagnostics & unavailable data (${availabilityIssues.length})';
+
+    return SectionCard(
+      title: 'Permission diagnostics',
+      subtitle: 'Manifest, runtime, USB state, Android behavior, and last failure',
+      leading: const Icon(Icons.admin_panel_settings_rounded),
+      child: _ExpandableBlock(
+        title: diagnosticsTitle,
+        initiallyExpanded: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (int i = 0; i < statuses.length; i++) ...[
+              if (i > 0) const SizedBox(height: 10),
+              _PermissionStateRow(status: statuses[i]),
+            ],
+            const SizedBox(height: 12),
+            KeyValueRow(
+              label: 'Device class',
+              value: _formatNullableString(device['deviceClassLabel'] as String?),
+            ),
+            KeyValueRow(
+              label: 'Android version',
+              value: 'SDK ${_asInt(android['sdkInt'])?.toString() ?? '?'} (${_formatNullableString(android['release'] as String?)})',
+            ),
+            KeyValueRow(
+              label: 'USB detail',
+              value: _formatNullableString(usb['detail'] as String?),
+            ),
+            KeyValueRow(
+              label: 'Microphone manifest',
+              value: _manifestStatusLabel(_asMap(diagnostics['microphone'])['manifestStatus'] as String?),
+            ),
+            KeyValueRow(
+              label: 'Microphone runtime',
+              value: _runtimeStatusLabel(_asMap(diagnostics['microphone'])['runtimeStatus'] as String?),
+            ),
+            KeyValueRow(
+              label: 'Camera manifest',
+              value: _manifestStatusLabel(_asMap(diagnostics['camera'])['manifestStatus'] as String?),
+            ),
+            KeyValueRow(
+              label: 'Camera runtime',
+              value: _runtimeStatusLabel(_asMap(diagnostics['camera'])['runtimeStatus'] as String?),
+            ),
+            if (behaviorNotes.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Text(
+                'Android behavior',
+                style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              ),
+              const SizedBox(height: 8),
+              for (final note in behaviorNotes) ...[
+                Text(
+                  '• $note',
+                  style: theme.textTheme.bodySmall,
+                ),
+                const SizedBox(height: 4),
+              ],
+            ],
+            const SizedBox(height: 8),
+            KeyValueRow(
+              label: 'Last failure reason',
+              value: lastFailureReason?.isNotEmpty == true ? lastFailureReason! : 'None recorded',
+            ),
+            if (lastFailureMessage?.isNotEmpty == true)
+              KeyValueRow(
+                label: 'Last failure detail',
+                value: lastFailureMessage!,
+              ),
+            if (lastFailureTime != null && lastFailureTime > 0)
+              KeyValueRow(
+                label: 'Last failure time',
+                value: _formatTimestamp(lastFailureTime),
+              ),
+            if (availabilityIssues.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Text(
+                'Why data is unavailable',
+                style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              ),
+              const SizedBox(height: 10),
+              for (int i = 0; i < availabilityIssues.length; i++) ...[
+                if (i > 0) const Divider(height: 24),
+                _AvailabilityIssueTile(issue: availabilityIssues[i]),
+              ],
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _reconnectDiffSection(BuildContext context, DeviceHistoryEntry historyMatch) {
+    final baseline = _asMap(historyMatch.previousSnapshot);
+    if (baseline.isEmpty) return const SizedBox.shrink();
+
+    final fields = _buildReconnectDiffFields(view, baseline);
+    final changedFields = fields.where((field) => field.changed).toList(growable: false);
+    final baselineTime = DateTime.tryParse((baseline['testedAt'] as String?) ?? '');
+    final baselineLabel = _reconnectBaselineLabel(context, baselineTime);
+    final theme = Theme.of(context);
+
+    return SectionCard(
+      title: 'Reconnect diff',
+      subtitle: 'Current device compared with the previous captured state',
+      leading: const Icon(Icons.compare_arrows_rounded),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            changedFields.isEmpty
+                ? 'No differences detected compared with $baselineLabel.'
+                : '${changedFields.length} change${changedFields.length == 1 ? '' : 's'} detected compared with $baselineLabel.',
+            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+          ),
+          if (changedFields.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            for (int i = 0; i < changedFields.length; i++) ...[
+              if (i > 0) const Divider(height: 24),
+              _ReconnectDiffTile(field: changedFields[i]),
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _classDescriptorSection(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required List<_ClassDescriptorView> descriptors,
+  }) {
+    final theme = Theme.of(context);
+    return SectionCard(
+      title: title,
+      subtitle: subtitle,
+      leading: Icon(icon),
+      child: Column(
+        children: [
+          for (int i = 0; i < descriptors.length; i++) ...[
+            if (i > 0) const Divider(height: 24),
+            _ExpandableBlock(
+              title: descriptors[i].title,
+              initiallyExpanded: i == 0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (descriptors[i].summary != null) ...[
+                    Text(
+                      descriptors[i].summary!,
+                      style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                  if (descriptors[i].fields.isNotEmpty) ...[
+                    for (final entry in descriptors[i].fields.entries.take(12))
+                      KeyValueRow(label: entry.key, value: _formatAny(entry.value)),
+                    if (descriptors[i].fields.length > 12)
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Showing first 12 fields.',
+                          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                        ),
+                      ),
+                    const SizedBox(height: 8),
+                  ],
+                  _DescriptorNodeTile(node: descriptors[i].node),
                 ],
               ),
             ),
@@ -604,15 +1249,45 @@ class _DeviceDetailBody extends StatelessWidget {
     final n = (name == null || name.trim().isEmpty) ? 'Unknown' : name;
     return '$n (${Fmt.decAndHex8(id)})';
   }
+
+  static bool _hasUsbClass(UsbDeviceSummary s, List<UsbInterfaceInfo> ifaces, int targetClass) {
+    if (s.deviceClass == targetClass) return true;
+    for (final iface in ifaces) {
+      if (iface.interfaceClass == targetClass) return true;
+    }
+    return false;
+  }
 }
 
 class _PermissionBanner extends ConsumerWidget {
   static const EventChannel _events = EventChannel('usbdevinfo/events');
   static const MethodChannel _methods = MethodChannel('usbdevinfo/methods');
 
-  const _PermissionBanner({required this.deviceName, required this.vendorId, required this.productId});
+  const _PermissionBanner({
+    required this.deviceName,
+    required this.vendorId,
+    required this.productId,
+    required this.serialNumber,
+    required this.physicalLocationKey,
+    required this.interfaceFingerprint,
+    required this.stableIdentityKey,
+    required this.needsMicrophonePermission,
+    required this.isVideo,
+    required this.diagnosticsArgs,
+    required this.microphoneWasGranted,
+    required this.cameraWasGranted,
+  });
   final int vendorId;
   final int productId;
+  final String? serialNumber;
+  final String? physicalLocationKey;
+  final String? interfaceFingerprint;
+  final String? stableIdentityKey;
+  final bool needsMicrophonePermission;
+  final bool isVideo;
+  final PermissionDiagnosticsArgs diagnosticsArgs;
+  final bool microphoneWasGranted;
+  final bool cameraWasGranted;
 
   static Stream<Map<String, dynamic>> _eventStream() => _events.receiveBroadcastStream().map((e) {
         if (e is Map) return e.cast<String, dynamic>();
@@ -623,6 +1298,7 @@ class _PermissionBanner extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final events = _eventStream();
+    final runtimeAsync = ref.watch(runtimePermissionDiagnosticsProvider(diagnosticsArgs));
     final theme = Theme.of(context);
     return Card(
       elevation: 0,
@@ -654,43 +1330,68 @@ class _PermissionBanner extends ConsumerWidget {
               stream: events,
               builder: (context, snapshot) {
                 final data = snapshot.data ?? const {};
-                final type = (data['type'] as String?) ?? '';
-                final instanceChanged = type == 'permission_instance_changed' && (data['originalName'] == deviceName);
-                final timeoutFailed = type == 'permission_timeout_failed';
-                final showHint = instanceChanged || timeoutFailed;
+                final statuses = buildPermissionBannerStatuses(
+                  runtimeDiagnostics: runtimeAsync.asData?.value ?? const {},
+                  event: data,
+                  needsMicrophonePermission: needsMicrophonePermission,
+                  isVideo: isVideo,
+                  microphoneWasGranted: microphoneWasGranted,
+                  cameraWasGranted: cameraWasGranted,
+                );
                 return Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (showHint) ...[
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Text(
-                          instanceChanged
-                              ? 'The device reconnected as a new instance. Please grant permission again.'
-                              : 'Permission broadcast was missed. Retrying can help after the device stabilizes.',
-                          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onErrorContainer),
-                        ),
-                      ),
+                    for (final status in statuses) ...[
+                      _PermissionStateRow(status: status),
+                      const SizedBox(height: 10),
                     ],
                     Align(
                       alignment: Alignment.centerRight,
                       child: FilledButton.icon(
                         onPressed: () async {
-                          // Ensure Android runtime mic permission for USB Audio devices
-                          try { await _methods.invokeMethod('requestRecordAudioPermission'); } catch (_) {}
-                          await Future.delayed(const Duration(milliseconds: 50));
-                  await ref.read(usbIdsDbProvider.future);
-                  final repo = ref.read(usbRepositoryProvider);
-                  final ok = await repo.requestPermission(deviceName, vendorId: vendorId, productId: productId);
-                  if (!context.mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(ok ? 'Permission granted' : 'Permission not granted')),
-                  );
-                  if (ok) {
-                    ref.invalidate(deviceDetailControllerProvider(deviceName));
-                    ref.invalidate(deviceDetailRawControllerProvider(deviceName));
-                  }
-                },
+                          if (isVideo) {
+                            final cameraOk =
+                                (await _methods.invokeMethod<bool>('requestCameraPermission', {
+                              'deviceName': deviceName,
+                              'vendorId': vendorId,
+                              'productId': productId,
+                              'deviceClass': diagnosticsArgs.deviceClass,
+                            })) ??
+                                    false;
+                            if (!context.mounted) return;
+                            if (!cameraOk) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Camera permission is required for USB video devices on this Android version.'),
+                                ),
+                              );
+                              ref.invalidate(runtimePermissionDiagnosticsProvider(diagnosticsArgs));
+                              return;
+                            }
+                            ref.invalidate(runtimePermissionDiagnosticsProvider(diagnosticsArgs));
+                          }
+
+                          await ref.read(usbIdsDbProvider.future);
+                          final repo = ref.read(usbRepositoryProvider);
+                          final ok = await repo.requestPermission(
+                            deviceName,
+                            vendorId: vendorId,
+                            productId: productId,
+                            serialNumber: serialNumber,
+                            physicalLocationKey: physicalLocationKey,
+                            interfaceFingerprint: interfaceFingerprint,
+                            stableIdentityKey: stableIdentityKey,
+                          );
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(ok ? 'Permission granted' : 'Permission not granted')),
+                          );
+                          ref.invalidate(runtimePermissionDiagnosticsProvider(diagnosticsArgs));
+                          if (ok) {
+                            ref.invalidate(deviceDetailControllerProvider(deviceName));
+                            ref.invalidate(deviceDetailRawControllerProvider(deviceName));
+                          }
+                        },
                         icon: const Icon(Icons.vpn_key_rounded),
                         label: const Text('Grant permission'),
                       ),
@@ -703,6 +1404,483 @@ class _PermissionBanner extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+Future<void> _showRawDumpExportSheet(
+  BuildContext context, {
+  required UsbDeviceDetailViewData view,
+  required Map<String, dynamic>? raw,
+}) async {
+  final payload = _buildDeviceExportPayload(view, raw);
+  final prettyJson = const JsonEncoder.withIndent('  ').convert(payload);
+  final plainText = _buildDevicePlainTextReport(view, raw);
+  final rawHex = _buildRawHexDump(view, raw);
+
+  await showModalBottomSheet<void>(
+    context: context,
+    useSafeArea: true,
+    isScrollControlled: true,
+    showDragHandle: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+    ),
+    builder: (ctx) => FractionallySizedBox(
+      heightFactor: 0.92,
+      child: _DeviceRawDumpExportSheet(
+        prettyJson: prettyJson,
+        plainText: plainText,
+        rawHex: rawHex,
+      ),
+    ),
+  );
+}
+
+Map<String, dynamic> _buildDeviceExportPayload(
+  UsbDeviceDetailViewData view,
+  Map<String, dynamic>? raw,
+) {
+  final s = view.details.summary;
+  return <String, dynamic>{
+    'schema': 'device_raw_dump_export_v1',
+    'exportedAt': DateTime.now().toIso8601String(),
+    'resolvedNames': <String, dynamic>{
+      'vendorName': view.vendorName,
+      'productName': view.productName,
+      'chipsetFamily': view.chipsetFamily?.family,
+      'chipsetConfidence': view.chipsetFamily?.confidence,
+      'chipsetReason': view.chipsetFamily?.reason,
+      'likelyFunction': view.likelyFunction?.label,
+      'likelyFunctionConfidence': view.likelyFunction?.confidence,
+      'likelyFunctionReason': view.likelyFunction?.reason,
+      'deviceClassName': view.deviceClassName,
+      'deviceSubclassName': view.deviceSubclassName,
+      'deviceProtocolName': view.deviceProtocolName,
+      'interfaceClassNames': [
+        for (final item in view.interfaceClassNames)
+          <String, dynamic>{
+            'className': item.className,
+            'subclassName': item.subclassName,
+            'protocolName': item.protocolName,
+          },
+      ],
+    },
+    'summary': <String, dynamic>{
+      'deviceName': s.deviceName,
+      'deviceId': s.deviceId,
+      'portNumber': s.portNumber,
+      'vendorId': s.vendorId,
+      'productId': s.productId,
+      'deviceClass': s.deviceClass,
+      'deviceSubclass': s.deviceSubclass,
+      'deviceProtocol': s.deviceProtocol,
+      'interfaceCount': s.interfaceCount,
+      'configurationCount': s.configurationCount,
+      'hasPermission': s.hasPermission,
+      'manufacturerName': s.manufacturerName,
+      'productName': s.productName,
+      'serialNumber': s.serialNumber,
+      'usbVersion': s.usbVersion,
+      'speed': s.speed,
+      'maxPowerMa': s.maxPowerMa,
+      'isInputDevice': s.isInputDevice,
+      'isHiddenDevice': s.isHiddenDevice,
+      'inputSources': s.inputSources,
+      'capabilities': s.capabilities,
+      'stableIdentityKey': s.stableIdentityKey,
+      'identityConfidence': s.identityConfidence,
+      'identityStrategy': s.identityStrategy,
+      'physicalLocationKey': s.physicalLocationKey,
+      'interfaceFingerprint': s.interfaceFingerprint,
+      'continuityKeys': s.continuityKeys,
+    },
+    'interfaces': [
+      for (final iface in view.details.interfaces)
+        <String, dynamic>{
+          'id': iface.id,
+          'alternateSetting': iface.alternateSetting,
+          'name': iface.name,
+          'interfaceClass': iface.interfaceClass,
+          'interfaceSubclass': iface.interfaceSubclass,
+          'interfaceProtocol': iface.interfaceProtocol,
+          'endpointCount': iface.endpointCount,
+          'endpoints': [
+            for (final ep in iface.endpoints)
+              <String, dynamic>{
+                'address': ep.address,
+                'direction': ep.direction,
+                'type': ep.type,
+                'maxPacketSize': ep.maxPacketSize,
+                'interval': ep.interval,
+                'attributes': ep.attributes,
+                'number': ep.number,
+              },
+          ],
+        },
+    ],
+    'configurations': [
+      for (final cfg in view.details.configurations)
+        <String, dynamic>{
+          'id': cfg.id,
+          'name': cfg.name,
+          'attributes': cfg.attributes,
+          'maxPowerMa': cfg.maxPowerMa,
+          'interfaceCount': cfg.interfaceCount,
+          'interfaces': [
+            for (final iface in cfg.interfaces)
+              <String, dynamic>{
+                'id': iface.id,
+                'alternateSetting': iface.alternateSetting,
+                'name': iface.name,
+                'interfaceClass': iface.interfaceClass,
+                'interfaceSubclass': iface.interfaceSubclass,
+                'interfaceProtocol': iface.interfaceProtocol,
+                'endpointCount': iface.endpointCount,
+              },
+          ],
+        },
+    ],
+    'deviceDescriptor': view.details.deviceDescriptor == null
+        ? null
+        : <String, dynamic>{
+            'bcdUsb': view.details.deviceDescriptor!.bcdUsb,
+            'usbVersion': view.details.deviceDescriptor!.usbVersion,
+            'bcdDevice': view.details.deviceDescriptor!.bcdDevice,
+            'deviceRelease': view.details.deviceDescriptor!.deviceRelease,
+            'maxPacketSize0': view.details.deviceDescriptor!.maxPacketSize0,
+            'numConfigurations': view.details.deviceDescriptor!.numConfigurations,
+            'iManufacturer': view.details.deviceDescriptor!.iManufacturer,
+            'iProduct': view.details.deviceDescriptor!.iProduct,
+            'iSerialNumber': view.details.deviceDescriptor!.iSerialNumber,
+          },
+    'input': view.details.input == null
+        ? null
+        : <String, dynamic>{
+            'id': view.details.input!.id,
+            'name': view.details.input!.name,
+            'descriptor': view.details.input!.descriptor,
+            'isExternal': view.details.input!.isExternal,
+            'vendorId': view.details.input!.vendorId,
+            'productId': view.details.input!.productId,
+            'sources': view.details.input!.sources,
+            'keyboardType': view.details.input!.keyboardType,
+            'motionRanges': [
+              for (final range in view.details.input!.motionRanges)
+                <String, dynamic>{
+                  'axis': range.axis,
+                  'min': range.min,
+                  'max': range.max,
+                  'flat': range.flat,
+                  'fuzz': range.fuzz,
+                  'resolution': range.resolution,
+                },
+            ],
+          },
+    'raw': raw ?? <String, dynamic>{},
+  };
+}
+
+String _buildDevicePlainTextReport(
+  UsbDeviceDetailViewData view,
+  Map<String, dynamic>? raw,
+) {
+  final s = view.details.summary;
+  final buffer = StringBuffer()
+    ..writeln('USBDevInfo Device Report')
+    ..writeln('Exported: ${DateTime.now().toIso8601String()}')
+    ..writeln()
+    ..writeln('Identity')
+    ..writeln('  Device path: ${s.deviceName}')
+    ..writeln('  Vendor ID: ${Fmt.hex16(s.vendorId)}')
+    ..writeln('  Product ID: ${Fmt.hex16(s.productId)}')
+    ..writeln('  Vendor: ${view.vendorName ?? s.manufacturerName ?? 'Unknown'}')
+    ..writeln('  Product: ${view.productName ?? s.productName ?? 'Unknown'}')
+    ..writeln(
+      '  Chipset family: ${view.chipsetFamily == null ? 'Unknown' : '${view.chipsetFamily!.family} (${view.chipsetFamily!.confidence})'}',
+    )
+    ..writeln(
+      '  Likely function: ${view.likelyFunction == null ? 'Unknown' : '${view.likelyFunction!.label} (${view.likelyFunction!.confidence})'}',
+    )
+    ..writeln('  Serial: ${s.serialNumber ?? 'Unknown'}')
+    ..writeln()
+    ..writeln('USB')
+    ..writeln('  Device class: ${view.deviceClassName ?? 'Unknown'} (${Fmt.decAndHex8(s.deviceClass)})')
+    ..writeln('  Subclass: ${view.deviceSubclassName ?? 'Unknown'} (${Fmt.decAndHex8(s.deviceSubclass)})')
+    ..writeln('  Protocol: ${view.deviceProtocolName ?? 'Unknown'} (${Fmt.decAndHex8(s.deviceProtocol)})')
+    ..writeln('  USB version: ${s.usbVersion ?? 'Unknown'}')
+    ..writeln('  Speed: ${s.speed ?? 'Unknown'}')
+    ..writeln('  Permission granted: ${s.hasPermission ? 'Yes' : 'No'}')
+    ..writeln('  Interfaces: ${s.interfaceCount}')
+    ..writeln('  Configurations: ${s.configurationCount}');
+
+  if ((s.capabilities ?? const <String>[]).isNotEmpty) {
+    buffer
+      ..writeln()
+      ..writeln('Capabilities')
+      ..writeln('  ${(s.capabilities ?? const <String>[]).join(', ')}');
+  }
+
+  if (view.chipsetFamily != null) {
+    buffer
+      ..writeln()
+      ..writeln('Chipset detection')
+      ..writeln('  ${view.chipsetFamily!.reason}');
+  }
+
+  if (view.likelyFunction != null) {
+    buffer
+      ..writeln()
+      ..writeln('Likely function')
+      ..writeln('  ${view.likelyFunction!.reason}');
+  }
+
+  if (view.details.interfaces.isNotEmpty) {
+    buffer
+      ..writeln()
+      ..writeln('Interfaces');
+    for (int i = 0; i < view.details.interfaces.length; i++) {
+      final iface = view.details.interfaces[i];
+      final resolved = view.interfaceClassNames.length > i ? view.interfaceClassNames[i] : null;
+      buffer
+        ..writeln(
+          '  IF ${iface.id} alt ${iface.alternateSetting}: ${resolved?.className ?? 'Unknown'} / ${resolved?.subclassName ?? 'Unknown'} / ${resolved?.protocolName ?? 'Unknown'}',
+        )
+        ..writeln('    Endpoints: ${iface.endpointCount}');
+      for (final ep in iface.endpoints) {
+        buffer.writeln(
+          '    - ${ep.type} ${ep.direction} addr ${Fmt.decAndHex8(ep.address)} maxPkt ${ep.maxPacketSize} interval ${ep.interval}',
+        );
+      }
+    }
+  }
+
+  final availabilityIssues = _asList(raw?['availabilityIssues']).map(_asMap).where((e) => e.isNotEmpty).toList(growable: false);
+  if (availabilityIssues.isNotEmpty) {
+    buffer
+      ..writeln()
+      ..writeln('Availability issues');
+    for (final issue in availabilityIssues) {
+      buffer.writeln('  - ${(issue['scope'] as String?) ?? 'availability'}: ${(issue['message'] as String?) ?? 'Unavailable'}');
+    }
+  }
+
+  final tree = _asList(raw?['descriptorTree']);
+  final hidReports = _asList(raw?['hidReports']);
+  buffer
+    ..writeln()
+    ..writeln('Advanced counts')
+    ..writeln('  Descriptor tree nodes: ${tree.length}')
+    ..writeln('  HID report descriptors: ${hidReports.length}')
+    ..writeln('  Strings available: ${_asMap(raw?['strings']).isNotEmpty ? 'Yes' : 'No'}')
+    ..writeln('  Device state available: ${_asMap(raw?['deviceState']).isNotEmpty ? 'Yes' : 'No'}');
+
+  return buffer.toString().trimRight();
+}
+
+String _buildRawHexDump(
+  UsbDeviceDetailViewData view,
+  Map<String, dynamic>? raw,
+) {
+  final buffer = StringBuffer()
+    ..writeln('# USBDevInfo raw hex dump')
+    ..writeln('# device: ${view.details.summary.deviceName}')
+    ..writeln('# exported: ${DateTime.now().toIso8601String()}')
+    ..writeln();
+
+  final tree = _asList(raw?['descriptorTree']).map(_asMap).where((e) => e.isNotEmpty).toList(growable: false);
+  if (tree.isEmpty) {
+    buffer.writeln('Descriptor tree: unavailable');
+  } else {
+    buffer.writeln('Descriptor tree');
+    for (final node in tree) {
+      final offset = _asInt(node['offset']);
+      final typeName = (node['descriptorTypeName'] as String?) ?? 'Unknown';
+      final descriptorType = _asInt(node['descriptorType']);
+      final rawHex = (node['rawHex'] as String?)?.trim() ?? '';
+      buffer.writeln(
+        '[${offset == null ? '?' : '0x${offset.toRadixString(16)}'}] $typeName (${descriptorType == null ? '?' : Fmt.decAndHex8(descriptorType)})',
+      );
+      buffer.writeln(rawHex.isEmpty ? '<unavailable>' : Fmt.hexWrap(rawHex, group: 2, groupsPerLine: 16));
+      buffer.writeln();
+    }
+  }
+
+  final reports = _asList(raw?['hidReports']).map(_asMap).where((e) => e.isNotEmpty).toList(growable: false);
+  if (reports.isEmpty) {
+    buffer.writeln('HID report descriptors: unavailable');
+  } else {
+    buffer.writeln('HID report descriptors');
+    for (final report in reports) {
+      final ifNum = _asInt(report['interfaceNumber']);
+      final hex = (report['reportHex'] as String?)?.trim() ?? '';
+      buffer.writeln('Interface ${ifNum ?? '?'}');
+      buffer.writeln(hex.isEmpty ? '<unavailable>' : Fmt.hexWrap(hex, group: 2, groupsPerLine: 16));
+      buffer.writeln();
+    }
+  }
+
+  return buffer.toString().trimRight();
+}
+
+String _manifestStatusLabel(String? status) {
+  switch (status) {
+    case 'declared':
+      return 'Declared';
+    case 'missing':
+      return 'Missing';
+    default:
+      return 'Unknown';
+  }
+}
+
+String _runtimeStatusLabel(String? status) {
+  switch (status) {
+    case 'granted':
+      return 'Granted';
+    case 'temporarily_denied':
+      return 'Temporarily denied';
+    case 'permanently_denied':
+      return 'Permanently denied';
+    case 'not_required':
+      return 'Not required on this Android version';
+    case 'missing':
+      return 'Not granted';
+    case 'unavailable':
+      return 'Unavailable';
+    default:
+      return 'Unknown';
+  }
+}
+
+String _formatTimestamp(int timestampMs) {
+  final dt = DateTime.fromMillisecondsSinceEpoch(timestampMs);
+  String two(int n) => n.toString().padLeft(2, '0');
+  return '${dt.year}-${two(dt.month)}-${two(dt.day)} ${two(dt.hour)}:${two(dt.minute)}:${two(dt.second)}';
+}
+
+class _PermissionStateRow extends StatelessWidget {
+  const _PermissionStateRow({required this.status});
+
+  final DevicePermissionStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final tone = _tone(scheme);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(top: 2),
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: tone.$1,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(_icon(), size: 18, color: tone.$2),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text(
+                    status.label,
+                    style: theme.textTheme.labelLarge?.copyWith(color: scheme.onErrorContainer),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: tone.$1,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      _label(),
+                      style: theme.textTheme.labelSmall?.copyWith(color: tone.$2),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                status.detail,
+                style: theme.textTheme.bodySmall?.copyWith(color: scheme.onErrorContainer),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  IconData _icon() {
+    switch (status.state) {
+      case DevicePermissionState.granted:
+        return Icons.verified_rounded;
+      case DevicePermissionState.temporarilyDenied:
+        return Icons.schedule_rounded;
+      case DevicePermissionState.permanentlyDenied:
+        return Icons.block_rounded;
+      case DevicePermissionState.reenumerated:
+        return Icons.sync_problem_rounded;
+      case DevicePermissionState.unavailable:
+        return Icons.build_circle_outlined;
+      case DevicePermissionState.notApplicable:
+        return Icons.remove_circle_outline_rounded;
+      case DevicePermissionState.revoked:
+        return Icons.restart_alt_rounded;
+      case DevicePermissionState.missing:
+        return Icons.lock_outline_rounded;
+    }
+  }
+
+  String _label() {
+    switch (status.state) {
+      case DevicePermissionState.granted:
+        return 'Granted';
+      case DevicePermissionState.temporarilyDenied:
+        return 'Temporary';
+      case DevicePermissionState.permanentlyDenied:
+        return 'Permanent';
+      case DevicePermissionState.reenumerated:
+        return 'Re-enumerated';
+      case DevicePermissionState.unavailable:
+        return 'Not in app';
+      case DevicePermissionState.notApplicable:
+        return 'Not needed';
+      case DevicePermissionState.revoked:
+        return 'Revoked';
+      case DevicePermissionState.missing:
+        return 'Missing';
+    }
+  }
+
+  (Color, Color) _tone(ColorScheme scheme) {
+    switch (status.state) {
+      case DevicePermissionState.granted:
+        return (scheme.secondaryContainer, scheme.onSecondaryContainer);
+      case DevicePermissionState.temporarilyDenied:
+        return (scheme.tertiaryContainer, scheme.onTertiaryContainer);
+      case DevicePermissionState.permanentlyDenied:
+        return (scheme.error, scheme.onError);
+      case DevicePermissionState.reenumerated:
+        return (scheme.tertiaryContainer, scheme.onTertiaryContainer);
+      case DevicePermissionState.unavailable:
+        return (scheme.surfaceContainerHighest, scheme.onSurfaceVariant);
+      case DevicePermissionState.notApplicable:
+        return (scheme.surfaceContainerHighest, scheme.onSurfaceVariant);
+      case DevicePermissionState.revoked:
+        return (scheme.tertiaryContainer, scheme.onTertiaryContainer);
+      case DevicePermissionState.missing:
+        return (scheme.error, scheme.onError);
+    }
   }
 }
 
@@ -894,6 +2072,319 @@ class _ExpandableBlock extends StatelessWidget {
   }
 }
 
+class _AdvancedRawViewScreen extends StatelessWidget {
+  const _AdvancedRawViewScreen({
+    required this.view,
+    required this.raw,
+  });
+
+  final UsbDeviceDetailViewData view;
+  final Map<String, dynamic>? raw;
+
+  @override
+  Widget build(BuildContext context) {
+    final tree = _asList(raw?['descriptorTree']).map(_asMap).where((item) => item.isNotEmpty).toList(growable: false);
+    final controlTransfers = _asList(raw?['controlTransfers']).map(_asMap).where((item) => item.isNotEmpty).toList(growable: false);
+    final hidReports = _asList(raw?['hidReports']).map(_asMap).where((item) => item.isNotEmpty).toList(growable: false);
+    final availabilityIssues = _asList(raw?['availabilityIssues']).map(_asMap).where((item) => item.isNotEmpty).toList(growable: false);
+    final title = view.productName ?? view.details.summary.productName ?? 'USB device';
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Advanced raw view'),
+      ),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+          children: [
+            SectionCard(
+              title: title,
+              subtitle: view.details.summary.deviceName,
+              leading: const Icon(Icons.developer_mode_rounded),
+              child: Column(
+                children: [
+                  KeyValueRow(label: 'Descriptor nodes', value: '${tree.length}'),
+                  KeyValueRow(label: 'Control transfers', value: '${controlTransfers.length}'),
+                  KeyValueRow(label: 'HID report dumps', value: '${hidReports.length}'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            if (controlTransfers.isNotEmpty) ...[
+              SectionCard(
+                title: 'Control transfers',
+                subtitle: 'Raw setup/result records from direct USB control reads',
+                leading: const Icon(Icons.swap_horiz_rounded),
+                child: Column(
+                  children: [
+                    for (int i = 0; i < controlTransfers.length; i++) ...[
+                      if (i > 0) const Divider(height: 24),
+                      _ControlTransferTile(transfer: controlTransfers[i]),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+            if (tree.isNotEmpty) ...[
+              SectionCard(
+                title: 'Descriptors side by side',
+                subtitle: 'Parsed fields next to the raw descriptor bytes',
+                leading: const Icon(Icons.view_sidebar_rounded),
+                child: Column(
+                  children: [
+                    for (int i = 0; i < tree.length; i++) ...[
+                      if (i > 0) const Divider(height: 24),
+                      _AdvancedDescriptorTile(node: tree[i]),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+            if (hidReports.isNotEmpty) ...[
+              SectionCard(
+                title: 'HID report dumps',
+                subtitle: 'Report descriptor hex with parsed summary',
+                leading: const Icon(Icons.keyboard_command_key_rounded),
+                child: Column(
+                  children: [
+                    for (int i = 0; i < hidReports.length; i++) ...[
+                      if (i > 0) const Divider(height: 24),
+                      _AdvancedHidReportTile(report: hidReports[i]),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+            if (controlTransfers.isEmpty && tree.isEmpty && hidReports.isEmpty)
+              SectionCard(
+                title: 'Advanced data unavailable',
+                subtitle: 'No raw control-transfer or descriptor payload is available for this device',
+                leading: const Icon(Icons.info_outline_rounded),
+                child: Text(
+                  availabilityIssues.isNotEmpty
+                      ? availabilityIssues.map((issue) => (issue['message'] as String?) ?? 'Unavailable').join('\n\n')
+                      : 'Grant USB permission and reconnect the device if you want Android to expose direct descriptor and transfer data.',
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ControlTransferTile extends StatelessWidget {
+  const _ControlTransferTile({required this.transfer});
+
+  final Map<String, dynamic> transfer;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final label = (transfer['label'] as String?)?.trim();
+    final responseHex = (transfer['responseHex'] as String?)?.trim();
+    final actualLength = _asInt(transfer['actualLength']);
+    final success = transfer['success'] != false && (actualLength == null || actualLength >= 0);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label?.isNotEmpty == true ? label! : 'Control transfer', style: theme.textTheme.titleSmall),
+        const SizedBox(height: 8),
+        KeyValueRow(label: 'bmRequestType', value: Fmt.decAndHex8(_asInt(transfer['requestType']) ?? 0)),
+        KeyValueRow(label: 'bRequest', value: Fmt.decAndHex8(_asInt(transfer['request']) ?? 0)),
+        KeyValueRow(label: 'wValue', value: Fmt.decAndHex16(_asInt(transfer['value']) ?? 0)),
+        KeyValueRow(label: 'wIndex', value: Fmt.decAndHex16(_asInt(transfer['index']) ?? 0)),
+        KeyValueRow(label: 'Requested length', value: '${_asInt(transfer['requestedLength']) ?? 0}'),
+        KeyValueRow(label: 'Actual length', value: actualLength?.toString() ?? 'Unknown'),
+        KeyValueRow(label: 'Result', value: success ? 'Success' : 'Failed'),
+        if (responseHex?.isNotEmpty == true) ...[
+          const SizedBox(height: 8),
+          _ExpandableBlock(
+            title: 'Response bytes (hex)',
+            child: SelectableText(
+              Fmt.hexWrap(responseHex!, group: 2, groupsPerLine: 16),
+              style: theme.textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _AdvancedDescriptorTile extends StatelessWidget {
+  const _AdvancedDescriptorTile({required this.node});
+
+  final Map<String, dynamic> node;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final off = _asInt(node['offset']);
+    final len = _asInt(node['length']);
+    final typeName = (node['descriptorTypeName'] as String?) ?? 'Unknown';
+    final type = _asInt(node['descriptorType']);
+    final rawHex = (node['rawHex'] as String?)?.trim() ?? '';
+    final fields = _asMap(node['fields']);
+    final title = '0x${off == null ? '??' : off.toRadixString(16)} • $typeName (${type == null ? '?' : Fmt.decAndHex8(type)}) • ${len ?? '?'} bytes';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: theme.textTheme.titleSmall),
+        const SizedBox(height: 10),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final stacked = constraints.maxWidth < 720;
+            final parsed = _AdvancedRawPane(
+              title: 'Parsed fields',
+              child: fields.isEmpty
+                  ? Text(
+                      'No parsed fields available.',
+                      style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                    )
+                  : Column(
+                      children: [
+                        for (final entry in fields.entries)
+                          KeyValueRow(label: entry.key, value: _formatAny(entry.value)),
+                      ],
+                    ),
+            );
+            final rawPane = _AdvancedRawPane(
+              title: 'Raw bytes',
+              child: SelectableText(
+                rawHex.isEmpty ? '<unavailable>' : Fmt.hexWrap(rawHex, group: 2, groupsPerLine: 16),
+                style: theme.textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
+              ),
+            );
+
+            if (stacked) {
+              return Column(
+                children: [
+                  parsed,
+                  const SizedBox(height: 12),
+                  rawPane,
+                ],
+              );
+            }
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: parsed),
+                const SizedBox(width: 12),
+                Expanded(child: rawPane),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _AdvancedHidReportTile extends StatelessWidget {
+  const _AdvancedHidReportTile({required this.report});
+
+  final Map<String, dynamic> report;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final ifNum = _asInt(report['interfaceNumber']);
+    final reportLen = _asInt(report['reportLength']);
+    final summary = _asMap(report['summary']);
+    final hex = (report['reportHex'] as String?)?.trim() ?? '';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Interface ${ifNum ?? '?'} • Report ${reportLen ?? '?'} bytes',
+          style: theme.textTheme.titleSmall,
+        ),
+        const SizedBox(height: 10),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final stacked = constraints.maxWidth < 720;
+            final parsed = _AdvancedRawPane(
+              title: 'Parsed summary',
+              child: summary.isEmpty
+                  ? Text(
+                      'No parsed HID summary available.',
+                      style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                    )
+                  : Column(
+                      children: [
+                        for (final entry in summary.entries)
+                          KeyValueRow(label: entry.key, value: _formatAny(entry.value)),
+                      ],
+                    ),
+            );
+            final rawPane = _AdvancedRawPane(
+              title: 'Report hex',
+              child: SelectableText(
+                hex.isEmpty ? '<unavailable>' : Fmt.hexWrap(hex, group: 2, groupsPerLine: 16),
+                style: theme.textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
+              ),
+            );
+            if (stacked) {
+              return Column(
+                children: [
+                  parsed,
+                  const SizedBox(height: 12),
+                  rawPane,
+                ],
+              );
+            }
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: parsed),
+                const SizedBox(width: 12),
+                Expanded(child: rawPane),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _AdvancedRawPane extends StatelessWidget {
+  const _AdvancedRawPane({
+    required this.title,
+    required this.child,
+  });
+
+  final String title;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: theme.textTheme.labelLarge),
+          const SizedBox(height: 8),
+          child,
+        ],
+      ),
+    );
+  }
+}
+
 class _DescriptorNodeTile extends StatelessWidget {
   const _DescriptorNodeTile({required this.node});
   final Map<String, dynamic> node;
@@ -1036,6 +2527,568 @@ class _HidReportBlock extends StatelessWidget {
   }
 }
 
+class _AudioEndpointBlock extends StatelessWidget {
+  const _AudioEndpointBlock({required this.endpoint, required this.index});
+
+  final Map<String, dynamic> endpoint;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final productName = (endpoint['productName'] as String?)?.trim();
+    final typeName = (endpoint['typeName'] as String?) ?? 'Audio endpoint';
+    final address = (endpoint['address'] as String?)?.trim();
+    final sampleRates = _asList(endpoint['sampleRates']).map(_asInt).whereType<int>().toList(growable: false);
+    final channelCounts = _asList(endpoint['channelCounts']).map(_asInt).whereType<int>().toList(growable: false);
+    final channelMasks = _asList(endpoint['channelMasks']).map(_asInt).whereType<int>().toList(growable: false);
+    final channelIndexMasks = _asList(endpoint['channelIndexMasks']).map(_asInt).whereType<int>().toList(growable: false);
+    final encodings = _asList(endpoint['encodings']).whereType<String>().toList(growable: false);
+    final profiles = _asList(endpoint['audioProfiles']);
+    final descriptors = _asList(endpoint['audioDescriptors']);
+
+    final roleParts = <String>[];
+    if (endpoint['isSource'] == true) roleParts.add('Source');
+    if (endpoint['isSink'] == true) roleParts.add('Sink');
+
+    return _ExpandableBlock(
+      title: 'Endpoint ${index + 1} • ${productName?.isNotEmpty == true ? productName : typeName}',
+      initiallyExpanded: index == 0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          KeyValueRow(label: 'Type', value: typeName),
+          KeyValueRow(label: 'Role', value: roleParts.isEmpty ? 'Unknown' : roleParts.join(' / ')),
+          KeyValueRow(label: 'Product name', value: (productName?.isNotEmpty ?? false) ? productName! : 'Unknown'),
+          KeyValueRow(label: 'Address', value: (address?.isNotEmpty ?? false) ? address! : 'Unknown'),
+          KeyValueRow(label: 'Sample rates', value: sampleRates.isEmpty ? 'Unknown' : sampleRates.join(', ')),
+          KeyValueRow(label: 'Channel counts', value: channelCounts.isEmpty ? 'Unknown' : channelCounts.join(', ')),
+          KeyValueRow(
+            label: 'Channel masks',
+            value: channelMasks.isEmpty ? 'Unknown' : channelMasks.map(Fmt.hex16).join(', '),
+          ),
+          KeyValueRow(
+            label: 'Channel index masks',
+            value: channelIndexMasks.isEmpty ? 'Unknown' : channelIndexMasks.map(Fmt.hex16).join(', '),
+          ),
+          KeyValueRow(label: 'Encodings', value: encodings.isEmpty ? 'Unknown' : encodings.join(', ')),
+          if (profiles.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            _ExpandableBlock(
+              title: 'Audio profiles (${profiles.length})',
+              child: Column(
+                children: [
+                  for (final p in profiles.take(12)) ...[
+                    _AudioProfileRow(profile: _asMap(p)),
+                    const SizedBox(height: 8),
+                  ],
+                  if (profiles.length > 12)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Showing first 12 profiles.',
+                        style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+          if (descriptors.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            _ExpandableBlock(
+              title: 'Audio descriptors (${descriptors.length})',
+              child: Column(
+                children: [
+                  for (final d in descriptors.take(8)) ...[
+                    _AudioDescriptorRow(descriptor: _asMap(d)),
+                    const SizedBox(height: 8),
+                  ],
+                  if (descriptors.length > 8)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Showing first 8 descriptors.',
+                        style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _AudioProfileRow extends StatelessWidget {
+  const _AudioProfileRow({required this.profile});
+
+  final Map<String, dynamic> profile;
+
+  @override
+  Widget build(BuildContext context) {
+    final formatName = (profile['formatName'] as String?) ?? 'Unknown';
+    final sampleRates = _asList(profile['sampleRates']).map(_asInt).whereType<int>().toList(growable: false);
+    final channelMasks = _asList(profile['channelMasks']).map(_asInt).whereType<int>().toList(growable: false);
+    final channelIndexMasks = _asList(profile['channelIndexMasks']).map(_asInt).whereType<int>().toList(growable: false);
+    final encapsulation = _asInt(profile['encapsulationType']);
+    return Card(
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            KeyValueRow(label: 'Format', value: formatName),
+            KeyValueRow(label: 'Sample rates', value: sampleRates.isEmpty ? 'Unknown' : sampleRates.join(', ')),
+            KeyValueRow(
+              label: 'Channel masks',
+              value: channelMasks.isEmpty ? 'Unknown' : channelMasks.map(Fmt.hex16).join(', '),
+            ),
+            KeyValueRow(
+              label: 'Channel index masks',
+              value: channelIndexMasks.isEmpty ? 'Unknown' : channelIndexMasks.map(Fmt.hex16).join(', '),
+            ),
+            KeyValueRow(
+              label: 'Encapsulation',
+              value: encapsulation == null ? 'Unknown' : '$encapsulation',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AudioDescriptorRow extends StatelessWidget {
+  const _AudioDescriptorRow({required this.descriptor});
+
+  final Map<String, dynamic> descriptor;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final standard = _asInt(descriptor['standard']);
+    final encapsulation = _asInt(descriptor['encapsulationType']);
+    final length = _asInt(descriptor['length']);
+    final hex = descriptor['descriptorHex'] as String?;
+    return Card(
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            KeyValueRow(label: 'Standard', value: standard == null ? 'Unknown' : '$standard'),
+            KeyValueRow(label: 'Encapsulation', value: encapsulation == null ? 'Unknown' : '$encapsulation'),
+            KeyValueRow(label: 'Length', value: length == null ? 'Unknown' : '$length bytes'),
+            if (hex != null && hex.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              _ExpandableBlock(
+                title: 'Raw descriptor (hex)',
+                child: SelectableText(
+                  Fmt.hexWrap(hex, group: 2, groupsPerLine: 16),
+                  style: theme.textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MidiDeviceBlock extends StatelessWidget {
+  const _MidiDeviceBlock({required this.device, required this.index});
+
+  final Map<String, dynamic> device;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final typeName = (device['typeName'] as String?) ?? 'MIDI device';
+    final transports = _asList(device['transports']).whereType<String>().toList(growable: false);
+    final props = _asMap(device['properties']);
+    final ports = _asList(device['ports']);
+    final name = _pickMidiDisplayName(props) ?? typeName;
+    return _ExpandableBlock(
+      title: 'Device ${index + 1} • $name',
+      initiallyExpanded: index == 0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          KeyValueRow(label: 'Type', value: typeName),
+          KeyValueRow(label: 'Transports', value: transports.isEmpty ? 'Unknown' : transports.join(', ')),
+          KeyValueRow(label: 'Input ports', value: '${_asInt(device['inputPortCount']) ?? 0}'),
+          KeyValueRow(label: 'Output ports', value: '${_asInt(device['outputPortCount']) ?? 0}'),
+          KeyValueRow(label: 'Private', value: device['isPrivate'] == true ? 'Yes' : 'No'),
+          KeyValueRow(
+            label: 'Default protocol',
+            value: _midiProtocolLabel(_asInt(device['defaultProtocol'])),
+          ),
+          if (props.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            _ExpandableBlock(
+              title: 'Properties',
+              child: Column(
+                children: [
+                  for (final e in props.entries.take(16)) ...[
+                    KeyValueRow(label: e.key, value: _formatAny(e.value)),
+                  ],
+                  if (props.length > 16)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Showing first 16 properties.',
+                        style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+          if (ports.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            _ExpandableBlock(
+              title: 'Ports (${ports.length})',
+              child: Column(
+                children: [
+                  for (final p in ports) ...[
+                    _MidiPortRow(port: _asMap(p)),
+                    const SizedBox(height: 8),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _MidiPortRow extends StatelessWidget {
+  const _MidiPortRow({required this.port});
+
+  final Map<String, dynamic> port;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            KeyValueRow(label: 'Type', value: (port['typeName'] as String?) ?? 'Unknown'),
+            KeyValueRow(label: 'Port number', value: '${_asInt(port['portNumber']) ?? 0}'),
+            KeyValueRow(label: 'Name', value: _formatNullableString(port['name'] as String?)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ClassDescriptorSections {
+  const _ClassDescriptorSections({
+    this.audio = const [],
+    this.video = const [],
+    this.cdc = const [],
+    this.hub = const [],
+    this.bos = const [],
+  });
+
+  final List<_ClassDescriptorView> audio;
+  final List<_ClassDescriptorView> video;
+  final List<_ClassDescriptorView> cdc;
+  final List<_ClassDescriptorView> hub;
+  final List<_ClassDescriptorView> bos;
+}
+
+class _ClassDescriptorView {
+  const _ClassDescriptorView({
+    required this.title,
+    required this.node,
+    required this.fields,
+    this.summary,
+  });
+
+  final String title;
+  final Map<String, dynamic> node;
+  final Map<String, dynamic> fields;
+  final String? summary;
+}
+
+class _TopologyPath extends StatelessWidget {
+  const _TopologyPath({required this.path});
+
+  final String path;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Text(
+        path,
+        style: theme.textTheme.bodyMedium,
+      ),
+    );
+  }
+}
+
+class _TopologyList extends StatelessWidget {
+  const _TopologyList({required this.title, required this.values});
+
+  final String title;
+  final List<String> values;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final value in values)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(value, style: theme.textTheme.labelMedium),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _AvailabilityIssueTile extends StatelessWidget {
+  const _AvailabilityIssueTile({required this.issue});
+
+  final Map<String, dynamic> issue;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final status = (issue['status'] as String?)?.trim().toLowerCase();
+    final scope = (issue['scope'] as String?)?.trim();
+    final message = (issue['message'] as String?)?.trim();
+    final reasonCode = (issue['reasonCode'] as String?)?.trim();
+    final isAdvisory = status == 'advisory';
+    final bg = isAdvisory
+        ? theme.colorScheme.tertiaryContainer
+        : theme.colorScheme.surfaceContainerHighest;
+    final fg = isAdvisory
+        ? theme.colorScheme.onTertiaryContainer
+        : theme.colorScheme.onSurfaceVariant;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 34,
+          height: 34,
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            isAdvisory ? Icons.warning_amber_rounded : Icons.block_rounded,
+            color: fg,
+            size: 18,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _availabilityScopeLabel(scope),
+                style: theme.textTheme.labelLarge,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                message?.isNotEmpty == true ? message! : 'Data is unavailable.',
+                style: theme.textTheme.bodyMedium,
+              ),
+              if (reasonCode?.isNotEmpty == true) ...[
+                const SizedBox(height: 4),
+                Text(
+                  reasonCode!,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+enum _RawDumpExportFormat {
+  json,
+  report,
+  hex,
+}
+
+class _DeviceRawDumpExportSheet extends StatefulWidget {
+  const _DeviceRawDumpExportSheet({
+    required this.prettyJson,
+    required this.plainText,
+    required this.rawHex,
+  });
+
+  final String prettyJson;
+  final String plainText;
+  final String rawHex;
+
+  @override
+  State<_DeviceRawDumpExportSheet> createState() => _DeviceRawDumpExportSheetState();
+}
+
+class _DeviceRawDumpExportSheetState extends State<_DeviceRawDumpExportSheet> {
+  _RawDumpExportFormat _format = _RawDumpExportFormat.json;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final content = switch (_format) {
+      _RawDumpExportFormat.json => widget.prettyJson,
+      _RawDumpExportFormat.report => widget.plainText,
+      _RawDumpExportFormat.hex => widget.rawHex,
+    };
+    final title = switch (_format) {
+      _RawDumpExportFormat.json => 'JSON payload',
+      _RawDumpExportFormat.report => 'Plain text report',
+      _RawDumpExportFormat.hex => 'Raw hex descriptors',
+    };
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Raw dump export', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 6),
+          Text(
+            'Export this live device snapshot directly without using history.',
+            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _ExportFormatChip(
+                label: 'JSON',
+                selected: _format == _RawDumpExportFormat.json,
+                onTap: () => setState(() => _format = _RawDumpExportFormat.json),
+              ),
+              _ExportFormatChip(
+                label: 'Report',
+                selected: _format == _RawDumpExportFormat.report,
+                onTap: () => setState(() => _format = _RawDumpExportFormat.report),
+              ),
+              _ExportFormatChip(
+                label: 'Raw hex',
+                selected: _format == _RawDumpExportFormat.hex,
+                onTap: () => setState(() => _format = _RawDumpExportFormat.hex),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: theme.textTheme.titleMedium,
+                ),
+              ),
+              FilledButton.icon(
+                onPressed: () async {
+                  await Clipboard.setData(ClipboardData(text: content));
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('$title copied to clipboard.')),
+                  );
+                  HapticFeedback.selectionClick();
+                },
+                icon: const Icon(Icons.copy_rounded),
+                label: const Text('Copy'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: SingleChildScrollView(
+                child: SelectableText(
+                  content,
+                  style: theme.textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ExportFormatChip extends StatelessWidget {
+  const _ExportFormatChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ChoiceChip(
+      label: Text(label),
+      selected: selected,
+      onSelected: (_) => onTap(),
+    );
+  }
+}
+
 Map<String, dynamic> _asMap(dynamic v) {
   if (v is Map) return v.cast<String, dynamic>();
   return <String, dynamic>{};
@@ -1051,4 +3104,939 @@ int? _asInt(dynamic v) {
   if (v is num) return v.toInt();
   if (v is String) return int.tryParse(v);
   return null;
+}
+
+_ClassDescriptorSections _buildClassDescriptorSections(List<dynamic> tree) {
+  final audio = <_ClassDescriptorView>[];
+  final video = <_ClassDescriptorView>[];
+  final cdc = <_ClassDescriptorView>[];
+  final hub = <_ClassDescriptorView>[];
+  final bos = <_ClassDescriptorView>[];
+
+  int? currentInterfaceNumber;
+  int? currentAltSetting;
+  int? currentInterfaceClass;
+  int? currentInterfaceSubclass;
+
+  for (final rawNode in tree) {
+    final node = _asMap(rawNode);
+    final type = _asInt(node['descriptorType']);
+    final fields = _asMap(node['fields']);
+    final context = _asMap(node['context']);
+
+    if (type == 0x04) {
+      currentInterfaceNumber = _asInt(fields['bInterfaceNumber']);
+      currentAltSetting = _asInt(fields['bAlternateSetting']);
+      currentInterfaceClass = _asInt(fields['bInterfaceClass']);
+      currentInterfaceSubclass = _asInt(fields['bInterfaceSubClass']);
+      continue;
+    }
+
+    if (type == 0x0F || type == 0x10) {
+      bos.add(
+        _ClassDescriptorView(
+          title: _bosTitle(type, fields),
+          node: node,
+          fields: fields,
+          summary: _bosSummary(type, fields),
+        ),
+      );
+      continue;
+    }
+
+    if (type == 0x29) {
+      hub.add(
+        _ClassDescriptorView(
+          title: 'Hub descriptor',
+          node: node,
+          fields: fields,
+          summary: _hubSummary(fields),
+        ),
+      );
+      continue;
+    }
+
+    if (type != 0x24 && type != 0x25) continue;
+
+    final subtype = _asInt(fields['bDescriptorSubType']);
+    final interfaceClass =
+        _asInt(fields['interfaceClassContext']) ?? _asInt(context['interfaceClass']) ?? currentInterfaceClass;
+    final interfaceSubclass =
+        _asInt(fields['interfaceSubclassContext']) ?? _asInt(context['interfaceSubclass']) ?? currentInterfaceSubclass;
+    final interfaceNumber =
+        _asInt(context['interfaceNumber']) ?? currentInterfaceNumber;
+    final altSetting =
+        _asInt(context['alternateSetting']) ?? currentAltSetting;
+    final target = switch (interfaceClass) {
+      1 => audio,
+      2 => cdc,
+      14 => video,
+      _ => null,
+    };
+    if (target == null) continue;
+
+    final title = _classSpecificTitle(
+      interfaceClass: interfaceClass,
+      interfaceSubclass: interfaceSubclass,
+      subtype: subtype,
+      type: type,
+      interfaceNumber: interfaceNumber,
+      altSetting: altSetting,
+      fields: fields,
+    );
+    final summary = _classSpecificSummary(
+      interfaceClass: interfaceClass,
+      interfaceSubclass: interfaceSubclass,
+      type: type,
+      subtype: subtype,
+      fields: fields,
+    );
+    target.add(
+      _ClassDescriptorView(
+        title: title,
+        node: node,
+        fields: fields,
+        summary: summary,
+      ),
+    );
+  }
+
+  return _ClassDescriptorSections(
+    audio: audio,
+    video: video,
+    cdc: cdc,
+    hub: hub,
+    bos: bos,
+  );
+}
+
+String _formatAny(dynamic v) {
+  if (v == null) return 'Unknown';
+  if (v is Map) {
+    final map = v.cast<dynamic, dynamic>();
+    return map.entries.map((e) => '${e.key}: ${e.value}').join(', ');
+  }
+  if (v is List) return v.join(', ');
+  final s = '$v'.trim();
+  return s.isEmpty ? 'Unknown' : s;
+}
+
+String _formatNullableString(String? v) {
+  final s = (v ?? '').trim();
+  return s.isEmpty ? 'Unknown' : s;
+}
+
+String? _buildTopologyPath(int? busNumber, List<int> portChain) {
+  if (busNumber == null) return null;
+  final parts = <String>['usb$busNumber'];
+  if (portChain.isEmpty) return parts.join(' → ');
+  for (final port in portChain) {
+    parts.add('port $port');
+  }
+  return parts.join(' → ');
+}
+
+String? _pickMidiDisplayName(Map<String, dynamic> props) {
+  for (final key in const [
+    'name',
+    'product',
+    'manufacturer',
+    'android.media.midi.MidiDeviceInfo.PROPERTY_NAME',
+    'android.media.midi.MidiDeviceInfo.PROPERTY_PRODUCT',
+  ]) {
+    final value = props[key];
+    if (value is String && value.trim().isNotEmpty) return value.trim();
+  }
+  return null;
+}
+
+String _bosTitle(int? type, Map<String, dynamic> fields) {
+  if (type == 0x0F) return 'Binary Object Store';
+  final capName = (fields['capabilityTypeName'] as String?) ?? _deviceCapabilityName(_asInt(fields['bDevCapabilityType']));
+  return capName == null ? 'Device capability' : 'Device capability • $capName';
+}
+
+String? _bosSummary(int? type, Map<String, dynamic> fields) {
+  if (type == 0x0F) {
+    final total = _asInt(fields['wTotalLength']);
+    final count = _asInt(fields['bNumDeviceCaps']);
+    return 'BOS with ${count ?? '?'} capability descriptor(s) and total length ${total ?? '?'} bytes.';
+  }
+  final capName = (fields['capabilityTypeName'] as String?) ?? _deviceCapabilityName(_asInt(fields['bDevCapabilityType']));
+  if (capName == null) return null;
+  final parts = <String>['Capability type: $capName'];
+  if (fields['supportsLpm'] == true) parts.add('supports LPM');
+  if (fields['supportsLtm'] == true) parts.add('supports LTM');
+  final speeds = _stringList(fields['supportedSpeedNames']);
+  if (speeds.isNotEmpty) parts.add('speeds ${speeds.join(', ')}');
+  final containerId = (fields['containerId'] as String?)?.trim();
+  if (containerId?.isNotEmpty == true) parts.add('container ID $containerId');
+  final platformUuid = (fields['platformCapabilityUuid'] as String?)?.trim();
+  if (platformUuid?.isNotEmpty == true) parts.add('platform UUID $platformUuid');
+  return '${parts.join(', ')}.';
+}
+
+String? _hubSummary(Map<String, dynamic> fields) {
+  final ports = _asInt(fields['bNbrPorts']);
+  final powerGood = _asInt(fields['powerGoodMs']);
+  final indicators = fields['portIndicatorsSupported'] == true;
+  final switchMode = (fields['powerSwitchingModeName'] as String?)?.trim();
+  final overCurrent = (fields['overCurrentProtectionModeName'] as String?)?.trim();
+  final extras = <String>[];
+  if (switchMode?.isNotEmpty == true) extras.add('power switching $switchMode');
+  if (overCurrent?.isNotEmpty == true) extras.add('over-current $overCurrent');
+  if (indicators) extras.add('indicators supported');
+  final extraText = extras.isEmpty ? '' : ', ${extras.join(', ')}';
+  return 'Hub with ${ports ?? '?'} downstream port(s), power-good delay ${powerGood ?? '?'} ms$extraText.';
+}
+
+String _classSpecificTitle({
+  required int? interfaceClass,
+  required int? interfaceSubclass,
+  required int? subtype,
+  required int? type,
+  required int? interfaceNumber,
+  required int? altSetting,
+  required Map<String, dynamic> fields,
+}) {
+  final base = (fields['descriptorSubtypeName'] as String?)?.trim().isNotEmpty == true
+      ? (fields['descriptorSubtypeName'] as String).trim()
+      : switch (interfaceClass) {
+          1 => _audioSubtypeName(subtype, interfaceSubclass),
+          2 => _cdcSubtypeName(subtype),
+          14 => _videoSubtypeName(subtype, interfaceSubclass),
+          _ => null,
+        };
+  final typeLabel = type == 0x25 ? 'Endpoint' : 'Interface';
+  final ifLabel = interfaceNumber == null ? 'IF ?' : 'IF $interfaceNumber';
+  final altLabel = altSetting == null ? '' : ' / Alt $altSetting';
+  if (base == null) return '$typeLabel descriptor • $ifLabel$altLabel';
+  if (type == 0x25 && !base.toLowerCase().contains('endpoint')) {
+    return '$base endpoint • $ifLabel$altLabel';
+  }
+  return '$base • $ifLabel$altLabel';
+}
+
+String? _classSpecificSummary({
+  required int? interfaceClass,
+  required int? interfaceSubclass,
+  required int? type,
+  required int? subtype,
+  required Map<String, dynamic> fields,
+}) {
+  switch (interfaceClass) {
+    case 1:
+      return _audioClassSummary(interfaceSubclass, type, subtype, fields);
+    case 2:
+      return _cdcClassSummary(subtype, fields);
+    case 14:
+      return _videoClassSummary(interfaceSubclass, type, subtype, fields);
+    default:
+      return null;
+  }
+}
+
+String? _audioSubtypeName(int? subtype, int? interfaceSubclass) {
+  if (subtype == null) return null;
+  if (interfaceSubclass == 0x02) {
+    switch (subtype) {
+      case 0x01:
+        return 'Audio streaming general';
+      case 0x02:
+        return 'Format type';
+      case 0x03:
+        return 'Format specific';
+      default:
+        return 'Audio subtype ${Fmt.decAndHex8(subtype)}';
+    }
+  }
+  if (interfaceSubclass == 0x03) {
+    switch (subtype) {
+      case 0x01:
+        return 'MIDI streaming header';
+      case 0x02:
+        return 'MIDI IN jack';
+      case 0x03:
+        return 'MIDI OUT jack';
+      case 0x04:
+        return 'MIDI element';
+      default:
+        return 'Audio subtype ${Fmt.decAndHex8(subtype)}';
+    }
+  }
+  switch (subtype) {
+    case 0x01:
+      return 'Audio control header';
+    case 0x02:
+      return 'Input terminal';
+    case 0x03:
+      return 'Output terminal';
+    case 0x04:
+      return 'Mixer unit';
+    case 0x05:
+      return 'Selector unit';
+    case 0x06:
+      return 'Feature unit';
+    case 0x07:
+      return 'Processing unit';
+    case 0x08:
+      return 'Extension unit';
+    case 0x0A:
+      return 'Clock source';
+    case 0x0B:
+      return 'Clock selector';
+    case 0x0C:
+      return 'Clock multiplier';
+    case 0x0D:
+      return 'Sample rate converter';
+    default:
+      return 'Audio subtype ${Fmt.decAndHex8(subtype)}';
+  }
+}
+
+String? _videoSubtypeName(int? subtype, int? interfaceSubclass) {
+  if (subtype == null) return null;
+  if (interfaceSubclass == 0x02) {
+    switch (subtype) {
+      case 0x01:
+        return 'Video streaming input header';
+      case 0x02:
+        return 'Video streaming output header';
+      case 0x03:
+        return 'Still image frame';
+      case 0x04:
+        return 'Format uncompressed';
+      case 0x05:
+        return 'Frame uncompressed';
+      case 0x06:
+        return 'Format MJPEG';
+      case 0x07:
+        return 'Frame MJPEG';
+      case 0x0A:
+        return 'Format MPEG-2 TS';
+      case 0x0C:
+        return 'Format DV';
+      case 0x0D:
+        return 'Color matching';
+      case 0x10:
+        return 'Format frame-based';
+      case 0x11:
+        return 'Frame frame-based';
+      case 0x12:
+        return 'Format stream-based';
+      default:
+        return 'Video subtype ${Fmt.decAndHex8(subtype)}';
+    }
+  }
+  switch (subtype) {
+    case 0x01:
+      return 'Video control header';
+    case 0x02:
+      return 'Input terminal';
+    case 0x03:
+      return 'Output terminal';
+    case 0x04:
+      return 'Selector unit';
+    case 0x05:
+      return 'Processing unit';
+    case 0x06:
+      return 'Extension unit';
+    case 0x07:
+      return 'Encoding unit';
+    default:
+      return 'Video subtype ${Fmt.decAndHex8(subtype)}';
+  }
+}
+
+String? _cdcSubtypeName(int? subtype) {
+  if (subtype == null) return null;
+  switch (subtype) {
+    case 0x00:
+      return 'CDC header';
+    case 0x01:
+      return 'Call management';
+    case 0x02:
+      return 'Abstract control management';
+    case 0x03:
+      return 'Direct line management';
+    case 0x04:
+      return 'Telephone ringer';
+    case 0x05:
+      return 'Telephone call and line state reporting';
+    case 0x06:
+      return 'Union functional descriptor';
+    case 0x07:
+      return 'Country selection';
+    case 0x08:
+      return 'Telephone operational modes';
+    case 0x09:
+      return 'USB terminal';
+    case 0x0A:
+      return 'Network channel';
+    case 0x0B:
+      return 'Protocol unit';
+    case 0x0C:
+      return 'Extension unit';
+    case 0x0D:
+      return 'Multi-channel management';
+    case 0x0E:
+      return 'CAPI control';
+    case 0x0F:
+      return 'Ethernet networking';
+    case 0x10:
+      return 'ATM networking';
+    default:
+      return 'CDC subtype ${Fmt.decAndHex8(subtype)}';
+  }
+}
+
+String? _deviceCapabilityName(int? type) {
+  switch (type) {
+    case 0x01:
+      return 'Wireless USB';
+    case 0x02:
+      return 'USB 2.0 extension';
+    case 0x03:
+      return 'SuperSpeed USB';
+    case 0x04:
+      return 'Container ID';
+    case 0x05:
+      return 'Platform';
+    case 0x0A:
+      return 'SuperSpeed Plus';
+    case null:
+      return null;
+    default:
+      return 'Capability ${Fmt.decAndHex8(type)}';
+  }
+}
+
+String? _audioClassSummary(int? interfaceSubclass, int? type, int? subtype, Map<String, dynamic> fields) {
+  final subtypeName =
+      (fields['descriptorSubtypeName'] as String?) ?? _audioSubtypeName(subtype, interfaceSubclass) ?? 'Audio descriptor';
+  if (type == 0x25) {
+    final jackCount = _asInt(fields['bNumEmbMIDIJack']);
+    if (jackCount != null) return '$subtypeName with $jackCount embedded jack(s).';
+    final lockDelay = _asInt(fields['wLockDelay']);
+    return lockDelay == null ? '$subtypeName.' : '$subtypeName, lock delay $lockDelay.';
+  }
+
+  final terminalType = (fields['terminalTypeName'] as String?)?.trim();
+  final parts = <String>[];
+  final terminalId = _asInt(fields['bTerminalID']);
+  if (terminalId != null) parts.add('terminal ID $terminalId');
+  final unitId = _asInt(fields['bUnitID']);
+  if (unitId != null) parts.add('unit ID $unitId');
+  final sourceId = _asInt(fields['bSourceID']);
+  if (sourceId != null) parts.add('source ID $sourceId');
+  final terminalLink = _asInt(fields['bTerminalLink']);
+  if (terminalLink != null) parts.add('terminal link $terminalLink');
+  if (terminalType?.isNotEmpty == true) parts.add(terminalType!);
+  final sampleRates = _asList(fields['sampleRates']).map(_asInt).whereType<int>().toList(growable: false);
+  if (sampleRates.isNotEmpty) parts.add('sample rates ${sampleRates.join(', ')} Hz');
+  final sourceIds = _asList(fields['baSourceID']).map(_asInt).whereType<int>().toList(growable: false);
+  if (sourceIds.isNotEmpty) parts.add('sources ${sourceIds.join(', ')}');
+  final jackType = (fields['jackTypeName'] as String?)?.trim();
+  if (jackType?.isNotEmpty == true) parts.add('$jackType jack');
+  if (parts.isEmpty) return '$subtypeName.';
+  return '$subtypeName: ${parts.join(', ')}.';
+}
+
+String? _cdcClassSummary(int? subtype, Map<String, dynamic> fields) {
+  final subtypeName = (fields['descriptorSubtypeName'] as String?) ?? _cdcSubtypeName(subtype) ?? 'CDC descriptor';
+  final capabilityNames = _stringList(fields['capabilityNames']);
+  if (capabilityNames.isNotEmpty) {
+    return '$subtypeName: ${capabilityNames.join(', ')}.';
+  }
+  final master = _asInt(fields['bMasterInterface']);
+  final slaves = _asList(fields['bSlaveInterfaces']).map(_asInt).whereType<int>().toList(growable: false);
+  if (master != null && slaves.isNotEmpty) {
+    return '$subtypeName: master interface $master, slave interfaces ${slaves.join(', ')}.';
+  }
+  final macIndex = _asInt(fields['iMACAddress']);
+  if (macIndex != null) {
+    return '$subtypeName: MAC string index $macIndex, max segment ${_asInt(fields['wMaxSegmentSize']) ?? '?'} bytes.';
+  }
+  return '$subtypeName.';
+}
+
+String? _videoClassSummary(int? interfaceSubclass, int? type, int? subtype, Map<String, dynamic> fields) {
+  final subtypeName =
+      (fields['descriptorSubtypeName'] as String?) ?? _videoSubtypeName(subtype, interfaceSubclass) ?? 'Video descriptor';
+  if (type == 0x25) {
+    final attributes = _asInt(fields['bmAttributes']);
+    return attributes == null ? '$subtypeName.' : '$subtypeName, attributes ${Fmt.decAndHex8(attributes)}.';
+  }
+  final terminalType = (fields['terminalTypeName'] as String?)?.trim();
+  final parts = <String>[];
+  final terminalId = _asInt(fields['bTerminalID']);
+  if (terminalId != null) parts.add('terminal ID $terminalId');
+  final unitId = _asInt(fields['bUnitID']);
+  if (unitId != null) parts.add('unit ID $unitId');
+  final sourceId = _asInt(fields['bSourceID']);
+  if (sourceId != null) parts.add('source ID $sourceId');
+  if (terminalType?.isNotEmpty == true) parts.add(terminalType!);
+  final formatCount = _asInt(fields['bNumFormats']);
+  if (formatCount != null) parts.add('$formatCount format(s)');
+  final frameWidth = _asInt(fields['wWidth']);
+  final frameHeight = _asInt(fields['wHeight']);
+  if (frameWidth != null && frameHeight != null) parts.add('${frameWidth}x$frameHeight');
+  final guidFormat = (fields['guidFormat'] as String?)?.trim();
+  if (guidFormat?.isNotEmpty == true) parts.add('GUID $guidFormat');
+  if (parts.isEmpty) return '$subtypeName.';
+  return '$subtypeName: ${parts.join(', ')}.';
+}
+
+List<String> _stringList(dynamic value) {
+  return _asList(value).map((e) => '$e'.trim()).where((e) => e.isNotEmpty).toList(growable: false);
+}
+
+class _ReconnectDiffField {
+  const _ReconnectDiffField({
+    required this.label,
+    required this.previous,
+    required this.current,
+    required this.changed,
+  });
+
+  final String label;
+  final String previous;
+  final String current;
+  final bool changed;
+}
+
+class _FrameworkLimitation {
+  const _FrameworkLimitation({
+    required this.title,
+    required this.summary,
+    required this.impact,
+    required this.code,
+  });
+
+  final String title;
+  final String summary;
+  final String impact;
+  final String code;
+}
+
+bool _hasReconnectBaseline(DeviceHistoryEntry entry) {
+  return entry.previousSnapshot != null && entry.previousSnapshot!.isNotEmpty;
+}
+
+List<_ReconnectDiffField> _buildReconnectDiffFields(
+  UsbDeviceDetailViewData view,
+  Map<String, dynamic> baseline,
+) {
+  final s = view.details.summary;
+  final fields = <_ReconnectDiffField?>[
+    _makeReconnectDiffField(
+      label: 'Device path',
+      previous: _formatNullableString(baseline['deviceName'] as String?),
+      current: s.deviceName,
+    ),
+    _makeReconnectDiffField(
+      label: 'USB permission',
+      previous: _permissionGrantedLabel(baseline['hasPermission'] == true),
+      current: _permissionGrantedLabel(s.hasPermission),
+    ),
+    _makeReconnectDiffField(
+      label: 'USB version',
+      previous: _formatNullableString(baseline['usbVersion'] as String?),
+      current: _formatNullableString(s.usbVersion),
+    ),
+    _makeReconnectDiffField(
+      label: 'Speed',
+      previous: Fmt.speedLabel(baseline['speed'] as String?),
+      current: Fmt.speedLabel(s.speed),
+    ),
+    _makeReconnectDiffField(
+      label: 'Interfaces',
+      previous: _asInt(baseline['interfaceCount'])?.toString() ?? 'Unknown',
+      current: '${s.interfaceCount}',
+    ),
+    _makeReconnectDiffField(
+      label: 'Configurations',
+      previous: _asInt(baseline['configurationCount'])?.toString() ?? 'Unknown',
+      current: '${s.configurationCount}',
+    ),
+    _makeReconnectDiffField(
+      label: 'Max power',
+      previous: _formatMilliampLabel(_asInt(baseline['maxPowerMa'])),
+      current: _formatMilliampLabel(s.maxPowerMa),
+    ),
+    _makeReconnectDiffField(
+      label: 'Android deviceId',
+      previous: _asInt(baseline['deviceId'])?.toString() ?? 'Unknown',
+      current: s.deviceId?.toString() ?? 'Unknown',
+    ),
+    _makeReconnectDiffField(
+      label: 'Port number',
+      previous: _asInt(baseline['portNumber'])?.toString() ?? 'Unknown',
+      current: s.portNumber?.toString() ?? 'Unknown',
+    ),
+    _makeReconnectDiffField(
+      label: 'Serial',
+      previous: _formatNullableString(baseline['serialNumber'] as String?),
+      current: _formatNullableString(s.serialNumber),
+    ),
+    _makeReconnectDiffField(
+      label: 'Stable identity',
+      previous: _formatNullableString(baseline['stableIdentityKey'] as String?),
+      current: _formatNullableString(s.stableIdentityKey),
+    ),
+    _makeReconnectDiffField(
+      label: 'Identity confidence',
+      previous: _identityConfidenceLabel(baseline['identityConfidence'] as String?),
+      current: _identityConfidenceLabel(s.identityConfidence),
+    ),
+    _makeReconnectDiffField(
+      label: 'Physical location',
+      previous: _formatNullableString(baseline['physicalLocationKey'] as String?),
+      current: _formatNullableString(s.physicalLocationKey),
+    ),
+    _makeReconnectDiffField(
+      label: 'Interface fingerprint',
+      previous: _formatNullableString(baseline['interfaceFingerprint'] as String?),
+      current: _formatNullableString(s.interfaceFingerprint),
+    ),
+    _makeReconnectDiffField(
+      label: 'Input sources',
+      previous: _formatStringList(baseline['inputSources']),
+      current: _formatStringList(s.inputSources),
+    ),
+  ];
+  return fields.whereType<_ReconnectDiffField>().where((field) => field.changed).toList(growable: false);
+}
+
+_ReconnectDiffField? _makeReconnectDiffField({
+  required String label,
+  required String previous,
+  required String current,
+}) {
+  final previousNorm = previous.trim().toLowerCase();
+  final currentNorm = current.trim().toLowerCase();
+  if (previousNorm.isEmpty && currentNorm.isEmpty) return null;
+  return _ReconnectDiffField(
+    label: label,
+    previous: previous,
+    current: current,
+    changed: previousNorm != currentNorm,
+  );
+}
+
+String _reconnectBaselineLabel(BuildContext context, DateTime? baselineTime) {
+  if (baselineTime == null) return 'the previous capture';
+  final local = baselineTime.toLocal();
+  final localizations = MaterialLocalizations.of(context);
+  final alwaysUse24HourFormat = MediaQuery.maybeOf(context)?.alwaysUse24HourFormat ?? true;
+  final date = localizations.formatMediumDate(local);
+  final time = localizations.formatTimeOfDay(
+    TimeOfDay.fromDateTime(local),
+    alwaysUse24HourFormat: alwaysUse24HourFormat,
+  );
+  return 'the capture from $date $time';
+}
+
+String _permissionGrantedLabel(bool granted) => granted ? 'Granted' : 'Not granted';
+
+String _formatMilliampLabel(int? value) => value == null ? 'Unknown' : '$value mA';
+
+String _formatStringList(List<String>? values) {
+  final list = (values ?? const <String>[]).map((value) => value.trim()).where((value) => value.isNotEmpty).toList(growable: false);
+  return list.isEmpty ? 'Unknown' : list.join(', ');
+}
+
+List<_FrameworkLimitation> _collectFrameworkLimitations({
+  required UsbDeviceSummary summary,
+  required List<Map<String, dynamic>> availabilityIssues,
+  required Map<String, dynamic> audio,
+  required Map<String, dynamic> midi,
+}) {
+  final limitations = <_FrameworkLimitation>[];
+  final seen = <String>{};
+
+  void add({
+    required String code,
+    required String title,
+    required String summary,
+    required String impact,
+  }) {
+    if (!seen.add(code)) return;
+    limitations.add(
+      _FrameworkLimitation(
+        code: code,
+        title: title,
+        summary: summary,
+        impact: impact,
+      ),
+    );
+  }
+
+  for (final issue in availabilityIssues) {
+    final reasonCode = (issue['reasonCode'] as String?)?.trim();
+    switch (reasonCode) {
+      case 'framework_hidden_topology_entry':
+        add(
+          code: reasonCode!,
+          title: 'Hidden from UsbManager enumeration',
+          summary: 'This device exists in the USB topology, but Android does not expose it as a normal `UsbManager` device.',
+          impact: 'You can inspect topology hints, but not request normal framework USB access for this entry.',
+        );
+      case 'selinux_sysfs_restriction':
+        add(
+          code: reasonCode!,
+          title: 'Blocked by SELinux / sysfs restrictions',
+          summary: 'Linux sysfs shows the device path, but Android security policy blocks direct reads from that topology entry.',
+          impact: 'Parent/child location can be shown, but raw descriptors and live reads stay unavailable.',
+        );
+      case 'framework_not_exposed':
+        add(
+          code: reasonCode!,
+          title: 'Raw descriptors not exposed by Android',
+          summary: 'Android has the device open, but this build does not expose the raw USB descriptor blob through the framework.',
+          impact: 'Descriptor tree, string indexing context, and some class-specific parsing may stay partial or missing.',
+        );
+      case 'hid_report_unavailable':
+        add(
+          code: reasonCode!,
+          title: 'HID report descriptor hidden',
+          summary: 'The HID interface is present, but Android did not return a report descriptor for it.',
+          impact: 'The app can show HID presence, but not the full report-byte layout for that interface.',
+        );
+      case 'device_disconnected_or_framework_error':
+        add(
+          code: reasonCode!,
+          title: 'Direct framework reads failed',
+          summary: 'The device is known to Android, but direct framework access failed during advanced USB reads.',
+          impact: 'Advanced sections such as descriptor bytes, strings, or live state may be incomplete until the next successful read.',
+        );
+    }
+  }
+
+  final audioNote = (audio['availabilityNote'] as String?)?.trim() ?? '';
+  if (audioNote.isNotEmpty && audio['platformAvailable'] == false) {
+    add(
+      code: 'audio_manager_unavailable',
+      title: 'AudioManager USB introspection unavailable',
+      summary: audioNote,
+      impact: 'Android audio endpoint metadata such as routes, formats, and matched audio endpoints cannot be shown here.',
+    );
+  } else if (audioNote.isNotEmpty &&
+      (audio['isUsbAudioClass'] == true || _asList(audio['matchedEndpoints']).isEmpty) &&
+      audioNote.toLowerCase().contains('android framework does not expose')) {
+    add(
+      code: 'audio_manager_not_exposed',
+      title: 'USB audio endpoint not exposed by Android',
+      summary: audioNote,
+      impact: 'The device may be a USB audio peripheral, but Android is not surfacing a matchable `AudioDeviceInfo` endpoint.',
+    );
+  }
+
+  final midiNote = (midi['availabilityNote'] as String?)?.trim() ?? '';
+  if (midiNote.isNotEmpty && midi['platformAvailable'] == false) {
+    add(
+      code: 'midi_manager_unavailable',
+      title: 'MidiManager introspection unavailable',
+      summary: midiNote,
+      impact: 'Android MIDI transport, port, and matched-device metadata cannot be shown on this device.',
+    );
+  } else if (midiNote.isNotEmpty &&
+      ((midi['probableUsbMidi'] == true) || _asList(midi['matchedDevices']).isEmpty) &&
+      (midiNote.toLowerCase().contains('android framework does not expose') ||
+          midiNote.toLowerCase().contains('no matching midimanager device'))) {
+    add(
+      code: 'midi_manager_not_exposed',
+      title: 'USB MIDI endpoint not exposed by Android',
+      summary: midiNote,
+      impact: 'The app can detect MIDI-like USB descriptors, but Android is not surfacing a matchable `MidiManager` device.',
+    );
+  }
+
+  if (summary.isHiddenDevice) {
+    add(
+      code: 'hidden_topology_entry',
+      title: 'Topology-only device view',
+      summary: 'This entry comes from sysfs topology inspection rather than the normal Android USB framework.',
+      impact: 'It helps reveal hidden hubs and downstream nodes, but it will always have less direct framework metadata than a normal `UsbManager` device.',
+    );
+  }
+
+  return limitations;
+}
+
+DeviceHistoryEntry? _findMatchingHistoryEntry(UsbDeviceSummary summary, List<DeviceHistoryEntry> items) {
+  final stableKey = (summary.stableIdentityKey ?? '').trim();
+  final continuityKeys = (summary.continuityKeys ?? const <String>[]).toSet();
+  for (final entry in items) {
+    if (stableKey.isNotEmpty && (entry.stableIdentityKey ?? '').trim() == stableKey) {
+      return entry;
+    }
+    final entryKeys = (entry.continuityKeys ?? const <String>[]).toSet();
+    if (continuityKeys.intersection(entryKeys).isNotEmpty) {
+      return entry;
+    }
+  }
+  return null;
+}
+
+String _identityConfidenceLabel(String? confidence) {
+  switch (confidence) {
+    case 'high':
+      return 'High';
+    case 'medium':
+      return 'Medium';
+    case 'low':
+      return 'Low';
+    default:
+      return 'Unknown';
+  }
+}
+
+String _identityStrategyLabel(String? strategy) {
+  switch (strategy) {
+    case 'serial_number':
+      return 'Serial number';
+    case 'physical_port':
+      return 'Physical port + interface fingerprint';
+    case 'interface_fingerprint':
+      return 'Interface fingerprint';
+    case 'model_fingerprint':
+      return 'Model fingerprint';
+    default:
+      return 'Unknown';
+  }
+}
+
+String _availabilityScopeLabel(String? scope) {
+  switch (scope) {
+    case 'device':
+      return 'Device presence';
+    case 'usb_permission':
+      return 'USB permission';
+    case 'usb_open':
+      return 'USB device open';
+    case 'direct_usb_details':
+      return 'Raw descriptors and state';
+    case 'raw_descriptors':
+      return 'Raw descriptors';
+    case 'string_descriptors':
+      return 'String descriptors';
+    case 'hid_reports':
+      return 'HID reports';
+    case 'usb_access':
+      return 'Framework USB access';
+    case 'direct_audio_capture':
+      return 'Direct audio capture';
+    case 'usb_video':
+      return 'USB video access';
+    default:
+      return 'Availability';
+  }
+}
+
+class _ReconnectDiffTile extends StatelessWidget {
+  const _ReconnectDiffTile({required this.field});
+
+  final _ReconnectDiffField field;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(field.label, style: theme.textTheme.labelLarge),
+        const SizedBox(height: 8),
+        Text(
+          'Previous: ${field.previous}',
+          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Current: ${field.current}',
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: field.changed ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+            fontWeight: field.changed ? FontWeight.w600 : FontWeight.w400,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FrameworkLimitationTile extends StatelessWidget {
+  const _FrameworkLimitationTile({required this.limitation});
+
+  final _FrameworkLimitation limitation;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 34,
+          height: 34,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.tertiaryContainer,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            Icons.visibility_off_rounded,
+            color: theme.colorScheme.onTertiaryContainer,
+            size: 18,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(limitation.title, style: theme.textTheme.labelLarge),
+              const SizedBox(height: 4),
+              Text(limitation.summary, style: theme.textTheme.bodyMedium),
+              const SizedBox(height: 6),
+              Text(
+                'Impact: ${limitation.impact}',
+                style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                limitation.code,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontFamily: 'monospace',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+String _midiProtocolLabel(int? protocol) {
+  switch (protocol) {
+    case null:
+      return 'Unknown';
+    case -1:
+      return 'Unknown';
+    case 1:
+      return 'MIDI 1.0';
+    case 2:
+      return 'MIDI 2.0';
+    case 17:
+      return 'UMP MIDI 1.0 up to 64-bit';
+    case 18:
+      return 'UMP MIDI 1.0 up to 128-bit';
+    case 33:
+      return 'UMP MIDI 2.0 up to 64-bit';
+    case 34:
+      return 'UMP MIDI 2.0 up to 128-bit';
+    default:
+      return '$protocol';
+  }
 }

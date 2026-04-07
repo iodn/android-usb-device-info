@@ -45,9 +45,28 @@ class DeviceHistoryController extends AsyncNotifier<List<DeviceHistoryEntry>> {
 
   Future<void> _upsert(DeviceHistoryEntry entry) async {
     final current = state.asData?.value ?? await _loadFromPrefs();
+    final existing = _findRelatedEntry(current, entry);
+    final mergedPaths = <String>[
+      entry.deviceName,
+      ...(entry.knownDevicePaths ?? const <String>[]),
+      ...(existing?.knownDevicePaths ?? const <String>[]),
+      if ((existing?.deviceName ?? '').trim().isNotEmpty) existing!.deviceName,
+    ].where((p) => p.trim().isNotEmpty).toSet().toList(growable: false);
+    final mergedContinuityKeys = <String>[
+      if ((entry.stableIdentityKey ?? '').trim().isNotEmpty) entry.stableIdentityKey!,
+      ...(entry.continuityKeys ?? const <String>[]),
+      if (((existing?.stableIdentityKey) ?? '').trim().isNotEmpty) existing!.stableIdentityKey!,
+      ...(existing?.continuityKeys ?? const <String>[]),
+    ].where((k) => k.trim().isNotEmpty).toSet().toList(growable: false);
+    final mergedEntry = _mergeEntries(
+      latest: entry,
+      previous: existing,
+      knownDevicePaths: mergedPaths,
+      continuityKeys: mergedContinuityKeys,
+    );
     final next = <DeviceHistoryEntry>[
-      entry,
-      ...current.where((e) => e.id != entry.id),
+      mergedEntry,
+      ...current.where((e) => e.id != mergedEntry.id && e.id != existing?.id),
     ];
     final capped = next.length <= _kHistoryMaxItems
         ? next
@@ -73,7 +92,15 @@ class DeviceHistoryController extends AsyncNotifier<List<DeviceHistoryEntry>> {
       configurationCount: s.configurationCount,
       hasPermission: s.hasPermission,
       isInputDevice: s.isInputDevice,
+      isHiddenDevice: s.isHiddenDevice,
       inputSources: s.inputSources,
+      stableIdentityKey: s.stableIdentityKey,
+      identityConfidence: s.identityConfidence,
+      identityStrategy: s.identityStrategy,
+      physicalLocationKey: s.physicalLocationKey,
+      interfaceFingerprint: s.interfaceFingerprint,
+      continuityKeys: s.continuityKeys,
+      knownDevicePaths: [s.deviceName],
       vendorName: item.vendorName,
       productNameResolved: item.productName,
       manufacturerNameRaw: s.manufacturerName,
@@ -105,7 +132,15 @@ class DeviceHistoryController extends AsyncNotifier<List<DeviceHistoryEntry>> {
       configurationCount: s.configurationCount,
       hasPermission: s.hasPermission,
       isInputDevice: s.isInputDevice,
+      isHiddenDevice: s.isHiddenDevice,
       inputSources: s.inputSources,
+      stableIdentityKey: s.stableIdentityKey,
+      identityConfidence: s.identityConfidence,
+      identityStrategy: s.identityStrategy,
+      physicalLocationKey: s.physicalLocationKey,
+      interfaceFingerprint: s.interfaceFingerprint,
+      continuityKeys: s.continuityKeys,
+      knownDevicePaths: [s.deviceName],
       vendorName: view.vendorName,
       productNameResolved: view.productName,
       manufacturerNameRaw: s.manufacturerName,
@@ -255,6 +290,10 @@ class DeviceHistoryController extends AsyncNotifier<List<DeviceHistoryEntry>> {
   }
 
   String _makeStableIdFromSummary(UsbDeviceSummary s) {
+    final stableIdentityKey = (s.stableIdentityKey ?? '').trim();
+    if (stableIdentityKey.isNotEmpty) {
+      return stableIdentityKey;
+    }
     final serial = (s.serialNumber ?? '').trim();
     if (serial.isNotEmpty) {
       return 'vid:${s.vendorId}|pid:${s.productId}|sn:$serial';
@@ -268,5 +307,219 @@ class DeviceHistoryController extends AsyncNotifier<List<DeviceHistoryEntry>> {
       return 'path:$dn';
     }
     return 'vid:${s.vendorId}|pid:${s.productId}|cls:${s.deviceClass}|sub:${s.deviceSubclass}|pr:${s.deviceProtocol}|input:${s.isInputDevice}';
+  }
+
+  DeviceHistoryEntry? _findRelatedEntry(
+    List<DeviceHistoryEntry> current,
+    DeviceHistoryEntry entry,
+  ) {
+    for (final candidate in current) {
+      if (candidate.id == entry.id) return candidate;
+    }
+
+    final entryStable = _normalized(entry.stableIdentityKey);
+    if (entryStable != null) {
+      for (final candidate in current) {
+        if (_normalized(candidate.stableIdentityKey) == entryStable) return candidate;
+      }
+    }
+
+    final entryContinuity = _normalizedSet(entry.continuityKeys);
+    if (entryStable != null) entryContinuity.add(entryStable);
+    for (final candidate in current) {
+      final candidateContinuity = _normalizedSet(candidate.continuityKeys);
+      final candidateStable = _normalized(candidate.stableIdentityKey);
+      if (candidateStable != null) candidateContinuity.add(candidateStable);
+      if (entryContinuity.isNotEmpty && entryContinuity.intersection(candidateContinuity).isNotEmpty) {
+        return candidate;
+      }
+    }
+
+    return null;
+  }
+
+  DeviceHistoryEntry _mergeEntries({
+    required DeviceHistoryEntry latest,
+    required DeviceHistoryEntry? previous,
+    required List<String> knownDevicePaths,
+    required List<String> continuityKeys,
+  }) {
+    final mergedStableIdentityKey = _preferredStableIdentity(
+      latest.stableIdentityKey,
+      latest.identityConfidence,
+      previous?.stableIdentityKey,
+      previous?.identityConfidence,
+    );
+    final mergedId = (mergedStableIdentityKey ?? '').trim().isNotEmpty
+        ? mergedStableIdentityKey!.trim()
+        : (previous?.id ?? latest.id);
+    return DeviceHistoryEntry(
+      id: mergedId,
+      testedAt: latest.testedAt,
+      deviceName: latest.deviceName,
+      vendorId: latest.vendorId,
+      productId: latest.productId,
+      deviceClass: latest.deviceClass,
+      deviceSubclass: latest.deviceSubclass,
+      deviceProtocol: latest.deviceProtocol,
+      interfaceCount: latest.interfaceCount,
+      configurationCount: latest.configurationCount,
+      hasPermission: latest.hasPermission,
+      isInputDevice: latest.isInputDevice,
+      isHiddenDevice: latest.isHiddenDevice,
+      inputSources: latest.inputSources ?? previous?.inputSources,
+      stableIdentityKey: mergedStableIdentityKey ?? previous?.stableIdentityKey,
+      identityConfidence: _preferredIdentityConfidence(
+        latest.stableIdentityKey,
+        latest.identityConfidence,
+        previous?.stableIdentityKey,
+        previous?.identityConfidence,
+      ),
+      identityStrategy: _preferredIdentityStrategy(
+        latest.stableIdentityKey,
+        latest.identityConfidence,
+        latest.identityStrategy,
+        previous?.stableIdentityKey,
+        previous?.identityConfidence,
+        previous?.identityStrategy,
+      ),
+      physicalLocationKey: _preferNonBlank(latest.physicalLocationKey, previous?.physicalLocationKey),
+      interfaceFingerprint: _preferNonBlank(latest.interfaceFingerprint, previous?.interfaceFingerprint),
+      continuityKeys: continuityKeys,
+      knownDevicePaths: knownDevicePaths,
+      previousSnapshot: previous == null ? latest.previousSnapshot : _buildReconnectSnapshot(previous),
+      vendorName: _preferNonBlank(latest.vendorName, previous?.vendorName),
+      productNameResolved: _preferNonBlank(latest.productNameResolved, previous?.productNameResolved),
+      manufacturerNameRaw: _preferNonBlank(latest.manufacturerNameRaw, previous?.manufacturerNameRaw),
+      productNameRaw: _preferNonBlank(latest.productNameRaw, previous?.productNameRaw),
+      serialNumber: _preferNonBlank(latest.serialNumber, previous?.serialNumber),
+      usbVersion: _preferNonBlank(latest.usbVersion, previous?.usbVersion),
+      speed: _preferNonBlank(latest.speed, previous?.speed),
+      deviceId: latest.deviceId ?? previous?.deviceId,
+      portNumber: latest.portNumber ?? previous?.portNumber,
+      maxPowerMa: latest.maxPowerMa ?? previous?.maxPowerMa,
+      deviceDescriptor: latest.deviceDescriptor ?? previous?.deviceDescriptor,
+      configurations: latest.configurations ?? previous?.configurations,
+      interfaces: latest.interfaces ?? previous?.interfaces,
+      input: latest.input ?? previous?.input,
+      deviceState: latest.deviceState ?? previous?.deviceState,
+      strings: latest.strings ?? previous?.strings,
+      descriptorTree: latest.descriptorTree ?? previous?.descriptorTree,
+      hidReports: latest.hidReports ?? previous?.hidReports,
+    );
+  }
+
+  Map<String, Object?> _buildReconnectSnapshot(DeviceHistoryEntry entry) {
+    return <String, Object?>{
+      'testedAt': entry.testedAt.toIso8601String(),
+      'deviceName': entry.deviceName,
+      'vendorId': entry.vendorId,
+      'productId': entry.productId,
+      'deviceClass': entry.deviceClass,
+      'deviceSubclass': entry.deviceSubclass,
+      'deviceProtocol': entry.deviceProtocol,
+      'interfaceCount': entry.interfaceCount,
+      'configurationCount': entry.configurationCount,
+      'hasPermission': entry.hasPermission,
+      'isInputDevice': entry.isInputDevice,
+      'isHiddenDevice': entry.isHiddenDevice,
+      'inputSources': entry.inputSources,
+      'stableIdentityKey': entry.stableIdentityKey,
+      'identityConfidence': entry.identityConfidence,
+      'identityStrategy': entry.identityStrategy,
+      'physicalLocationKey': entry.physicalLocationKey,
+      'interfaceFingerprint': entry.interfaceFingerprint,
+      'vendorName': entry.vendorName,
+      'productNameResolved': entry.productNameResolved,
+      'manufacturerNameRaw': entry.manufacturerNameRaw,
+      'productNameRaw': entry.productNameRaw,
+      'serialNumber': entry.serialNumber,
+      'usbVersion': entry.usbVersion,
+      'speed': entry.speed,
+      'deviceId': entry.deviceId,
+      'portNumber': entry.portNumber,
+      'maxPowerMa': entry.maxPowerMa,
+    };
+  }
+
+  String? _preferredStableIdentity(
+    String? latestKey,
+    String? latestConfidence,
+    String? previousKey,
+    String? previousConfidence,
+  ) {
+    final latest = _normalized(latestKey);
+    final previous = _normalized(previousKey);
+    if (latest == null) return previous;
+    if (previous == null) return latest;
+    return _identityConfidenceRank(latestConfidence) >= _identityConfidenceRank(previousConfidence)
+        ? latest
+        : previous;
+  }
+
+  String? _preferredIdentityConfidence(
+    String? latestKey,
+    String? latestConfidence,
+    String? previousKey,
+    String? previousConfidence,
+  ) {
+    final latest = _normalized(latestKey);
+    final previous = _normalized(previousKey);
+    if (latest == null) return previousConfidence;
+    if (previous == null) return latestConfidence;
+    return _identityConfidenceRank(latestConfidence) >= _identityConfidenceRank(previousConfidence)
+        ? latestConfidence
+        : previousConfidence;
+  }
+
+  String? _preferredIdentityStrategy(
+    String? latestKey,
+    String? latestConfidence,
+    String? latestStrategy,
+    String? previousKey,
+    String? previousConfidence,
+    String? previousStrategy,
+  ) {
+    final latest = _normalized(latestKey);
+    final previous = _normalized(previousKey);
+    if (latest == null) return previousStrategy;
+    if (previous == null) return latestStrategy;
+    return _identityConfidenceRank(latestConfidence) >= _identityConfidenceRank(previousConfidence)
+        ? latestStrategy
+        : previousStrategy;
+  }
+
+  int _identityConfidenceRank(String? value) {
+    switch ((value ?? '').trim().toLowerCase()) {
+      case 'high':
+        return 3;
+      case 'medium':
+        return 2;
+      case 'low':
+        return 1;
+      default:
+        return 0;
+    }
+  }
+
+  String? _preferNonBlank(String? latest, String? previous) {
+    final latestTrimmed = latest?.trim();
+    if (latestTrimmed != null && latestTrimmed.isNotEmpty) return latestTrimmed;
+    final previousTrimmed = previous?.trim();
+    if (previousTrimmed != null && previousTrimmed.isNotEmpty) return previousTrimmed;
+    return null;
+  }
+
+  String? _normalized(String? value) {
+    final trimmed = value?.trim();
+    return (trimmed == null || trimmed.isEmpty) ? null : trimmed;
+  }
+
+  Set<String> _normalizedSet(List<String>? values) {
+    return values
+            ?.map((value) => value.trim())
+            .where((value) => value.isNotEmpty)
+            .toSet() ??
+        <String>{};
   }
 }

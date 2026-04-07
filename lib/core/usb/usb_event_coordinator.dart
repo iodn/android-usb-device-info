@@ -16,6 +16,7 @@ final usbEventCoordinatorProvider = Provider<void>((ref) {
   ref.onDispose(() => disposed = true);
 
   String? autoOpenedDeviceName;
+  DateTime? lastChooserLaunchAt;
   Future<void> chain = Future.value();
 
   ref.listen<AsyncValue<UsbEvent>>(usbEventsProvider, (prev, next) {
@@ -28,8 +29,17 @@ final usbEventCoordinatorProvider = Provider<void>((ref) {
       await ref.read(usbIdsDbProvider.future);
 
       final type = event.type.toLowerCase().trim();
-      final isAttach = type.contains('attach') || type.contains('connect') || type == 'added';
-      final isDetach = type.contains('detach') || type.contains('disconnect') || type == 'removed';
+      final reason = (event.reason ?? '').toLowerCase().trim();
+      final isAttach = reason.contains('usb_device_attached') ||
+          type.contains('attach') ||
+          type.contains('connect') ||
+          type == 'added';
+      final isDetach = reason.contains('usb_device_detached') ||
+          type.contains('detach') ||
+          type.contains('disconnect') ||
+          type == 'removed';
+      final launchedFromChooser = reason.startsWith('activity_intent:') &&
+          reason.contains('usb_device_attached');
 
       await ref.read(deviceListControllerProvider.notifier).refresh();
 
@@ -48,11 +58,20 @@ final usbEventCoordinatorProvider = Provider<void>((ref) {
           }
         } catch (_) {}
 
-        autoOpenedDeviceName = dn;
-        final enc = Uri.encodeComponent(dn);
-        scheduleMicrotask(() {
-          router.goNamed(DeviceDetailScreen.routeName, pathParameters: {'id': enc});
-        });
+        if (launchedFromChooser) {
+          final now = DateTime.now();
+          final duplicateLaunch = autoOpenedDeviceName == dn &&
+              lastChooserLaunchAt != null &&
+              now.difference(lastChooserLaunchAt!).inSeconds < 2;
+          if (!duplicateLaunch) {
+            autoOpenedDeviceName = dn;
+            lastChooserLaunchAt = now;
+            final enc = Uri.encodeComponent(dn);
+            scheduleMicrotask(() {
+              router.goNamed(DeviceDetailScreen.routeName, pathParameters: {'id': enc});
+            });
+          }
+        }
         return;
       }
 

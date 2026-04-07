@@ -457,6 +457,21 @@ class SettingsScreen extends ConsumerWidget {
                   style: theme.textTheme.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                 ),
               ),
+              const SizedBox(height: 10),
+              KeyValueRow(
+                label: 'Attach filter scope',
+                value: 'All USB devices',
+              ),
+              KeyValueRow(
+                label: 'Attach launch behavior',
+                value: enabled
+                    ? 'Open only when Android explicitly launches USBDevInfo from the USB attach chooser'
+                    : 'Chooser alias disabled',
+              ),
+              KeyValueRow(
+                label: 'While app is open',
+                value: 'USB attach/detach events refresh device data without forcing navigation',
+              ),
             ],
           ),
         ),

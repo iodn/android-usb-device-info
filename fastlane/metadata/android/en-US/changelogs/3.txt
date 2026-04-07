@@ -1,0 +1,36 @@
+Major USB inspector upgrade with much deeper Android device analysis and much stronger diagnostics.
+
+- Fixed the broken USB audio permission loop by separating USB device permission from Android runtime permissions.
+- Removed the old RECORD_AUDIO dependency from the descriptor-inspection flow when direct audio capture is not needed.
+- Reworked permission handling to use the modern Activity Result API instead of manual runtime permission requests.
+- Moved runtime permission orchestration out of the USB broadcast receiver so USB permission and Android runtime permission flows are handled cleanly.
+- Added structured native permission logging for USB and camera requests to simplify OEM-specific debugging.
+- Added automated tests for permission state transitions, including audio/non-audio devices, denies, grants, re-enumeration, timeout, and revocation behavior.
+
+- Added richer permission state modeling in the UI, including USB permission missing, microphone missing, camera missing, temporary denial, permanent denial, revocation, and re-enumeration states.
+- Added a dedicated permission diagnostics section showing manifest state, runtime state, USB state, Android version behavior, and last failure reason.
+- Changed permission diagnostics into a closed-by-default accordion to reduce screen noise.
+- Moved “Why data is unavailable” into the diagnostics accordion so advanced failure context stays available without dominating the main screen.
+
+- Added Android USB audio introspection through AudioManager and AudioDeviceInfo.
+- Added USB video support, including CAMERA-aware permission behavior for USB video class devices.
+- Added MIDI-specific inspection through MidiManager.
+- Added hidden device and topology inspection from /sys/bus/usb/devices when available.
+- Added parent/child topology visualization, including bus number, tree depth, upstream hub, port chain, siblings, and children.
+- Added explicit Android framework limitation reporting so users can see when Android is hiding part of a connected device.
+
+- Expanded descriptor parsing beyond HID with first-class Audio, Video, CDC/serial, Hub, and BOS/capability summaries.
+- Added clearer “why unavailable” messaging for framework, permission, SELinux/sysfs, disconnect, audio, and video limitations.
+- Added advanced raw inspection with side-by-side parsed descriptor fields and raw descriptor hex.
+- Added raw control-transfer tracing for direct USB reads, including string, status, configuration, interface, and HID report requests.
+
+- Added capability badges on the device list for Audio, Video, HID, MIDI, Storage, Hub, CDC, Composite, and related roles.
+- Added chipset family detection from VID:PID and interface signatures.
+- Added “likely function” classification for composite devices.
+- Added stable device identity and continuity tracking using serial number, physical location, interface fingerprint, and history matching.
+- Added reconnect diff view to compare the current device state against the previous captured history snapshot.
+
+- Added per-device raw dump export on live device detail with JSON, plain-text report, and raw hex output.
+- Added the same raw dump export flow on history detail so past captures can be shared without reconnecting the device.
+
+- Reduced noisy attach behavior while keeping broad USB attach coverage for a general-purpose inspector.

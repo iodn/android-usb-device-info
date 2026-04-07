@@ -18,7 +18,15 @@ class UsbDeviceSummary {
     this.deviceId,
     this.portNumber,
     this.isInputDevice = false,
+    this.isHiddenDevice = false,
     this.inputSources,
+    this.capabilities,
+    this.stableIdentityKey,
+    this.identityConfidence,
+    this.identityStrategy,
+    this.physicalLocationKey,
+    this.interfaceFingerprint,
+    this.continuityKeys,
   });
 
   final String deviceName;
@@ -41,10 +49,20 @@ class UsbDeviceSummary {
   final int? deviceId;
   final int? portNumber;
   final bool isInputDevice;
+  final bool isHiddenDevice;
   final List<String>? inputSources;
+  final List<String>? capabilities;
+  final String? stableIdentityKey;
+  final String? identityConfidence;
+  final String? identityStrategy;
+  final String? physicalLocationKey;
+  final String? interfaceFingerprint;
+  final List<String>? continuityKeys;
 
   factory UsbDeviceSummary.fromMap(Map<Object?, Object?> map) {
     final rawSources = map['inputSources'];
+    final rawCapabilities = map['capabilities'];
+    final rawContinuityKeys = map['continuityKeys'];
     return UsbDeviceSummary(
       deviceName: (map['deviceName'] as String?) ?? '',
       vendorId: (map['vendorId'] as int?) ?? 0,
@@ -64,8 +82,20 @@ class UsbDeviceSummary {
       deviceId: map['deviceId'] as int?,
       portNumber: map['portNumber'] as int?,
       isInputDevice: (map['isInputDevice'] as bool?) ?? false,
+      isHiddenDevice: (map['isHiddenDevice'] as bool?) ?? false,
       inputSources: rawSources is List
           ? rawSources.whereType<String>().toList(growable: false)
+          : null,
+      capabilities: rawCapabilities is List
+          ? rawCapabilities.whereType<String>().toList(growable: false)
+          : null,
+      stableIdentityKey: map['stableIdentityKey'] as String?,
+      identityConfidence: map['identityConfidence'] as String?,
+      identityStrategy: map['identityStrategy'] as String?,
+      physicalLocationKey: map['physicalLocationKey'] as String?,
+      interfaceFingerprint: map['interfaceFingerprint'] as String?,
+      continuityKeys: rawContinuityKeys is List
+          ? rawContinuityKeys.whereType<String>().toList(growable: false)
           : null,
     );
   }
@@ -340,15 +370,27 @@ class UsbDeviceDetails {
 }
 
 class UsbEvent {
-  UsbEvent({required this.type, this.deviceName});
+  UsbEvent({
+    required this.type,
+    this.deviceName,
+    this.reason,
+    this.granted,
+    this.originalName,
+  });
 
   final String type;
   final String? deviceName;
+  final String? reason;
+  final bool? granted;
+  final String? originalName;
 
   factory UsbEvent.fromMap(Map<Object?, Object?> map) {
     return UsbEvent(
       type: (map['type'] as String?) ?? 'unknown',
       deviceName: map['deviceName'] as String?,
+      reason: map['reason'] as String?,
+      granted: map['granted'] as bool?,
+      originalName: map['originalName'] as String?,
     );
   }
 }

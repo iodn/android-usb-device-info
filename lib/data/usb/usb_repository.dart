@@ -1,3 +1,5 @@
+import 'chipset_family_detector.dart';
+import 'likely_function_detector.dart';
 import '../db/usb_ids_db.dart';
 import 'models.dart';
 import 'platform_usb_service.dart';
@@ -8,12 +10,16 @@ class UsbDeviceListItem {
     required this.vendorName,
     required this.productName,
     required this.deviceClassName,
+    this.chipsetFamily,
+    this.likelyFunction,
   });
 
   final UsbDeviceSummary device;
   final String? vendorName;
   final String? productName;
   final String? deviceClassName;
+  final ChipsetFamilyMatch? chipsetFamily;
+  final LikelyFunctionMatch? likelyFunction;
 }
 
 class UsbDeviceDetailViewData {
@@ -25,6 +31,8 @@ class UsbDeviceDetailViewData {
     required this.deviceSubclassName,
     required this.deviceProtocolName,
     required this.interfaceClassNames,
+    this.chipsetFamily,
+    this.likelyFunction,
   });
 
   final UsbDeviceDetails details;
@@ -36,6 +44,8 @@ class UsbDeviceDetailViewData {
   final String? deviceProtocolName;
 
   final List<({String? className, String? subclassName, String? protocolName})> interfaceClassNames;
+  final ChipsetFamilyMatch? chipsetFamily;
+  final LikelyFunctionMatch? likelyFunction;
 }
 
 class UsbRepository {
@@ -53,17 +63,48 @@ class UsbRepository {
       final v = await db.vendorName(d.vendorId);
       final p = await db.productName(d.vendorId, d.productId);
       final c = await db.usbClassName(d.deviceClass);
+      final chipsetFamily = detectChipsetFamily(
+        summary: d,
+        interfaces: const <UsbInterfaceInfo>[],
+        vendorName: v,
+        productName: p,
+      );
+      final likelyFunction = detectLikelyFunction(
+        summary: d,
+        interfaces: const <UsbInterfaceInfo>[],
+        vendorName: v,
+        productName: p,
+      );
       out.add(UsbDeviceListItem(
         device: d,
         vendorName: v,
         productName: p,
         deviceClassName: c,
+        chipsetFamily: chipsetFamily,
+        likelyFunction: likelyFunction,
       ));
     }
     return out;
   }
 
-  Future<bool> requestPermission(String deviceName, {int? vendorId, int? productId}) => _platform.requestPermission(deviceName, vendorId: vendorId, productId: productId);
+  Future<bool> requestPermission(
+    String deviceName, {
+    int? vendorId,
+    int? productId,
+    String? serialNumber,
+    String? physicalLocationKey,
+    String? interfaceFingerprint,
+    String? stableIdentityKey,
+  }) =>
+      _platform.requestPermission(
+        deviceName,
+        vendorId: vendorId,
+        productId: productId,
+        serialNumber: serialNumber,
+        physicalLocationKey: physicalLocationKey,
+        interfaceFingerprint: interfaceFingerprint,
+        stableIdentityKey: stableIdentityKey,
+      );
 
   Future<UsbDeviceDetailViewData> getDeviceDetailsEnriched(String deviceName) async {
     final db = await _dbFuture();
@@ -83,6 +124,18 @@ class UsbRepository {
       final pr = await db.usbProtocolName(i.interfaceClass, i.interfaceSubclass, i.interfaceProtocol);
       ifaceNames.add((className: c, subclassName: sc, protocolName: pr));
     }
+    final chipsetFamily = detectChipsetFamily(
+      summary: s,
+      interfaces: details.interfaces,
+      vendorName: vendorName,
+      productName: productName,
+    );
+    final likelyFunction = detectLikelyFunction(
+      summary: s,
+      interfaces: details.interfaces,
+      vendorName: vendorName,
+      productName: productName,
+    );
 
     return UsbDeviceDetailViewData(
       details: details,
@@ -92,6 +145,8 @@ class UsbRepository {
       deviceSubclassName: deviceSubclassName,
       deviceProtocolName: deviceProtocolName,
       interfaceClassNames: ifaceNames,
+      chipsetFamily: chipsetFamily,
+      likelyFunction: likelyFunction,
     );
   }
 

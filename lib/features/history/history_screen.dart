@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/section_card.dart';
+import '../../data/usb/usb_repository.dart';
 import 'controllers/device_history_controller.dart';
 import 'history_entry_detail_screen.dart';
 import '../home/controllers/device_list_controller.dart';
@@ -27,7 +28,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     super.dispose();
   }
 
-  static String _connectionKey({
+  static String _fallbackConnectionKey({
     required int vendorId,
     required int productId,
     required String deviceName,
@@ -39,6 +40,35 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     final dn = deviceName.trim();
     final identity = sn.isNotEmpty ? 'sn:$sn' : 'dn:$dn';
     return '${vid.toRadixString(16).padLeft(4, '0')}:${pid.toRadixString(16).padLeft(4, '0')}:$identity';
+  }
+
+  static String _deviceMatchKey(UsbDeviceListItem item) {
+    final stable = (item.device.stableIdentityKey ?? '').trim();
+    if (stable.isNotEmpty) return stable;
+    return _fallbackConnectionKey(
+      vendorId: item.device.vendorId,
+      productId: item.device.productId,
+      deviceName: item.device.deviceName,
+      serialNumber: item.device.serialNumber,
+    );
+  }
+
+  static String _entryMatchKey(DeviceHistoryEntry entry) {
+    final stable = (entry.stableIdentityKey ?? '').trim();
+    if (stable.isNotEmpty) return stable;
+    return _fallbackConnectionKey(
+      vendorId: entry.vendorId,
+      productId: entry.productId,
+      deviceName: entry.deviceName,
+      serialNumber: entry.serialNumber,
+    );
+  }
+
+  static bool _matchesEntry(DeviceHistoryEntry entry, UsbDeviceListItem item) {
+    if (_entryMatchKey(entry) == _deviceMatchKey(item)) return true;
+    final entryKeys = (entry.continuityKeys ?? const <String>[]).toSet();
+    final itemKeys = (item.device.continuityKeys ?? const <String>[]).toSet();
+    return entryKeys.intersection(itemKeys).isNotEmpty;
   }
 
   @override
@@ -85,30 +115,14 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                     })
                     .toList(growable: false);
 
-            final connectedKeys = <String>{};
             final current = devicesAsync.asData?.value;
-            if (current != null) {
-              for (final it in current) {
-                final d = it.device;
-                connectedKeys.add(
-                  _connectionKey(
-                    vendorId: d.vendorId,
-                    productId: d.productId,
-                    deviceName: d.deviceName,
-                    serialNumber: d.serialNumber,
-                  ),
-                );
-              }
-            }
 
             bool isEntryConnected(DeviceHistoryEntry entry) {
-              final key = _connectionKey(
-                vendorId: entry.vendorId,
-                productId: entry.productId,
-                deviceName: entry.deviceName,
-                serialNumber: entry.serialNumber,
-              );
-              return connectedKeys.contains(key);
+              if (current == null) return false;
+              for (final item in current) {
+                if (_matchesEntry(entry, item)) return true;
+              }
+              return false;
             }
 
             return Column(
@@ -292,7 +306,9 @@ class _HistoryTile extends StatelessWidget {
       tonal: !connected,
     );
 
-    final permChip = entry.isInputDevice
+    final permChip = entry.isHiddenDevice
+        ? const _Chip(icon: Icons.account_tree_rounded, label: 'Sysfs topology', tonal: true)
+        : entry.isInputDevice
         ? _Chip(
             icon: (entry.inputSources ?? const []).contains('mouse')
                 ? Icons.mouse_rounded

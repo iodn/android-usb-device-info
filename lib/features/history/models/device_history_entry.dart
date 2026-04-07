@@ -15,7 +15,16 @@ class DeviceHistoryEntry {
     required this.configurationCount,
     required this.hasPermission,
     required this.isInputDevice,
+    this.isHiddenDevice = false,
     this.inputSources,
+    this.stableIdentityKey,
+    this.identityConfidence,
+    this.identityStrategy,
+    this.physicalLocationKey,
+    this.interfaceFingerprint,
+    this.continuityKeys,
+    this.knownDevicePaths,
+    this.previousSnapshot,
     this.vendorName,
     this.productNameResolved,
     this.manufacturerNameRaw,
@@ -54,7 +63,16 @@ class DeviceHistoryEntry {
   final bool hasPermission;
 
   final bool isInputDevice;
+  final bool isHiddenDevice;
   final List<String>? inputSources;
+  final String? stableIdentityKey;
+  final String? identityConfidence;
+  final String? identityStrategy;
+  final String? physicalLocationKey;
+  final String? interfaceFingerprint;
+  final List<String>? continuityKeys;
+  final List<String>? knownDevicePaths;
+  final Map<String, Object?>? previousSnapshot;
 
   final String? vendorName;
   final String? productNameResolved;
@@ -93,7 +111,16 @@ class DeviceHistoryEntry {
         'configurationCount': configurationCount,
         'hasPermission': hasPermission,
         'isInputDevice': isInputDevice,
+        'isHiddenDevice': isHiddenDevice,
         'inputSources': inputSources,
+        'stableIdentityKey': stableIdentityKey,
+        'identityConfidence': identityConfidence,
+        'identityStrategy': identityStrategy,
+        'physicalLocationKey': physicalLocationKey,
+        'interfaceFingerprint': interfaceFingerprint,
+        'continuityKeys': continuityKeys,
+        'knownDevicePaths': knownDevicePaths,
+        'previousSnapshot': previousSnapshot,
         'vendorName': vendorName,
         'productNameResolved': productNameResolved,
         'manufacturerNameRaw': manufacturerNameRaw,
@@ -116,6 +143,8 @@ class DeviceHistoryEntry {
 
   factory DeviceHistoryEntry.fromMap(Map<Object?, Object?> map) {
     final rawSources = map['inputSources'];
+    final rawContinuityKeys = map['continuityKeys'];
+    final rawKnownPaths = map['knownDevicePaths'];
     return DeviceHistoryEntry(
       id: (map['id'] as String?) ?? '',
       testedAt: DateTime.tryParse((map['testedAt'] as String?) ?? '') ??
@@ -130,8 +159,23 @@ class DeviceHistoryEntry {
       configurationCount: (map['configurationCount'] as int?) ?? 0,
       hasPermission: (map['hasPermission'] as bool?) ?? false,
       isInputDevice: (map['isInputDevice'] as bool?) ?? false,
+      isHiddenDevice: (map['isHiddenDevice'] as bool?) ?? false,
       inputSources: rawSources is List
           ? rawSources.whereType<String>().toList(growable: false)
+          : null,
+      stableIdentityKey: map['stableIdentityKey'] as String?,
+      identityConfidence: map['identityConfidence'] as String?,
+      identityStrategy: map['identityStrategy'] as String?,
+      physicalLocationKey: map['physicalLocationKey'] as String?,
+      interfaceFingerprint: map['interfaceFingerprint'] as String?,
+      continuityKeys: rawContinuityKeys is List
+          ? rawContinuityKeys.whereType<String>().toList(growable: false)
+          : null,
+      knownDevicePaths: rawKnownPaths is List
+          ? rawKnownPaths.whereType<String>().toList(growable: false)
+          : null,
+      previousSnapshot: (map['previousSnapshot'] is Map)
+          ? (map['previousSnapshot'] as Map).cast<String, Object?>()
           : null,
       vendorName: map['vendorName'] as String?,
       productNameResolved: map['productNameResolved'] as String?,
@@ -159,6 +203,9 @@ class DeviceHistoryEntry {
   DeviceHistoryEntry copyWith({
     DateTime? testedAt,
     List<String>? inputSources,
+    List<String>? continuityKeys,
+    List<String>? knownDevicePaths,
+    Map<String, Object?>? previousSnapshot,
     String? vendorName,
     String? productNameResolved,
     Map<String, Object?>? deviceDescriptor,
@@ -184,7 +231,16 @@ class DeviceHistoryEntry {
       configurationCount: configurationCount,
       hasPermission: hasPermission,
       isInputDevice: isInputDevice,
+      isHiddenDevice: isHiddenDevice,
       inputSources: inputSources ?? this.inputSources,
+      stableIdentityKey: stableIdentityKey,
+      identityConfidence: identityConfidence,
+      identityStrategy: identityStrategy,
+      physicalLocationKey: physicalLocationKey,
+      interfaceFingerprint: interfaceFingerprint,
+      continuityKeys: continuityKeys ?? this.continuityKeys,
+      knownDevicePaths: knownDevicePaths ?? this.knownDevicePaths,
+      previousSnapshot: previousSnapshot ?? this.previousSnapshot,
       vendorName: vendorName ?? this.vendorName,
       productNameResolved: productNameResolved ?? this.productNameResolved,
       manufacturerNameRaw: manufacturerNameRaw,

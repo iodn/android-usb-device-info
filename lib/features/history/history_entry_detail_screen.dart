@@ -1,11 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/services.dart';
 
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/key_value_row.dart';
 import '../../core/widgets/section_card.dart';
 import '../../data/usb/providers.dart';
+import '../../data/usb/usb_repository.dart';
 import '../device/device_detail_screen.dart';
 import '../home/controllers/device_list_controller.dart';
 import 'controllers/device_history_controller.dart';
@@ -246,7 +250,7 @@ class HistoryEntryDetailScreen extends ConsumerWidget {
   static const routeName = 'historyEntry';
   final String entryId;
 
-  static String _connectionKey({
+  static String _fallbackConnectionKey({
     required int vendorId,
     required int productId,
     required String deviceName,
@@ -258,6 +262,43 @@ class HistoryEntryDetailScreen extends ConsumerWidget {
     final dn = deviceName.trim();
     final identity = sn.isNotEmpty ? 'sn:$sn' : 'dn:$dn';
     return '${vid.toRadixString(16).padLeft(4, '0')}:${pid.toRadixString(16).padLeft(4, '0')}:$identity';
+  }
+
+  static String _entryMatchKey(DeviceHistoryEntry entry) {
+    final stable = (entry.stableIdentityKey ?? '').trim();
+    if (stable.isNotEmpty) return stable;
+    return _fallbackConnectionKey(
+      vendorId: entry.vendorId,
+      productId: entry.productId,
+      deviceName: entry.deviceName,
+      serialNumber: entry.serialNumber,
+    );
+  }
+
+  static String _deviceMatchKey(UsbDeviceListItem item) {
+    final stable = (item.device.stableIdentityKey ?? '').trim();
+    if (stable.isNotEmpty) return stable;
+    return _fallbackConnectionKey(
+      vendorId: item.device.vendorId,
+      productId: item.device.productId,
+      deviceName: item.device.deviceName,
+      serialNumber: item.device.serialNumber,
+    );
+  }
+
+  static bool _matchesEntry(DeviceHistoryEntry entry, UsbDeviceListItem item) {
+    if (_entryMatchKey(entry) == _deviceMatchKey(item)) return true;
+    final entryKeys = (entry.continuityKeys ?? const <String>[]).toSet();
+    final itemKeys = (item.device.continuityKeys ?? const <String>[]).toSet();
+    return entryKeys.intersection(itemKeys).isNotEmpty;
+  }
+
+  static UsbDeviceListItem? _findCurrentMatch(DeviceHistoryEntry entry, List<dynamic>? currentItems) {
+    if (currentItems == null) return null;
+    for (final item in currentItems.whereType<UsbDeviceListItem>()) {
+      if (_matchesEntry(entry, item)) return item;
+    }
+    return null;
   }
 
   @override
@@ -276,11 +317,38 @@ class HistoryEntryDetailScreen extends ConsumerWidget {
                     orElse: () => null,
                   );
               if (entry == null) return const SizedBox.shrink();
-              final connected = _isConnected(entry, devicesAsync.asData?.value);
-              return IconButton(
-                tooltip: 'Open live device info',
-                onPressed: connected ? () => _openLive(context, entry) : null,
-                icon: const Icon(Icons.open_in_new_rounded),
+              final resolvedAsync = ref.watch(_historyResolvedProvider(entry));
+              final resolved = resolvedAsync.asData?.value ??
+                  _HistoryResolved(
+                    vendorName: entry.vendorName ?? entry.manufacturerNameRaw,
+                    productName: entry.productNameResolved ?? entry.productNameRaw,
+                    className: null,
+                    subclassName: null,
+                    protocolName: null,
+                    interfaceResolved: const [],
+                  );
+              final raw = _extractHistoryRaw(entry);
+              final currentMatch = _findCurrentMatch(entry, devicesAsync.asData?.value);
+              final connected = currentMatch != null;
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    tooltip: 'Export raw dump',
+                    onPressed: () => _showHistoryRawDumpExportSheet(
+                      context,
+                      entry: entry,
+                      resolved: resolved,
+                      raw: raw,
+                    ),
+                    icon: const Icon(Icons.ios_share_rounded),
+                  ),
+                  IconButton(
+                    tooltip: 'Open live device info',
+                    onPressed: connected ? () => _openLive(context, currentMatch) : null,
+                    icon: const Icon(Icons.open_in_new_rounded),
+                  ),
+                ],
               );
             },
             orElse: () => const SizedBox.shrink(),
@@ -298,7 +366,8 @@ class HistoryEntryDetailScreen extends ConsumerWidget {
                 );
             if (entry == null) return const _NotFoundBody();
 
-            final connected = _isConnected(entry, devicesAsync.asData?.value);
+            final currentMatch = _findCurrentMatch(entry, devicesAsync.asData?.value);
+            final connected = currentMatch != null;
             final resolvedAsync = ref.watch(_historyResolvedProvider(entry));
 
             return resolvedAsync.when(
@@ -308,7 +377,7 @@ class HistoryEntryDetailScreen extends ConsumerWidget {
                 entry: entry,
                 resolved: resolved,
                 connected: connected,
-                onOpenLive: connected ? () => _openLive(context, entry) : null,
+                onOpenLive: connected ? () => _openLive(context, currentMatch) : null,
               ),
             );
           },
@@ -318,30 +387,12 @@ class HistoryEntryDetailScreen extends ConsumerWidget {
   }
 
   static bool _isConnected(DeviceHistoryEntry entry, List<dynamic>? currentItems) {
-    if (currentItems == null) return false;
-    final keys = <String>{};
-    for (final it in currentItems) {
-      final d = (it as dynamic).device;
-      keys.add(
-        _connectionKey(
-          vendorId: d.vendorId as int,
-          productId: d.productId as int,
-          deviceName: d.deviceName as String,
-          serialNumber: d.serialNumber as String?,
-        ),
-      );
-    }
-    final key = _connectionKey(
-      vendorId: entry.vendorId,
-      productId: entry.productId,
-      deviceName: entry.deviceName,
-      serialNumber: entry.serialNumber,
-    );
-    return keys.contains(key);
+    return _findCurrentMatch(entry, currentItems) != null;
   }
 
-  static void _openLive(BuildContext context, DeviceHistoryEntry entry) {
-    final enc = Uri.encodeComponent(entry.deviceName);
+  static void _openLive(BuildContext context, UsbDeviceListItem? item) {
+    if (item == null) return;
+    final enc = Uri.encodeComponent(item.device.deviceName);
     context.pushNamed(DeviceDetailScreen.routeName, pathParameters: {'id': enc});
   }
 }
@@ -385,7 +436,7 @@ class _Body extends StatelessWidget {
     final hasTree = adv.descriptorTree.isNotEmpty;
     final hasHid = adv.hidReports.isNotEmpty;
 
-    final showPermissionHint = !isInput && !entry.hasPermission && !(hasDescriptor || hasStrings || hasTree || hasHid || hasState);
+    final showPermissionHint = !isInput && !entry.isHiddenDevice && !entry.hasPermission && !(hasDescriptor || hasStrings || hasTree || hasHid || hasState);
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -449,7 +500,9 @@ class _Body extends StatelessWidget {
                               tonal: true,
                             )
                           else
-                            (entry.hasPermission
+                            (entry.isHiddenDevice
+                                ? const _Chip(icon: Icons.account_tree_rounded, label: 'Sysfs topology', tonal: true)
+                                : entry.hasPermission
                                 ? const _Chip(icon: Icons.verified_rounded, label: 'Permission', tonal: false)
                                 : const _Chip(icon: Icons.lock_outline_rounded, label: 'Needs permission', tonal: true)),
                         ],
@@ -573,7 +626,11 @@ class _Body extends StatelessWidget {
           KeyValueRow(label: 'Port number', value: entry.portNumber == null ? 'Unknown' : '${entry.portNumber}'),
           KeyValueRow(
             label: 'Type',
-            value: entry.isInputDevice ? 'Input device (keyboard/mouse via InputManager)' : 'USB device (UsbManager)',
+            value: entry.isInputDevice
+                ? 'Input device (keyboard/mouse via InputManager)'
+                : entry.isHiddenDevice
+                    ? 'USB topology entry (sysfs)'
+                    : 'USB device (UsbManager)',
             allowCopy: false,
           ),
         ],
@@ -961,6 +1018,354 @@ class _PermissionHintCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+Future<void> _showHistoryRawDumpExportSheet(
+  BuildContext context, {
+  required DeviceHistoryEntry entry,
+  required _HistoryResolved resolved,
+  required Map<String, dynamic> raw,
+}) async {
+  final payload = _buildHistoryExportPayload(entry, resolved, raw);
+  final prettyJson = const JsonEncoder.withIndent('  ').convert(payload);
+  final plainText = _buildHistoryPlainTextReport(entry, resolved, raw);
+  final rawHex = _buildHistoryRawHexDump(entry, raw);
+
+  await showModalBottomSheet<void>(
+    context: context,
+    useSafeArea: true,
+    isScrollControlled: true,
+    showDragHandle: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+    ),
+    builder: (ctx) => FractionallySizedBox(
+      heightFactor: 0.92,
+      child: _HistoryRawDumpExportSheet(
+        prettyJson: prettyJson,
+        plainText: plainText,
+        rawHex: rawHex,
+      ),
+    ),
+  );
+}
+
+Map<String, dynamic> _buildHistoryExportPayload(
+  DeviceHistoryEntry entry,
+  _HistoryResolved resolved,
+  Map<String, dynamic> raw,
+) {
+  final adv = _HistoryAdvanced.fromEntry(entry);
+  return <String, dynamic>{
+    'schema': 'device_history_raw_dump_export_v1',
+    'exportedAt': DateTime.now().toIso8601String(),
+    'history': <String, dynamic>{
+      'entryId': entry.id,
+      'testedAt': entry.testedAt.toIso8601String(),
+      'knownDevicePaths': entry.knownDevicePaths,
+      'continuityKeys': entry.continuityKeys,
+      'previousSnapshot': entry.previousSnapshot,
+    },
+    'resolvedNames': <String, dynamic>{
+      'vendorName': resolved.vendorName,
+      'productName': resolved.productName,
+      'deviceClassName': resolved.className,
+      'deviceSubclassName': resolved.subclassName,
+      'deviceProtocolName': resolved.protocolName,
+      'interfaceClassNames': [
+        for (final item in resolved.interfaceResolved)
+          <String, dynamic>{
+            'className': item.className,
+            'subclassName': item.subclassName,
+            'protocolName': item.protocolName,
+          },
+      ],
+    },
+    'summary': <String, dynamic>{
+      'deviceName': entry.deviceName,
+      'deviceId': entry.deviceId,
+      'portNumber': entry.portNumber,
+      'vendorId': entry.vendorId,
+      'productId': entry.productId,
+      'deviceClass': entry.deviceClass,
+      'deviceSubclass': entry.deviceSubclass,
+      'deviceProtocol': entry.deviceProtocol,
+      'interfaceCount': entry.interfaceCount,
+      'configurationCount': entry.configurationCount,
+      'hasPermission': entry.hasPermission,
+      'manufacturerName': entry.manufacturerNameRaw,
+      'productName': entry.productNameRaw,
+      'serialNumber': entry.serialNumber,
+      'usbVersion': entry.usbVersion,
+      'speed': entry.speed,
+      'maxPowerMa': adv.maxPowerMa ?? entry.maxPowerMa,
+      'isInputDevice': entry.isInputDevice,
+      'isHiddenDevice': entry.isHiddenDevice,
+      'inputSources': entry.inputSources,
+      'stableIdentityKey': entry.stableIdentityKey,
+      'identityConfidence': entry.identityConfidence,
+      'identityStrategy': entry.identityStrategy,
+      'physicalLocationKey': entry.physicalLocationKey,
+      'interfaceFingerprint': entry.interfaceFingerprint,
+    },
+    'deviceDescriptor': adv.deviceDescriptor.isEmpty ? null : adv.deviceDescriptor,
+    'configurations': adv.configurations,
+    'interfaces': adv.interfaces,
+    'input': adv.input.isEmpty ? null : adv.input,
+    'raw': raw,
+  };
+}
+
+String _buildHistoryPlainTextReport(
+  DeviceHistoryEntry entry,
+  _HistoryResolved resolved,
+  Map<String, dynamic> raw,
+) {
+  final adv = _HistoryAdvanced.fromEntry(entry);
+  final buffer = StringBuffer()
+    ..writeln('USBDevInfo History Device Report')
+    ..writeln('Exported: ${DateTime.now().toIso8601String()}')
+    ..writeln('Captured: ${entry.testedAt.toIso8601String()}')
+    ..writeln()
+    ..writeln('Identity')
+    ..writeln('  Device path: ${entry.deviceName}')
+    ..writeln('  Vendor ID: ${Fmt.hex16(entry.vendorId)}')
+    ..writeln('  Product ID: ${Fmt.hex16(entry.productId)}')
+    ..writeln('  Vendor: ${resolved.vendorName ?? entry.manufacturerNameRaw ?? 'Unknown'}')
+    ..writeln('  Product: ${resolved.productName ?? entry.productNameRaw ?? 'Unknown'}')
+    ..writeln('  Serial: ${entry.serialNumber ?? 'Unknown'}')
+    ..writeln()
+    ..writeln('USB')
+    ..writeln('  Device class: ${resolved.className ?? 'Unknown'} (${Fmt.decAndHex8(entry.deviceClass)})')
+    ..writeln('  Subclass: ${resolved.subclassName ?? 'Unknown'} (${Fmt.decAndHex8(entry.deviceSubclass)})')
+    ..writeln('  Protocol: ${resolved.protocolName ?? 'Unknown'} (${Fmt.decAndHex8(entry.deviceProtocol)})')
+    ..writeln('  USB version: ${entry.usbVersion ?? 'Unknown'}')
+    ..writeln('  Speed: ${entry.speed ?? 'Unknown'}')
+    ..writeln('  Permission granted at capture: ${entry.hasPermission ? 'Yes' : 'No'}')
+    ..writeln('  Interfaces: ${entry.interfaceCount}')
+    ..writeln('  Configurations: ${entry.configurationCount}');
+
+  if (adv.interfaces.isNotEmpty) {
+    buffer
+      ..writeln()
+      ..writeln('Interfaces');
+    for (int i = 0; i < adv.interfaces.length; i++) {
+      final iface = _asJsonMap(adv.interfaces[i]);
+      final resolvedIface = resolved.interfaceResolved.length > i ? resolved.interfaceResolved[i] : null;
+      buffer
+        ..writeln(
+          '  IF ${_asInt(iface['id']) ?? '?'} alt ${_asInt(iface['alternateSetting']) ?? 0}: ${resolvedIface?.className ?? 'Unknown'} / ${resolvedIface?.subclassName ?? 'Unknown'} / ${resolvedIface?.protocolName ?? 'Unknown'}',
+        )
+        ..writeln('    Endpoints: ${_asInt(iface['endpointCount']) ?? _asList(iface['endpoints']).length}');
+      for (final ep in _asList(iface['endpoints'])) {
+        final epMap = _asJsonMap(ep);
+        buffer.writeln(
+          '    - ${(epMap['type'] as String?) ?? 'Unknown'} ${(epMap['direction'] as String?) ?? 'Unknown'} addr ${Fmt.decAndHex8(_asInt(epMap['address']) ?? 0)} maxPkt ${_asInt(epMap['maxPacketSize']) ?? 0} interval ${_asInt(epMap['interval']) ?? 0}',
+        );
+      }
+    }
+  }
+
+  final availabilityIssues = _asList(raw['availabilityIssues']).map(_asMap).where((e) => e.isNotEmpty).toList(growable: false);
+  if (availabilityIssues.isNotEmpty) {
+    buffer
+      ..writeln()
+      ..writeln('Availability issues');
+    for (final issue in availabilityIssues) {
+      buffer.writeln('  - ${(issue['scope'] as String?) ?? 'availability'}: ${(issue['message'] as String?) ?? 'Unavailable'}');
+    }
+  }
+
+  buffer
+    ..writeln()
+    ..writeln('Advanced counts')
+    ..writeln('  Descriptor tree nodes: ${adv.descriptorTree.length}')
+    ..writeln('  HID report descriptors: ${adv.hidReports.length}')
+    ..writeln('  Strings available: ${adv.strings.isNotEmpty ? 'Yes' : 'No'}')
+    ..writeln('  Device state available: ${adv.deviceState.isNotEmpty ? 'Yes' : 'No'}');
+
+  return buffer.toString().trimRight();
+}
+
+String _buildHistoryRawHexDump(DeviceHistoryEntry entry, Map<String, dynamic> raw) {
+  final buffer = StringBuffer()
+    ..writeln('# USBDevInfo history raw hex dump')
+    ..writeln('# device: ${entry.deviceName}')
+    ..writeln('# captured: ${entry.testedAt.toIso8601String()}')
+    ..writeln('# exported: ${DateTime.now().toIso8601String()}')
+    ..writeln();
+
+  final tree = _asList(raw['descriptorTree']).map(_asMap).where((e) => e.isNotEmpty).toList(growable: false);
+  if (tree.isEmpty) {
+    buffer.writeln('Descriptor tree: unavailable');
+  } else {
+    buffer.writeln('Descriptor tree');
+    for (final node in tree) {
+      final offset = _asInt(node['offset']);
+      final typeName = (node['descriptorTypeName'] as String?) ?? 'Unknown';
+      final descriptorType = _asInt(node['descriptorType']);
+      final rawHex = (node['rawHex'] as String?)?.trim() ?? '';
+      buffer.writeln(
+        '[${offset == null ? '?' : '0x${offset.toRadixString(16)}'}] $typeName (${descriptorType == null ? '?' : Fmt.decAndHex8(descriptorType)})',
+      );
+      buffer.writeln(rawHex.isEmpty ? '<unavailable>' : Fmt.hexWrap(rawHex, group: 2, groupsPerLine: 16));
+      buffer.writeln();
+    }
+  }
+
+  final reports = _asList(raw['hidReports']).map(_asMap).where((e) => e.isNotEmpty).toList(growable: false);
+  if (reports.isEmpty) {
+    buffer.writeln('HID report descriptors: unavailable');
+  } else {
+    buffer.writeln('HID report descriptors');
+    for (final report in reports) {
+      final ifNum = _asInt(report['interfaceNumber']);
+      final hex = (report['reportHex'] as String?)?.trim() ?? '';
+      buffer.writeln('Interface ${ifNum ?? '?'}');
+      buffer.writeln(hex.isEmpty ? '<unavailable>' : Fmt.hexWrap(hex, group: 2, groupsPerLine: 16));
+      buffer.writeln();
+    }
+  }
+
+  return buffer.toString().trimRight();
+}
+
+enum _HistoryRawDumpExportFormat {
+  json,
+  report,
+  hex,
+}
+
+class _HistoryRawDumpExportSheet extends StatefulWidget {
+  const _HistoryRawDumpExportSheet({
+    required this.prettyJson,
+    required this.plainText,
+    required this.rawHex,
+  });
+
+  final String prettyJson;
+  final String plainText;
+  final String rawHex;
+
+  @override
+  State<_HistoryRawDumpExportSheet> createState() => _HistoryRawDumpExportSheetState();
+}
+
+class _HistoryRawDumpExportSheetState extends State<_HistoryRawDumpExportSheet> {
+  _HistoryRawDumpExportFormat _format = _HistoryRawDumpExportFormat.json;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final content = switch (_format) {
+      _HistoryRawDumpExportFormat.json => widget.prettyJson,
+      _HistoryRawDumpExportFormat.report => widget.plainText,
+      _HistoryRawDumpExportFormat.hex => widget.rawHex,
+    };
+    final title = switch (_format) {
+      _HistoryRawDumpExportFormat.json => 'JSON payload',
+      _HistoryRawDumpExportFormat.report => 'Plain text report',
+      _HistoryRawDumpExportFormat.hex => 'Raw hex descriptors',
+    };
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Raw dump export', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 6),
+          Text(
+            'Export this historical device snapshot directly from history.',
+            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _ExportFormatChip(
+                label: 'JSON',
+                selected: _format == _HistoryRawDumpExportFormat.json,
+                onTap: () => setState(() => _format = _HistoryRawDumpExportFormat.json),
+              ),
+              _ExportFormatChip(
+                label: 'Report',
+                selected: _format == _HistoryRawDumpExportFormat.report,
+                onTap: () => setState(() => _format = _HistoryRawDumpExportFormat.report),
+              ),
+              _ExportFormatChip(
+                label: 'Raw hex',
+                selected: _format == _HistoryRawDumpExportFormat.hex,
+                onTap: () => setState(() => _format = _HistoryRawDumpExportFormat.hex),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: theme.textTheme.titleMedium,
+                ),
+              ),
+              FilledButton.icon(
+                onPressed: () async {
+                  await Clipboard.setData(ClipboardData(text: content));
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('$title copied to clipboard.')),
+                  );
+                  HapticFeedback.selectionClick();
+                },
+                icon: const Icon(Icons.copy_rounded),
+                label: const Text('Copy'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: SingleChildScrollView(
+                child: SelectableText(
+                  content,
+                  style: theme.textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ExportFormatChip extends StatelessWidget {
+  const _ExportFormatChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ChoiceChip(
+      label: Text(label),
+      selected: selected,
+      onSelected: (_) => onTap(),
     );
   }
 }

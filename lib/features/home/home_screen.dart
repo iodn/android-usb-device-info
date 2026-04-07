@@ -150,11 +150,17 @@ class _DeviceTile extends ConsumerWidget {
     final title = item.productName ?? d.productName ?? (d.isInputDevice ? 'Input device' : 'USB Device');
     final subtitle = item.vendorName ?? d.manufacturerName ?? item.deviceClassName ?? 'Unknown vendor';
     final idLine = '${Fmt.hex16(d.vendorId)} : ${Fmt.hex16(d.productId)}';
+    final chipsetFamily = item.chipsetFamily;
+    final likelyFunction = item.likelyFunction;
 
     final isInput = d.isInputDevice;
+    final isHidden = d.isHiddenDevice;
     final sources = d.inputSources ?? const <String>[];
+    final capabilities = d.capabilities ?? const <String>[];
 
-    final permissionChip = isInput
+    final permissionChip = isHidden
+        ? const _StatusChip(label: 'Sysfs topology', icon: Icons.account_tree_rounded, tonal: true)
+        : isInput
         ? _StatusChip(
             label: sources.isEmpty ? 'Input device' : 'Input: ${sources.join(', ')}',
             icon: sources.contains('mouse')
@@ -201,6 +207,24 @@ class _DeviceTile extends ConsumerWidget {
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                     ),
+                    if (chipsetFamily != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        '${chipsetFamily.family} • ${chipsetFamily.confidence}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                      ),
+                    ],
+                    if (likelyFunction != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        '${likelyFunction.label} • ${likelyFunction.confidence}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                      ),
+                    ],
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
@@ -210,11 +234,22 @@ class _DeviceTile extends ConsumerWidget {
                         _InfoPill(icon: Icons.fingerprint_rounded, label: idLine),
                         _InfoPill(
                           icon: Icons.usb_rounded,
-                          label: isInput ? 'Input path' : '${d.interfaceCount} interfaces',
+                          label: isHidden ? 'Hidden topology' : isInput ? 'Input path' : '${d.interfaceCount} interfaces',
                         ),
                         permissionChip,
                       ],
                     ),
+                    if (capabilities.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          for (final capability in capabilities)
+                            _CapabilityChip(label: capability, icon: _capabilityIcon(capability)),
+                        ],
+                      ),
+                    ],
                     const SizedBox(height: 10),
                     Text(
                       d.deviceName,
@@ -234,6 +269,31 @@ class _DeviceTile extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+IconData _capabilityIcon(String capability) {
+  switch (capability) {
+    case 'Audio':
+      return Icons.headset_rounded;
+    case 'Video':
+      return Icons.videocam_rounded;
+    case 'HID':
+      return Icons.keyboard_alt_rounded;
+    case 'MIDI':
+      return Icons.piano_rounded;
+    case 'Storage':
+      return Icons.storage_rounded;
+    case 'Hub':
+      return Icons.hub_rounded;
+    case 'CDC':
+      return Icons.settings_ethernet_rounded;
+    case 'Composite':
+      return Icons.widgets_rounded;
+    case 'Input':
+      return Icons.input_rounded;
+    default:
+      return Icons.usb_rounded;
   }
 }
 
@@ -347,6 +407,38 @@ class _StatusChip extends StatelessWidget {
           Icon(icon, size: 16, color: fg),
           const SizedBox(width: 6),
           Text(label, style: theme.textTheme.labelMedium?.copyWith(color: fg)),
+        ],
+      ),
+    );
+  }
+}
+
+class _CapabilityChip extends StatelessWidget {
+  const _CapabilityChip({required this.label, required this.icon});
+
+  final String label;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 15, color: theme.colorScheme.onSecondaryContainer),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: theme.colorScheme.onSecondaryContainer,
+            ),
+          ),
         ],
       ),
     );

@@ -12,7 +12,6 @@ DEFAULT_OUT_DB = ROOT / "assets" / "db" / "usbids.sqlite"
 
 
 def _cleanup_sidecars(db_path: Path) -> None:
-    # Defensive: ensure no WAL/SHM sidecars remain in assets/
     for suffix in ("-wal", "-shm"):
         p = Path(str(db_path) + suffix)
         if p.exists():
@@ -40,7 +39,6 @@ def main() -> None:
 
     con = sqlite3.connect(str(out_db))
     try:
-        # Fast build settings
         con.execute("PRAGMA journal_mode=OFF;")
         con.execute("PRAGMA synchronous=OFF;")
         con.execute("PRAGMA temp_store=MEMORY;")
@@ -48,7 +46,6 @@ def main() -> None:
         con.executescript(sql)
         con.commit()
 
-        # Switch back to a safer default for a shipped DB file
         con.execute("PRAGMA journal_mode=DELETE;")
         con.execute("PRAGMA optimize;")
         con.commit()
