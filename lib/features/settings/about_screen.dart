@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../l10n/l10n.dart';
 import 'widgets/section_card.dart';
 import 'widgets/support_pill.dart';
 
@@ -71,6 +72,7 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
   Future<void> _launchExternal(BuildContext context, String url) async {
+    final l10n = context.l10n;
     try {
       final uri = Uri.parse(url);
       final ok = await canLaunchUrl(uri);
@@ -78,7 +80,7 @@ class _AboutScreenState extends State<AboutScreen> {
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('No browser available'),
+            content: Text(l10n.noBrowserAvailable),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -89,7 +91,7 @@ class _AboutScreenState extends State<AboutScreen> {
       if (!launched && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Failed to open link'),
+            content: Text(l10n.usbAboutFailedToOpenLink),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -99,7 +101,7 @@ class _AboutScreenState extends State<AboutScreen> {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to open: $e'),
+          content: Text(l10n.failedToOpen('$e')),
           backgroundColor: Theme.of(context).colorScheme.error,
           behavior: SnackBarBehavior.floating,
         ),
@@ -108,9 +110,9 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
   String _buildModeLabel() {
-    if (kReleaseMode) return 'Release';
-    if (kProfileMode) return 'Profile';
-    return 'Debug';
+    if (kReleaseMode) return 'release';
+    if (kProfileMode) return 'profile';
+    return 'debug';
   }
 
   String _versionLabel() {
@@ -142,11 +144,16 @@ class _AboutScreenState extends State<AboutScreen> {
     final appName = _appName();
     final ver = _versionLabel();
     final pkg = _packageName();
-    final mode = _buildModeLabel();
+    final modeKey = _buildModeLabel();
+    final mode = switch (modeKey) {
+      'release' => context.l10n.usbAboutBuildModeRelease,
+      'profile' => context.l10n.usbAboutBuildModeProfile,
+      _ => context.l10n.usbAboutBuildModeDebug,
+    };
     final year = DateTime.now().year;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('About')),
+      appBar: AppBar(title: Text(context.l10n.aboutTitle)),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
         children: [
@@ -167,7 +174,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Version $ver',
+                  context.l10n.usbAboutVersion(ver),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: cs.onSurface.withOpacity(0.7),
                     fontWeight: FontWeight.w700,
@@ -186,44 +193,44 @@ class _AboutScreenState extends State<AboutScreen> {
           ),
           const SizedBox(height: 18),
           SectionCard(
-            title: 'Links',
-            subtitle: 'Repository, issues, and donations',
+            title: context.l10n.usbAboutLinksTitle,
+            subtitle: context.l10n.usbAboutLinksSubtitle,
             leading: Icon(Icons.link_rounded, color: cs.primary),
             child: Column(
               children: [
                 ListTile(
                   leading: const Icon(Icons.code_rounded),
-                  title: const Text('Repository'),
+                  title: Text(context.l10n.usbAboutRepositoryTitle),
                   subtitle: Text(widget.repoUrl),
                   trailing: const Icon(Icons.open_in_new_rounded),
                   onTap: () => _launchExternal(context, widget.repoUrl),
-                  onLongPress: () => _copy(context, widget.repoUrl, 'Repository link copied'),
+                  onLongPress: () => _copy(context, widget.repoUrl, context.l10n.repositoryLinkCopied),
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.bug_report_outlined),
-                  title: const Text('Report an issue'),
+                  title: Text(context.l10n.usbAboutReportIssueTitle),
                   subtitle: Text(widget.issuesUrl),
                   trailing: const Icon(Icons.open_in_new_rounded),
                   onTap: () => _launchExternal(context, widget.issuesUrl),
-                  onLongPress: () => _copy(context, widget.issuesUrl, 'Issues link copied'),
+                  onLongPress: () => _copy(context, widget.issuesUrl, context.l10n.usbAboutIssuesLinkCopied),
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.favorite_rounded),
-                  title: const Text('Donate via Liberapay'),
+                  title: Text(context.l10n.usbAboutDonateTitle),
                   subtitle: Text(widget.liberapayUrl),
                   trailing: const Icon(Icons.open_in_new_rounded),
                   onTap: () => _launchExternal(context, widget.liberapayUrl),
-                  onLongPress: () => _copy(context, widget.liberapayUrl, 'Liberapay link copied'),
+                  onLongPress: () => _copy(context, widget.liberapayUrl, context.l10n.usbAboutLiberapayLinkCopied),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 12),
           SectionCard(
-            title: 'What this app is',
-            subtitle: 'USB inspection utility',
+            title: context.l10n.usbAboutWhatThisAppIsTitle,
+            subtitle: context.l10n.usbAboutWhatThisAppIsSubtitle,
             leading: Icon(Icons.usb_rounded, color: cs.primary),
             child: Padding(
               padding: const EdgeInsets.all(14),
@@ -231,7 +238,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'USBDevInfo enumerates OTG/USB host devices, shows descriptors and class/protocol details, resolves VID/PID using an offline USB IDs database, and records connection history. No accounts, no tracking, no ads.',
+                    context.l10n.usbAboutWhatThisAppIsBody,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: cs.onSurface.withOpacity(0.85),
                       height: 1.35,
@@ -239,14 +246,14 @@ class _AboutScreenState extends State<AboutScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Wrap(
+                  Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      SupportPill(icon: Icons.usb_rounded, label: 'USB host'),
-                      SupportPill(icon: Icons.view_list_rounded, label: 'Descriptors'),
-                      SupportPill(icon: Icons.storage_rounded, label: 'Offline USB IDs'),
-                      SupportPill(icon: Icons.history_rounded, label: 'History'),
+                      SupportPill(icon: Icons.usb_rounded, label: context.l10n.usbAboutUsbHostPill),
+                      SupportPill(icon: Icons.view_list_rounded, label: context.l10n.usbAboutDescriptorsPill),
+                      SupportPill(icon: Icons.storage_rounded, label: context.l10n.usbAboutOfflineUsbIdsPill),
+                      SupportPill(icon: Icons.history_rounded, label: context.l10n.historyScreenTitle),
                     ],
                   ),
                 ],
@@ -255,28 +262,28 @@ class _AboutScreenState extends State<AboutScreen> {
           ),
           const SizedBox(height: 12),
           SectionCard(
-            title: 'Build information',
-            subtitle: 'Version, package, and build mode',
+            title: context.l10n.usbAboutBuildInformationTitle,
+            subtitle: context.l10n.usbAboutBuildInformationSubtitle,
             leading: Icon(Icons.info_outline, color: cs.primary),
             child: Padding(
               padding: const EdgeInsets.all(14),
               child: Column(
                 children: [
-                  _InfoRow(label: 'App', value: appName),
+                  _InfoRow(label: context.l10n.usbAboutAppLabel, value: appName),
                   const SizedBox(height: 10),
-                  _InfoRow(label: 'Version', value: ver),
+                  _InfoRow(label: context.l10n.usbAboutVersionLabel, value: ver),
                   const SizedBox(height: 10),
-                  _InfoRow(label: 'Package', value: pkg),
+                  _InfoRow(label: context.l10n.usbAboutPackageLabel, value: pkg),
                   const SizedBox(height: 10),
-                  _InfoRow(label: 'Build', value: mode),
+                  _InfoRow(label: context.l10n.usbAboutBuildLabel, value: mode),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 12),
           SectionCard(
-            title: 'Other apps by KaijinLab',
-            subtitle: 'More security and hardware-adjacent tools',
+            title: context.l10n.usbAboutOtherAppsTitle,
+            subtitle: context.l10n.usbAboutOtherAppsSubtitle,
             leading: Icon(Icons.apps_rounded, color: cs.primary),
             child: Column(
               children: [
@@ -284,10 +291,10 @@ class _AboutScreenState extends State<AboutScreen> {
                   ListTile(
                     leading: const Icon(Icons.launch_rounded),
                     title: Text(a.name),
-                    subtitle: const Text('Open GitHub repository'),
+                    subtitle: Text(context.l10n.usbAboutOpenGithubRepository),
                     trailing: const Icon(Icons.open_in_new_rounded),
                     onTap: () => _launchExternal(context, a.url),
-                    onLongPress: () => _copy(context, a.url, 'Repository link copied'),
+                    onLongPress: () => _copy(context, a.url, context.l10n.repositoryLinkCopied),
                   ),
                   if (a != _otherApps().last) const Divider(height: 1),
                 ],
@@ -296,15 +303,15 @@ class _AboutScreenState extends State<AboutScreen> {
           ),
           const SizedBox(height: 12),
           SectionCard(
-            title: 'Legal',
-            subtitle: 'Open-source licenses and acknowledgements',
+            title: context.l10n.usbAboutLegalTitle,
+            subtitle: context.l10n.usbAboutLegalSubtitle,
             leading: Icon(Icons.gavel_rounded, color: cs.primary),
             child: Column(
               children: [
                 ListTile(
                   leading: const Icon(Icons.article_outlined),
-                  title: const Text('Open-source licenses'),
-                  subtitle: const Text('View third-party dependency licenses'),
+                  title: Text(context.l10n.openSourceLicenses),
+                  subtitle: Text(context.l10n.usbAboutViewThirdPartyLicenses),
                   trailing: const Icon(Icons.chevron_right_rounded),
                   onTap: () {
                     showLicensePage(
@@ -326,12 +333,12 @@ class _AboutScreenState extends State<AboutScreen> {
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.content_copy_rounded),
-                  title: const Text('Copy build details'),
-                  subtitle: const Text('Version + package + build mode'),
+                  title: Text(context.l10n.usbAboutCopyBuildDetailsTitle),
+                  subtitle: Text(context.l10n.usbAboutCopyBuildDetailsSubtitle),
                   onTap: () {
                     final text =
                         '$appName\nVersion: $ver\nPackage: $pkg\nBuild: $mode\nRepo: ${widget.repoUrl}\n';
-                    _copy(context, text, 'Build details copied');
+                    _copy(context, text, context.l10n.usbAboutBuildDetailsCopied);
                   },
                 ),
               ],
@@ -340,7 +347,7 @@ class _AboutScreenState extends State<AboutScreen> {
           const SizedBox(height: 14),
           Center(
             child: Text(
-              '© $year KaijinLab • Open-source software',
+              context.l10n.usbAboutCopyright(year),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: cs.onSurface.withOpacity(0.55),
                 fontWeight: FontWeight.w700,

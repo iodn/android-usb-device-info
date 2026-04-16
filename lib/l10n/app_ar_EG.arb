@@ -1,0 +1,2615 @@
+{
+  "@@locale": "ar_EG",
+  "appTitle": "IR Blaster",
+  "loading": "جار التحميل…",
+  "unknownError": "خطأ غير معروف",
+  "failedToStart": "تعذر البدء",
+  "retry": "إعادة المحاولة",
+  "quickTilePower": "تشغيل",
+  "quickTileMute": "كتم",
+  "quickTileVolumeUp": "الصوت +",
+  "quickTileVolumeDown": "الصوت -",
+  "homeUsbPermissionRequiredMessage": "هذا الهاتف لا يحتوي على مرسل IR مدمج. تم اكتشاف دونجل IR عبر USB، لكن لم يتم منح الإذن بعد.\n\nوافق على طلب إذن USB لتفعيل الإرسال عبر IR.",
+  "homeUsbPermissionDeniedMessage": "هذا الهاتف لا يحتوي على مرسل IR مدمج. تم اكتشاف دونجل IR عبر USB، لكن تم رفض إذن USB.\n\nاطلب الإذن مرة أخرى ووافق على الرسالة لتفعيل الإرسال عبر IR.",
+  "homeUsbPermissionGrantedMessage": "هذا الهاتف لا يحتوي على مرسل IR مدمج. تم السماح لدونجل IR عبر USB، لكنه لم يتهيأ بعد.",
+  "homeUsbOpenFailedMessage": "هذا الهاتف لا يحتوي على مرسل IR مدمج. تم اكتشاف دونجل IR عبر USB والسماح له، لكن تعذر تهيئته.\n\nأعد توصيل الدونجل وحاول مرة أخرى.",
+  "homeUsbReadyMessage": "هذا الهاتف لا يحتوي على مرسل IR مدمج.",
+  "homeUsbNoDeviceMessage": "هذا الهاتف لا يحتوي على مرسل IR مدمج، ولا يوجد حالياً دونجل IR عبر USB مدعوم متصل.\n\nما زال بإمكانك إنشاء أجهزة التحكم واستيرادها وإدارتها، لكن لإرسال إشارات IR تحتاج إلى أحد الخيارات أدناه.",
+  "homeUsbOptionPlugIn": "وصّل دونجل IR عبر USB مدعوماً، ثم وافق على الإذن.",
+  "homeUsbOptionReady": "جاهز للاستخدام.",
+  "homeUsbOptionPermissionRequired": "موصول. الإذن مطلوب.",
+  "homeUsbOptionPermissionDenied": "تم رفض الإذن. اطلبه مرة أخرى.",
+  "homeUsbOptionPermissionGranted": "تم السماح. جار تهيئة الدونجل.",
+  "homeUsbOptionOpenFailed": "تم السماح، لكن فشلت التهيئة.",
+  "homeHardwareBannerNoInternal": "هذا الهاتف لا يحتوي على IR مدمج. وصّل دونجل IR عبر USB أو فعّل وضع الصوت من الإعدادات.",
+  "homeHardwareBannerPermissionRequired": "تم اكتشاف دونجل USB. الإذن مطلوب لإرسال IR.",
+  "homeHardwareBannerPermissionDenied": "تم رفض إذن USB. اطلبه مرة أخرى لإرسال IR.",
+  "homeHardwareBannerPermissionGranted": "تم السماح لدونجل USB. في انتظار التهيئة.",
+  "homeHardwareBannerOpenFailed": "تم السماح لدونجل USB، لكن التهيئة فشلت.",
+  "homeHardwareBannerReady": "USB جاهز.",
+  "homeHardwareRequiredTitle": "محتاج هاردوير IR عشان تبعت أوامر",
+  "homeUsbDongleRecommended": "دونجل IR عبر USB، موصى به",
+  "homeAudioAdapterAlternative": "محول IR صوتي (بديل)",
+  "homeAudioAdapterDescription": "الإعدادات → مرسل IR → الصوت 1 LED أو 2 LED. يتطلب محول صوت إلى IR.",
+  "close": "إغلاق",
+  "homeChooseTransmitter": "اختار مرسل",
+  "openSettings": "فتح الإعدادات",
+  "homeUsbPermissionSentApprove": "تم إرسال طلب إذن USB. وافق على الرسالة لتفعيل USB.",
+  "homeUsbDongleNotDetected": "لم يتم اكتشاف دونجل IR عبر USB مدعوم. وصّله ثم حاول مرة أخرى.",
+  "homeUsbPermissionRequestFailed": "فشل طلب إذن USB.",
+  "working": "جارٍ التنفيذ…",
+  "requestUsbPermission": "طلب إذن USB",
+  "homeHardwareTip": "ملاحظة: ما زال بإمكانك إنشاء أجهزة التحكم وتنظيمها الآن. يلزم العتاد فقط عند الإرسال.",
+  "homeNoIrTransmitterTitle": "مافيش مرسل IR متاح",
+  "homeHardwareRequiredBody": "يقدر IR Blaster ينشئ ويدير الريموتات على أي موبايل. لكن عشان ترسل أوامر الأشعة تحت الحمراء فعليًا، جهازك محتاج واحد من خيارات الهاردوير اللي تحت.",
+  "homeCanStillUseWithoutHardware": "لسه تقدر تنشئ الريموتات وتستوردها وتنظمها دلوقتي.",
+  "homeWaysToUseIrBlaster": "طرق استخدام IR Blaster",
+  "homeBuiltInIrOptionTitle": "موبايل فيه IR مدمج",
+  "homeBuiltInIrOptionSubtitle": "يشتغل على الموبايلات المدعومة اللي فيها مرسل IR مدمج. الموبايل ده ما فيهوش واحد.",
+  "homeBuiltInIrUnavailable": "غير متاح على هذا الهاتف",
+  "homeUsbFamilyTiqiaaZaza": "Tiqiaa / ZaZa",
+  "homeUsbFamilyElkSmart": "ElkSmart",
+  "homeAudioAccessoryLabel": "محول صوت 3.5 مم",
+  "homeContinueWithoutHardware": "كمل بدون هاردوير",
+  "homeHowItWorks": "كيف يعمل",
+  "settingsNavLabel": "الإعدادات",
+  "dismiss": "تجاهل",
+  "remotesNavLabel": "أجهزة التحكم",
+  "macrosNavLabel": "الماكرو",
+  "signalTesterNavLabel": "مختبر الإشارة",
+  "settingsTitle": "الإعدادات",
+  "remoteNoIrEmitterTitle": "No IR emitter",
+  "remoteNoIrEmitterMessage": "هذا الجهاز لا يحتوي على مرسل IR.",
+  "remoteNoIrEmitterNeedsEmitter": "This app needs an IR emitter إلى function",
+  "remoteDismiss": "تجاهل",
+  "remoteClose": "إغلاق",
+  "remoteFailedToSend": "فشل إلى send IR: {error}",
+  "@remoteFailedToSend": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "remoteFailedToStartLoop": "فشل إلى start loop: {error}",
+  "@remoteFailedToStartLoop": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "remoteLoopStoppedFailed": "Loop stopped (send فشل): {error}",
+  "@remoteLoopStoppedFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "remoteLoopingHint": "يتم الآن تكرار \"{title}\". اضغط إيقاف في الشريط العلوي للتوقف.",
+  "@remoteLoopingHint": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "remoteLoopStopped": "Loop stopped.",
+  "remoteUpdatedNotFound": "تم تحديث جهاز التحكم على الشاشة. لم يتم العثور عليه في القائمة المحفوظة.",
+  "remoteUpdatedNamed": "تم تحديث \"{name}\".",
+  "@remoteUpdatedNamed": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "remoteDeleteFailed": "حذف فشل: {error}",
+  "@remoteDeleteFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "remoteNotFoundSavedList": "جهاز التحكم not موجود in saved list.",
+  "remoteDeletedNamed": "تم حذف \"{name}\".",
+  "@remoteDeletedNamed": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "buttonFallbackTitle": "زر",
+  "imageFallbackTitle": "Image",
+  "noBrowserAvailable": "No browser available",
+  "failedToOpen": "فشل الفتح: {error}",
+  "@failedToOpen": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "cancel": "إلغاء",
+  "settingsRestoreDemoTitle": "استعادة أجهزة التحكم التجريبية؟",
+  "settingsRestoreDemoMessage": "سيؤدي هذا إلى استبدال أجهزة التحكم الحالية بالأجهزة التجريبية المدمجة. يُنصح بأخذ نسخة احتياطية إذا كنت تريد الاحتفاظ بالقائمة الحالية.",
+  "settingsRestoreDemoConfirm": "استعادة التجريبي",
+  "settingsDemoRemotesRestored": "تمت استعادة الأجهزة التجريبية.",
+  "settingsDeleteAllRemotesTitle": "حذف all remotes?",
+  "settingsDeleteAllRemotesMessage": "سيؤدي هذا إلى إزالة كل أجهزة التحكم من هذا الجهاز. لا يمكن التراجع عن هذا الإجراء.",
+  "settingsDeleteAllConfirm": "حذف الكل",
+  "settingsAllRemotesDeleted": "الكل remotes deleted.",
+  "themeAuto": "تلقائي Theme",
+  "themeLight": "فاتح Theme",
+  "themeDark": "داكن Theme",
+  "themeDescAuto": "يتبع إعدادات جهازك",
+  "themeDescLight": "مشرق وواضح دائماً",
+  "themeDescDark": "مريح للعين",
+  "themeHintAuto": "يتبدل المظهر تلقائياً عند تغيير إعدادات جهازك بين الوضع الفاتح والداكن",
+  "themeHintLight": "مثالي للاستخدام النهاري والأماكن المضيئة جيداً",
+  "themeHintDark": "يقلل إجهاد العين في الإضاءة المنخفضة ويوفر البطارية على شاشات OLED",
+  "supportDevelopmentTitle": "دعم التطوير",
+  "supportDevelopmentSubtitle": "ساعد على إبقاء IR Blaster محدثاً ومتوافقاً مع العتاد",
+  "supportDevelopmentBody": "لا إعلانات، ولا تتبع، ولا ميزات مقفلة. دعمك يمول عمل البروتوكولات، ودعم دونجل USB، وتحسين التوافق بين الأجهزة.",
+  "donate": "تبرع",
+  "starRepo": "Star Repo",
+  "repositoryLinkCopied": "Repository link copied",
+  "supportPillLocalOnly": "Local-only",
+  "supportPillNoTracking": "No tracking",
+  "supportPillHardwareAware": "Hardware-aware",
+  "supportPillOpenSource": "فتح-source",
+  "appearanceTitle": "Appearance",
+  "appearanceSubtitle": "خصص تجربتك البصرية",
+  "localizationTitle": "الترجمة",
+  "localizationSubtitle": "لغة التطبيق وسلوك الترجمة",
+  "localizationAutoUsing": "تلقائي، يستخدم {language}",
+  "@localizationAutoUsing": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "localizationAutoDescription": "يتبع التطبيق لغة جهازك متى أمكن.",
+  "localizationManualDescription": "تم ضبط لغة التطبيق يدوياً.",
+  "useSystemLanguageTitle": "استخدام لغة النظام",
+  "useSystemLanguageEnabled": "يتبع لغة جهازك: {language}",
+  "@useSystemLanguageEnabled": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "useSystemLanguageDisabled": "استخدم اللغة المحددة أدناه بدلاً من لغة الجهاز الافتراضية.",
+  "chooseAppLanguage": "اختر لغة التطبيق",
+  "languagePickerDisabledHint": "أوقف لغة النظام لاختيار لغة يدوياً.",
+  "searchLanguages": "ابحث عن اللغات",
+  "noLanguagesFound": "لا توجد لغات مطابقة",
+  "localizationHint": "عند تفعيل لغة النظام، يتبع التطبيق إعداد اللغة في جهازك ويعود إلى الإنجليزية إذا لم تتوفر ترجمة. أوقفه لقفل التطبيق على لغة محددة.",
+  "appLanguageTitle": "لغة التطبيق",
+  "appLanguageHint": "الوضع التلقائي يتبع لغة جهازك. اختر الإنجليزية أو الفرنسية هنا لتطبيقها على التطبيق فقط.",
+  "languageAuto": "تلقائي، النظام",
+  "languageAutoDescription": "اتبع لغة جهازك تلقائياً",
+  "languageEnglish": "الإنجليزية",
+  "languageEnglishDescription": "اجعل التطبيق يستخدم الإنجليزية دائماً",
+  "languageFrench": "الفرنسية",
+  "languageFrenchDescription": "اجعل التطبيق يستخدم الفرنسية دائماً",
+  "languageAutoShort": "تلقائي",
+  "languageEnglishShort": "الإنجليزية",
+  "languageFrenchShort": "الفرنسية",
+  "useDynamicColors": "Use dynamic colors",
+  "themeChoiceAuto": "تلقائي",
+  "themeChoiceLight": "فاتح",
+  "themeChoiceDark": "داكن",
+  "irTransmitterTitle": "IR Transmitter",
+  "irTransmitterSubtitle": "اختر التي hardware sends IR commands",
+  "interactionTitle": "Interaction",
+  "interactionSubtitle": "استجابة اللمس وتخطيط جهاز التحكم",
+  "hapticFeedbackTitle": "Haptic feedback",
+  "hapticFeedbackSubtitle": "اهتزاز عند اللمس والإجراءات",
+  "intensity": "Intensity",
+  "intensityLight": "فاتح",
+  "intensityMedium": "Medium",
+  "intensityStrong": "Strong",
+  "flipRemoteDefaultTitle": "Flip جهاز التحكم عرض by default",
+  "flipRemoteDefaultSubtitle": "فتح جهاز التحكم screens rotated 180° (for bottom-mounted USB dongles).",
+  "remoteViewFlipped": "سيفتح عرض جهاز التحكم بوضع مقلوب.",
+  "remoteViewNormal": "سيفتح عرض جهاز التحكم بشكل عادي.",
+  "backupTitle": "نسخة احتياطية",
+  "backupSubtitle": "استيراد أو تصدير أجهزة التحكم والماكرو",
+  "importBackup": "استيراد نسخة احتياطية",
+  "importBackupSubtitle": "استيراد نسخة أجهزة التحكم أو الماكرو أو ملفات Flipper Zero أو LIRC أو IRPLUS",
+  "bulkImportFolder": "Bulk import folder",
+  "bulkImportFolderSubtitle": "استيراد multiple remotes من a folder",
+  "exportBackup": "تصدير نسخة احتياطية",
+  "exportBackupSubtitle": "احفظ أجهزة التحكم والماكرو في ملف JSON واحد داخل التنزيلات",
+  "restoreDemoRemotes": "استعادة الأجهزة التجريبية",
+  "restoreDemoRemotesSubtitle": "استبدال الأجهزة الحالية بالنسخة التجريبية المدمجة",
+  "deleteAllRemotes": "حذف all remotes",
+  "deleteAllRemotesSubtitle": "إزالة كل أجهزة التحكم من هذا الجهاز",
+  "backupTip": "ملاحظة: صدّر نسخة احتياطية قبل التعديلات الكبيرة. يدعم الاستيراد النسخ الكاملة ونسخ JSON القديمة الخاصة بالأجهزة فقط وملفات Flipper Zero بصيغة .ir.",
+  "aboutTitle": "حول",
+  "aboutSubtitle": "معلومات التطبيق وتفاصيل المصدر المفتوح",
+  "aboutAppNameWithCreator": "IR Blaster - {creator}",
+  "@aboutAppNameWithCreator": {
+    "placeholders": {
+      "creator": {}
+    }
+  },
+  "versionLabel": "Version {version}",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "sourceCode": "المصدر Code",
+  "viewOnGitHub": "عرض on GitHub",
+  "repositoryUrlCopied": "Repository URL copied",
+  "reportIssue": "Report Issue",
+  "reportIssueSubtitle": "Bug reports & feature requests",
+  "issuesUrlCopied": "Issues URL copied",
+  "license": "License",
+  "openSourceLicense": "فتح-source license",
+  "licenseUrlCopied": "License URL copied",
+  "companyName": "KaijinLab Inc.",
+  "visitWebsite": "Visit our website",
+  "companyUrlCopied": "Company URL copied",
+  "licenses": "Licenses",
+  "openSourceLicenses": "فتح source licenses",
+  "byCreator": "by {creator}",
+  "@byCreator": {
+    "placeholders": {
+      "creator": {}
+    }
+  },
+  "deviceControlsTitle": "الجهاز Controls",
+  "deviceControlsSubtitle": "اعرض الأزرار المفضلة في صفحة عناصر تحكم النظام",
+  "manageFavorites": "Manage favorites",
+  "manageFavoritesSubtitle": "اختر الأزرار التي تظهر في عناصر تحكم الجهاز",
+  "quickSettingsTitle": "Quick الإعدادات",
+  "quickSettingsSubtitle": "أضف مربعات لاختصارات الطاقة والصوت",
+  "configureTiles": "Configure tiles",
+  "configureTilesSubtitle": "اربط المربعات بأزرار جهاز التحكم",
+  "tvKillTitle": "TVKill",
+  "tvKillSubtitle": "Universal power cycling for owned أجهزة",
+  "openTvKill": "فتح TVKill",
+  "openTvKillSubtitle": "Cycle power codes (use only on أجهزة you own)",
+  "failedToLoadTransmitterSettings": "فشل إلى تحميل transmitter settings.",
+  "usbStatusReady": "دونجل USB متصل وجاهز لإرسال IR.",
+  "usbStatusPermissionRequired": "تم اكتشاف دونجل USB. اطلب إذن USB ووافق على رسالة النظام.",
+  "usbStatusPermissionDenied": "تم رفض إذن USB للدونجل الموصول. اطلبه مرة أخرى ووافق على الرسالة.",
+  "usbStatusPermissionGranted": "تم منح إذن USB. ما زال الدونجل يحتاج إلى تهيئة قبل أن يتمكن من إرسال IR.",
+  "usbStatusOpenFailed": "تم منح إذن USB، لكن تعذر تهيئة الدونجل. أعد توصيله وحاول مرة أخرى.",
+  "usbStatusNoDevice": "لم يتم اكتشاف دونجل IR عبر USB مدعوم.",
+  "usbSelectPermissionRequired": "تم اكتشاف دونجل USB لكنه غير مصرح. اضغط طلب إذن USB.",
+  "usbSelectPermissionDenied": "تم رفض إذن USB. اضغط طلب إذن USB ووافق على الرسالة.",
+  "usbSelectPermissionGranted": "تم منح إذن USB، لكن الدونجل لم يتهيأ بعد. جرّب إعادة توصيله.",
+  "usbSelectOpenFailed": "تم منح إذن USB، لكن تعذر تهيئة الدونجل. أعد توصيله وحاول مرة أخرى.",
+  "usbSelectNoDevice": "لم يتم اكتشاف دونجل IR عبر USB مدعوم. وصّله ثم اضغط طلب إذن USB.",
+  "usbSelectReady": "دونجل USB جاهز.",
+  "autoSwitchEnabledMessage": "التبديل التلقائي مفعّل: يستخدم USB عند التوصيل، وإلا الداخلي.",
+  "autoSwitchDisabledMessage": "تلقائي-switch disabled: transmitter selection is now يدوي.",
+  "failedToUpdateAutoSwitch": "فشل إلى update auto-switch setting.",
+  "failedToSwitchTransmitter": "فشل إلى switch transmitter.",
+  "deviceHasNoInternalIr": "هذا الجهاز لا يحتوي على مرسل IR مدمج.",
+  "audioModeEnabledMessage": "تم تفعيل وضع الصوت. استخدم أعلى مستوى لصوت الوسائط ومحول صوت إلى IR LED.",
+  "usbPermissionRequestSent": "تم إرسال طلب إذن USB.",
+  "usbPermissionRequestSentApprove": "تم إرسال طلب إذن USB. وافق على الرسالة لتفعيل USB.",
+  "usbAlreadyReady": "تمت تهيئة دونجل USB بالفعل وهو جاهز.",
+  "failedToRequestUsbPermission": "فشل طلب إذن USB.",
+  "transmitterHelpInternal": "استخدم مرسل IR المدمج في الهاتف لإرسال الأوامر.",
+  "transmitterHelpUsb": "استخدم دونجل IR عبر USB، الإذن مطلوب، لإرسال الأوامر.",
+  "transmitterHelpAudio1": "استخدم خرج الصوت أحادي. يتطلب محول صوت إلى IR LED ومستوى صوت وسائط مرتفع.",
+  "transmitterHelpAudio2": "استخدم خرج الصوت الستيريو. يستخدم قناتين لتحسين تشغيل LED مع المحولات المتوافقة.",
+  "transmitterInternal": "Internal IR",
+  "transmitterUsb": "دونجل IR عبر USB",
+  "transmitterAudio1": "صوت (1 LED)",
+  "transmitterAudio2": "صوت (2 LEDs)",
+  "failedToLoadTransmitterCapabilities": "فشل إلى تحميل transmitter capabilities.",
+  "selectedTransmitter": "المحدد transmitter",
+  "selectedTransmitterValue": "{effective} • Active: {active}",
+  "@selectedTransmitterValue": {
+    "placeholders": {
+      "effective": {},
+      "active": {}
+    }
+  },
+  "refresh": "تحديث",
+  "autoSwitchTitle": "تلقائي-switch",
+  "autoSwitchDisabledWhileAudio": "Disabled while using صوت mode",
+  "autoSwitchUsesUsbOtherwiseInternal": "يستخدم USB عند التوصيل، وإلا الداخلي",
+  "unavailableOnThisDevice": "غير متاح على هذا الجهاز",
+  "openOnUsbAttachTitle": "الفتح عند توصيل USB",
+  "openOnUsbAttachSubtitle": "قد يقترح أندرويد فتح التطبيق عند توصيل دونجل IR عبر USB مدعوم.",
+  "openOnUsbAttachEnabledMessage": "سيُقترح فتح IR Blaster عند توصيل دونجل USB مدعوم.",
+  "openOnUsbAttachDisabledMessage": "لن يُقترح الفتح عند توصيل USB.",
+  "failedToUpdateSetting": "فشل إلى update setting.",
+  "unnamedButton": "زر بدون اسم",
+  "iconFallback": "أيقونة",
+  "remoteListReorderHint": "وضع إعادة الترتيب: اضغط مطولاً واسحب البطاقة لتحريكها.",
+  "deleteRemoteTitle": "حذف جهاز التحكم؟",
+  "deleteRemoteMessage": "\"{name}\" will be permanently removed. This action can't be undone.",
+  "@deleteRemoteMessage": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "delete": "حذف",
+  "addToDeviceControlsTitle": "إضافة إلى الجهاز Controls?",
+  "addToDeviceControlsDescription": "وصول سريع في عناصر تحكم جهاز النظام.",
+  "skip": "تخطي",
+  "add": "إضافة",
+  "addedToDeviceControls": "Added إلى الجهاز Controls.",
+  "deletedRemoteUndoUnavailable": "Deleted \"{name}\". This action can't be undone.",
+  "@deletedRemoteUndoUnavailable": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "remoteLayoutSummary": "{count} زر · {layout}",
+  "@remoteLayoutSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "layout": {}
+    }
+  },
+  "layoutComfort": "Comfort",
+  "layoutCompact": "Compact",
+  "open": "فتح",
+  "useThisRemote": "استخدم جهاز التحكم هذا",
+  "edit": "تعديل",
+  "editRemoteSubtitle": "إعادة التسمية وتعديل الأزرار",
+  "thisCannotBeUndone": "This cannot be undone",
+  "searchRemotes": "ابحث أجهزة التحكم",
+  "reorderRemotes": "Reorder remotes",
+  "addRemote": "إضافة جهاز تحكم",
+  "more": "المزيد",
+  "reorderMode": "Reorder mode",
+  "remoteButtonCount": "{count} زر{plural}",
+  "@remoteButtonCount": {
+    "placeholders": {
+      "count": {},
+      "plural": {}
+    }
+  },
+  "noRemotesYet": "No remotes yet",
+  "noRemotesDescription": "أنشئ جهاز تحكم لبدء إرسال أكواد IR.",
+  "noRemotesNextStep": "ماذا بعد: اضغط إضافة جهاز تحكم، ثم أضف أول أزرارك.",
+  "actions": "Actions",
+  "macrosTitle": "الماكرو",
+  "help": "مساعدة",
+  "createMacro": "إنشاء ماكرو",
+  "timedMacrosTitle": "ماكرو مؤقت",
+  "timedMacrosSubtitle": "أتمتة تسلسلات أوامر IR بتوقيت دقيق",
+  "timedMacrosNextStep": "الخطوة التالية: اضغط إنشاء أول ماكرو، اختر جهاز تحكم، ثم أضف الأوامر وفترات التأخير.",
+  "macroFeatureToysTitle": "مثالي للألعاب التفاعلية",
+  "macroFeatureToysDescription": "تحكم في أجهزة مثل كلاب i-cybie الروبوتية وروبوتات i-sobot وغيرها من الألعاب التي تحتاج وقتاً بين الأوامر لمعالجة الإجراءات.",
+  "macroFeatureTimingTitle": "تحكم دقيق بالتوقيت",
+  "macroFeatureTimingDescription": "أضف تأخيرات بين الأوامر، من 250ms إلى مدد مخصصة، حتى يجد جهازك وقتاً للاستجابة قبل الأمر التالي.",
+  "macroFeatureManualTitle": "خطوات متابعة يدوية",
+  "macroFeatureManualDescription": "أوقف التنفيذ وانتظر تأكيدك عندما تختلف مدة الحركة أو عندما تحتاج إلى ملاحظة مرئية.",
+  "exampleUseCase": "مثال Use Case",
+  "macroExampleText": "وضع i-cybie المتقدم:\n1. أرسل أمر الوضع\n2. انتظر 1000ms، اللعبة تعالج\n3. أرسل الإجراء 1\n4. انتظر 1000ms\n5. أرسل الإجراء 2\n…وهكذا تلقائياً",
+  "createFirstMacro": "أنشئ أول ماكرو",
+  "noRemote": "لا يوجد جهاز تحكم",
+  "macroStepCount": "{count} خطوة{plural}",
+  "@macroStepCount": {
+    "placeholders": {
+      "count": {},
+      "plural": {}
+    }
+  },
+  "aboutTimedMacros": "حول الماكرو المؤقت",
+  "aboutTimedMacrosDescription": "تتيح لك وحدات الماكرو المؤقتة أتمتة تسلسلات أوامر IR مع تأخيرات دقيقة بين كل خطوة.",
+  "sendCommand": "إرسال Command",
+  "sendCommandDescription": "يرسل أمر IR من جهاز التحكم الخاص بك.",
+  "delay": "تأخير",
+  "delayDescription": "ينتظر مدة محددة، مثل 1000ms، قبل الخطوة التالية.",
+  "manualContinue": "يدوي متابعة",
+  "manualContinueDescription": "يوقف التنفيذ حتى تضغط متابعة، مفيد للحركات ذات الطول المتغير.",
+  "gotIt": "فهمت",
+  "failedToSaveMacros": "فشل حفظ الماكرو.",
+  "deletedMacroNamed": "تم حذف \"{name}\".",
+  "@deletedMacroNamed": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "undo": "Undo",
+  "failedToRestoreMacro": "فشل استعادة الماكرو.",
+  "deleteMacroTitle": "حذف الماكرو؟",
+  "deleteMacroMessage": "يمكنك التراجع عن ذلك من الشريط التالي.",
+  "noRemotesAvailable": "No remotes available.",
+  "remoteButtonCountSummary": "{count} زر",
+  "@remoteButtonCountSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "remoteOrientationFlippedTooltip": "Orientation: flipped (tap إلى normal)",
+  "remoteOrientationNormalTooltip": "Orientation: normal (tap إلى flip)",
+  "stopLoop": "إيقاف loop",
+  "reorderButtons": "Reorder أزرار",
+  "remoteReorderHint": "وضع إعادة الترتيب: اضغط مطولاً واسحب الزر لتحريكه.",
+  "manageRemote": "إدارة جهاز التحكم",
+  "remoteNoButtons": "لا توجد أزرار في جهاز التحكم هذا",
+  "remoteNoButtonsDescription": "استخدم تعديل جهاز التحكم لإضافة الأزرار أو ضبطها.",
+  "editRemote": "تعديل جهاز التحكم",
+  "editRemoteActionsSubtitle": "إعادة التسمية وإعادة الترتيب وتعديل الأزرار",
+  "remoteUpdatedNamedButton": "تم تحديث \"{name}\".",
+  "@remoteUpdatedNamedButton": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "buttonAddedNamed": "Added \"{name}\".",
+  "@buttonAddedNamed": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "buttonDuplicated": "زر duplicated.",
+  "loopRunningForButton": "التكرار يعمل لهذا الزر.",
+  "loopTip": "ملاحظة: Use Loop إلى repeat until you stop it.",
+  "loopingBadge": "Looping",
+  "codeCopied": "Code copied.",
+  "copyCode": "نسخ code",
+  "startLoop": "بدء loop",
+  "editButtonSubtitle": "تعديل التسمية والكود والبروتوكول والتردد",
+  "newButton": "زر جديد",
+  "newButtonSubtitle": "أنشئ زراً جديداً بعد هذا الزر",
+  "duplicate": "Duplicate",
+  "duplicateButtonSubtitle": "أنشئ نسخة من هذا الزر",
+  "removeFromDeviceControls": "Remove من الجهاز Controls",
+  "addToDeviceControls": "إضافة إلى الجهاز Controls",
+  "deviceControlsButtonSubtitle": "يعرض هذا الزر في عناصر تحكم جهاز النظام",
+  "removedFromDeviceControls": "Removed من الجهاز Controls.",
+  "pinQuickTile": "Pin إلى Quick Tile favorites",
+  "unpinQuickTile": "Unpin من Quick Tile favorites",
+  "quickTileButtonSubtitle": "يعرض هذا الزر أعلى قائمة اختيار المربعات السريعة",
+  "removedFromQuickTileFavorites": "Removed من Quick Tile favorites.",
+  "pinnedToQuickTileFavorites": "Pinned إلى Quick Tile favorites.",
+  "duplicateAndEdit": "نسخ وتعديل",
+  "duplicateAndEditSubtitle": "أنشئ نسخة وعدلها فوراً",
+  "done": "تم",
+  "run": "تشغيل",
+  "untitledRemote": "Untitled جهاز التحكم",
+  "createRemoteTitle": "إنشاء جهاز تحكم",
+  "editRemoteTitle": "تعديل جهاز التحكم",
+  "removeButtonTitle": "إزالة الزر؟",
+  "imageButtonRemovedMessage": "سيتم حذف زر الصورة هذا.",
+  "namedButtonRemovedMessage": "\"{name}\" will be removed.",
+  "@namedButtonRemovedMessage": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "remove": "Remove",
+  "importedButtonCount": "تم استيراد {count} زر.",
+  "@importedButtonCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importedButtonsFromExistingRemotes": "تم استيراد {count} زر من أجهزة التحكم الموجودة.",
+  "@importedButtonsFromExistingRemotes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "editButtonSettingsSubtitle": "غيّر التسمية والإشارة والإعدادات المتقدمة",
+  "createButtonCopySubtitle": "أنشئ نسخة من هذا الزر",
+  "duplicateAndEditButtonSubtitle": "أنشئ نسخة وعدلها فوراً",
+  "undoAvailableInNextSnackbar": "يمكنك التراجع من الشريط التالي",
+  "buttonRemoved": "زر removed.",
+  "remoteNameCannotBeEmpty": "جهاز التحكم name can't be empty.",
+  "saveRemote": "حفظ جهاز التحكم",
+  "remoteName": "جهاز التحكم name",
+  "remoteNameHint": "e.g., TV, Air Conditioner, LED Strip",
+  "remoteNameHelper": "سيظهر هذا الاسم في قائمة أجهزة التحكم لديك.",
+  "layoutStyle": "Layout style",
+  "layoutWideDescription": "عريض: أزرار بعمودين مع تفاصيل إضافية، موصى به.",
+  "layoutCompactDescription": "Compact: classic 4× grid (icons/text only).",
+  "importFromRemotes": "استيراد من remotes",
+  "importFromDatabase": "استيراد من DB",
+  "addButton": "إضافة زر",
+  "noButtonsYet": "No أزرار yet",
+  "createRemoteEmptyStateDescription": "أضف أول زر، ثم اضغطه مطولاً لخيارات التعديل أو الإزالة.",
+  "createButtonTitle": "إنشاء زر",
+  "editButtonTitle": "تعديل زر",
+  "failedToLoadProtocols": "فشل إلى تحميل protocols: {error}",
+  "@failedToLoadProtocols": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "failedToLoadDatabaseKeys": "فشل تحميل مفاتيح قاعدة البيانات: {error}",
+  "@failedToLoadDatabaseKeys": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "presetPower": "تشغيل",
+  "presetVolume": "الصوت",
+  "presetChannel": "Channel",
+  "presetNavigation": "تنقل",
+  "all": "الكل",
+  "completeRequiredFieldsToSave": "أكمل الحقول المطلوبة للحفظ",
+  "buttonLabelStepTitle": "تسمية الزر",
+  "buttonLabelStepSubtitle": "اختر an image, icon, or type a text label.",
+  "buttonColorStepTitle": "لون الزر",
+  "buttonColorStepSubtitle": "اختر لون خلفية لهذا الزر.",
+  "selectColor": "اختر اللون:",
+  "noImageSelected": "No image المحدد",
+  "gallery": "Gallery",
+  "builtIn": "Built-in",
+  "removeImage": "Remove image",
+  "requiredSelectImageOrSwitch": "مطلوب: اختر صورة أو أيقونة أو بدّل إلى نص.",
+  "iconSelected": "Icon المحدد",
+  "noIconSelected": "No icon المحدد",
+  "chooseIcon": "اختر Icon",
+  "removeIcon": "Remove icon",
+  "requiredSelectIconOrSwitch": "مطلوب: اختر أيقونة أو بدّل إلى صورة أو نص.",
+  "buttonText": "زر text",
+  "buttonTextHint": "e.g., تشغيل, الصوت +, HDMI 1",
+  "buttonTextHelper": "سيظهر هذا النص على الزر.",
+  "requiredEnterButtonLabel": "مطلوب: أدخل تسمية للزر.",
+  "defaultColorName": "افتراضي",
+  "newRemoteCreatedFromLastHit": "تم إنشاء جهاز تحكم جديد مع زر واحد من آخر إصابة.",
+  "selectRemote": "اختر جهاز تحكم",
+  "remoteNumber": "جهاز التحكم #{id}",
+  "@remoteNumber": {
+    "placeholders": {
+      "id": {}
+    }
+  },
+  "newRemoteCreated": "تم إنشاء جهاز تحكم جديد.",
+  "failedToCreateRemote": "فشل إنشاء جهاز التحكم.",
+  "newRemoteEllipsis": "جهاز تحكم جديد…",
+  "addedToRemoteNamed": "Added إلى {name}.",
+  "@addedToRemoteNamed": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "failedToAddToRemote": "فشل الإضافة إلى جهاز التحكم.",
+  "newRemoteDefaultName": "New جهاز التحكم",
+  "jumpedToOffsetPaused": "Jumped إلى offset {offset}. Paused — press استئناف إلى continue.",
+  "@jumpedToOffsetPaused": {
+    "placeholders": {
+      "offset": {
+        "type": "int"
+      }
+    }
+  },
+  "sent": "تم الإرسال.",
+  "failedToSend": "فشل إلى send: {error}",
+  "@failedToSend": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "copiedProtocolCode": "تم النسخ، البروتوكول: الكود.",
+  "savedToResults": "Saved إلى النتائج.",
+  "invalidCodeForProtocol": "كود غير صالح لهذا البروتوكول: {error}",
+  "@invalidCodeForProtocol": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "copiedCurrentCandidate": "Copied الحالي candidate.",
+  "jumpToOffset": "انتقال إلى offset",
+  "jumpToBruteCursor": "انتقال إلى brute cursor",
+  "jump": "انتقال",
+  "jumpedToCursorPaused": "Jumped إلى cursor 0x{cursor}. Paused — press استئناف إلى continue.",
+  "@jumpedToCursorPaused": {
+    "placeholders": {
+      "cursor": {}
+    }
+  },
+  "irSignalTester": "IR إشارة Tester",
+  "stop": "إيقاف",
+  "selectButton": "اختر زر",
+  "buttonNotFoundInRemotes": "زر not موجود in remotes.",
+  "sentNamed": "Sent \"{name}\".",
+  "@sentNamed": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "sendFailed": "إرسال فشل: {error}",
+  "@sendFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "noFavoritesYet": "No favorites yet",
+  "deviceControlsEmptyHint": "اضغط مطولاً على زر في جهاز التحكم واختر إضافة إلى عناصر تحكم الجهاز.",
+  "sendTest": "إرسال test",
+  "testSendCompleted": "اختبار send completed.",
+  "testSendFailed": "اختبار send فشل: {error}",
+  "@testSendFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "removedNamed": "Removed \"{name}\".",
+  "@removedNamed": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "brand": "العلامة",
+  "model": "الطراز",
+  "selectBrand": "اختر العلامة",
+  "searchBrand": "ابحث عن علامة…",
+  "selectModel": "اختر الطراز",
+  "searchModel": "ابحث عن طراز…",
+  "unnamedKey": "Unnamed key",
+  "unknown": "غير معروف",
+  "emDash": "—",
+  "searchCommands": "ابحث commands",
+  "noMatchingCommands": "No matching commands",
+  "quickTileFavoritesTitle": "Quick tile favorites",
+  "changeMappingForTile": "Change mapping for {tileLabel} tile",
+  "@changeMappingForTile": {
+    "placeholders": {
+      "tileLabel": {}
+    }
+  },
+  "pickDifferentButton": "اختر زراً آخر",
+  "browseAllRemotesEllipsis": "Browse all remotes…",
+  "invalidMacroFileFormat": "تنسيق ملف الماكرو غير صالح.",
+  "failedToParseMacroFile": "فشل تحليل ملف الماكرو.",
+  "deviceCodeLabel": "الجهاز Code",
+  "commandLabel": "Command",
+  "editButtonCodeTitle": "تعديل كود الزر",
+  "thisRemoteHasNoButtons": "هذا الجهاز لا يحتوي على أزرار.",
+  "selectCommand": "اختر Command",
+  "databaseModeAutofillHint": "يقوم وضع قاعدة البيانات بملء الخطوة 2 تلقائياً، العلامة والطراز والبروتوكول. بعد استيراد مفتاح، يمكنك تعديل أي شيء في الوضع اليدوي.",
+  "test": "اختبار",
+  "allSelectedButtonsWereDuplicates": "الكل المحدد أزرار were duplicates.",
+  "noButtonsImported": "No أزرار imported.",
+  "importedButtonsSkippedDuplicates": "تم استيراد {addedCount} زر. تم تخطي {skippedCount} من النسخ المكررة.",
+  "@importedButtonsSkippedDuplicates": {
+    "placeholders": {
+      "addedCount": {
+        "type": "int"
+      },
+      "skippedCount": {
+        "type": "int"
+      }
+    }
+  },
+  "importAllMatchingTitle": "استيراد all matching أزرار?",
+  "noMatchingKeysFound": "No matching keys موجود.",
+  "importAllMatchingMessage": "سيتم استيراد ما يصل إلى {count} من المفاتيح المطابقة من اختيار قاعدة البيانات الحالي.",
+  "@importAllMatchingMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importAll": "استيراد all",
+  "importingButtons": "Importing أزرار…",
+  "allMatchingButtonsWereDuplicates": "الكل matching أزرار were duplicates.",
+  "quickPresets": "Quick presets",
+  "selectDeviceFirst": "اختر الجهاز أولاً",
+  "searchByLabelOrHex": "ابحث by label or hex",
+  "optionalRefinePresetKeys": "اختياري: حسّن مفاتيح الإعداد المسبق {preset}",
+  "@optionalRefinePresetKeys": {
+    "placeholders": {
+      "preset": {}
+    }
+  },
+  "selectBrandModelProtocolFirst": "اختر العلامة والطراز والبروتوكول أولاً.",
+  "importFromDatabaseTitle": "استيراد من قاعدة البيانات",
+  "importFromDatabaseSubtitle": "اختر جهازاً، حمّل المفاتيح المطابقة، ثم استورد الأزرار المحددة.",
+  "deviceAndFilters": "الجهاز & filters",
+  "loadedCount": "{count} loaded",
+  "@loadedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hideFilters": "Hide filters",
+  "showFilters": "Show filters",
+  "noProtocolFoundForBrandModel": "لم يتم العثور على بروتوكول لهذه العلامة والطراز.",
+  "protocolAutoDetected": "البروتوكول",
+  "protocolAutoDetectedHelper": "تم اكتشافه تلقائياً من قاعدة البيانات. يمكنك تغييره قبل الاستيراد.",
+  "selectBrandModelToLoadKeys": "اختر علامة وطرازاً وبروتوكولاً لتحميل المفاتيح.",
+  "noKeysFound": "No keys موجود.",
+  "noKeysFoundForSearch": "No keys موجود for “{query}”.",
+  "@noKeysFoundForSearch": {
+    "placeholders": {
+      "query": {}
+    }
+  },
+  "skipDuplicates": "Skip duplicates",
+  "skipDuplicatesSubtitle": "لا تستورد الأزرار الموجودة بالفعل في جهاز التحكم هذا.",
+  "importSelected": "استيراد المحدد",
+  "noMacrosToExport": "لا توجد وحدات ماكرو للتصدير.",
+  "macrosExportedToDownloads": "تم تصدير الماكرو إلى التنزيلات.",
+  "failedToExportMacros": "فشل تصدير الماكرو.",
+  "failedToReadFile": "فشل إلى read file.",
+  "importFromExistingRemotesTitle": "استيراد من Existing أجهزة التحكم",
+  "selectedCount": "{count} المحدد",
+  "@selectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noOtherRemotesWithButtons": "لم يتم العثور على أجهزة تحكم أخرى تحتوي على أزرار.",
+  "sourceRemote": "جهاز التحكم المصدر",
+  "searchButtons": "ابحث أزرار",
+  "searchButtonsHint": "تشغيل, الصوت, كتم...",
+  "selectVisible": "اختر visible",
+  "clearVisible": "Clear visible",
+  "protocolNamed": "البروتوكول: {name}",
+  "@protocolNamed": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rawSignal": "خام",
+  "legacyCode": "Legacy code",
+  "importCount": "استيراد {count}",
+  "@importCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "storagePermissionDeniedLegacy": "تم رفض إذن التخزين، وهو مطلوب في بعض أجهزة أندرويد الأقدم.",
+  "backupExportedToDownloads": "تم تصدير النسخة الاحتياطية إلى التنزيلات.",
+  "failedToExport": "فشل إلى export: {error}",
+  "@failedToExport": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "importedLegacyJsonBackup": "تم استيراد {count} من أجهزة التحكم من نسخة JSON القديمة. لم يتم تغيير الماكرو.",
+  "@importedLegacyJsonBackup": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importFailedRemotesMustBeList": "فشل الاستيراد: يجب أن تكون النسخة الاحتياطية remotes قائمة JSON عند وجودها.",
+  "importFailedMacrosMustBeList": "فشل الاستيراد: يجب أن تكون النسخة الاحتياطية للماكرو قائمة JSON عند وجودها.",
+  "importFailedInvalidBackupFormat": "فشل الاستيراد: تنسيق النسخة الاحتياطية غير صالح، المطلوب قائمة قديمة أو خريطة مع أجهزة التحكم أو الماكرو.",
+  "importedBackupRemotesOnly": "تم استيراد {remoteCount} من أجهزة التحكم من النسخة الاحتياطية. لم يتم تغيير الماكرو.",
+  "@importedBackupRemotesOnly": {
+    "placeholders": {
+      "remoteCount": {
+        "type": "int"
+      }
+    }
+  },
+  "importedBackupRemotesAndMacros": "تم استيراد {remoteCount} من أجهزة التحكم و {macroCount} من وحدات الماكرو من النسخة الاحتياطية.",
+  "@importedBackupRemotesAndMacros": {
+    "placeholders": {
+      "remoteCount": {
+        "type": "int"
+      },
+      "macroCount": {
+        "type": "int"
+      }
+    }
+  },
+  "importFailedNoValidButtonsInIr": "فشل الاستيراد: no valid أزرار موجود in .ir file.",
+  "importedOneRemoteFromFlipper": "تم استيراد جهاز تحكم واحد من Flipper بصيغة .ir. لم يتم تغيير الماكرو.",
+  "importFailedInvalidIrplus": "فشل الاستيراد: invalid irplus file (no valid أزرار موجود).",
+  "importedOneRemoteFromIrplus": "تم استيراد جهاز تحكم واحد من irplus. لم يتم تغيير الماكرو.",
+  "importFailedInvalidLirc": "فشل الاستيراد: invalid LIRC file (no valid codes/raw codes موجود).",
+  "importedOneRemoteFromLirc": "تم استيراد جهاز تحكم واحد من إعداد LIRC. لم يتم تغيير الماكرو.",
+  "unsupportedFileTypeSelected": "Unsupported file type المحدد.",
+  "importFailedInvalidUnreadableFile": "فشل الاستيراد: invalid or unreadable file.",
+  "bulkImportNoSupportedFilesInFolder": "اكتمل الاستيراد المجمع: no مدعوم files موجود in folder.",
+  "bulkImportNoRemotesImported": "اكتمل الاستيراد المجمع: لم يتم استيراد أي جهاز تحكم. تم تخطي {skippedCount} ملفاً.",
+  "@bulkImportNoRemotesImported": {
+    "placeholders": {
+      "skippedCount": {
+        "type": "int"
+      }
+    }
+  },
+  "bulkImportComplete": "اكتمل الاستيراد المجمع: تم استيراد {importedCount} جهاز تحكم من {supportedCount} ملفاً مدعوماً. تم تخطي {skippedCount} ملفاً.",
+  "@bulkImportComplete": {
+    "placeholders": {
+      "importedCount": {
+        "type": "int"
+      },
+      "supportedCount": {
+        "type": "int"
+      },
+      "skippedCount": {
+        "type": "int"
+      }
+    }
+  },
+  "storagePermissionDenied": "تم رفض إذن التخزين.",
+  "bulkImportFailedReadFolder": "Bulk import فشل: unable إلى read folder contents.",
+  "bulkImportNoSupportedFilesSource": "اكتمل الاستيراد المجمع: no مدعوم files موجود ({sourceLabel}).",
+  "@bulkImportNoSupportedFilesSource": {
+    "placeholders": {
+      "sourceLabel": {}
+    }
+  },
+  "clearAction": "مسح",
+  "saveAction": "حفظ",
+  "buttonsTitleCount": "أزرار ({count})",
+  "@buttonsTitleCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "invalidStepEncountered": "تم العثور على خطوة غير صالحة",
+  "failedToSendNamed": "فشل إلى send: {name}",
+  "@failedToSendNamed": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "buttonNotFound": "زر not موجود",
+  "buttonNotFoundNamed": "زر not موجود: {name}",
+  "@buttonNotFoundNamed": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "unknownButton": "غير معروف زر",
+  "durationSecondsShort": "{seconds}s",
+  "@durationSecondsShort": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "durationMinutesSecondsShort": "{minutes}m {seconds}s",
+  "@durationMinutesSecondsShort": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      },
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "durationHoursMinutesShort": "{hours}h {minutes}m",
+  "@durationHoursMinutesShort": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "orientationFlippedTooltip": "Orientation: flipped (tap إلى normal)",
+  "orientationNormalTooltip": "Orientation: normal (tap إلى flip)",
+  "noSteps": "لا توجد خطوات",
+  "stepProgress": "خطوة {current} / {total}",
+  "@stepProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "completed": "Completed",
+  "paused": "Paused",
+  "running": "Running",
+  "ready": "جاهز",
+  "stepsProgress": "{current} / {total} خطوات",
+  "@stepsProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "waiting": "Waiting",
+  "secondsRemaining": "يتبقى {seconds}s",
+  "@secondsRemaining": {
+    "placeholders": {
+      "seconds": {}
+    }
+  },
+  "millisecondsShort": "{ms}ms",
+  "@millisecondsShort": {
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "tapContinueWhenReady": "اضغط متابعة عندما تصبح جاهزاً للخطوة التالية",
+  "error": "خطأ",
+  "macroCompleted": "اكتمل الماكرو",
+  "finishedIn": "Finished in {duration}",
+  "@finishedIn": {
+    "placeholders": {
+      "duration": {}
+    }
+  },
+  "sequence": "Sequence",
+  "waitMilliseconds": "Wait {ms}ms",
+  "@waitMilliseconds": {
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "runAgain": "تشغيل Again",
+  "startMacro": "بدء الماكرو",
+  "continueAction": "متابعة",
+  "unnamedRemote": "Unnamed جهاز التحكم",
+  "enterMacroName": "أدخل اسم الماكرو",
+  "addAtLeastOneStep": "أضف خطوة واحدة على الأقل",
+  "fixInvalidSteps": "أصلح الخطوات غير الصالحة",
+  "unknownCommand": "غير معروف Command",
+  "unnamedCommand": "Unnamed Command",
+  "iconCommand": "Icon Command",
+  "selectDelay": "اختر تأخير",
+  "keepMilliseconds": "Keep: {ms}ms",
+  "@keepMilliseconds": {
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "custom": "مخصص",
+  "enterCustomDelayDuration": "Enter a custom delay duration",
+  "millisecondsLong": "{ms} milliseconds",
+  "@millisecondsLong": {
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsLong": "{seconds} ثانية{plural}",
+  "@secondsLong": {
+    "placeholders": {
+      "seconds": {},
+      "plural": {}
+    }
+  },
+  "customDelay": "Custom تأخير",
+  "delayMillisecondsLabel": "تأخير (milliseconds)",
+  "delayMillisecondsHint": "e.g., 3000",
+  "recommendedDelayRange": "Recommended: 250-5000ms for most أجهزة",
+  "enterValidPositiveNumber": "Please enter a valid positive number",
+  "ok": "موافق",
+  "remote": "جهاز التحكم",
+  "macroName": "اسم الماكرو",
+  "macroNameHint": "مثال، وضع i-cybie المتقدم",
+  "stepsTitleCount": "خطوات ({count})",
+  "@stepsTitleCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noStepsYet": "لا توجد خطوات بعد",
+  "addCommandsAndDelaysHint": "أضف الأوامر وفترات التأخير أدناه لبناء التسلسل",
+  "addStep": "إضافة خطوة",
+  "reorderStepsHint": "ملاحظة: اسحب المقبض لإعادة ترتيب الخطوات. اضغط على خطوة لتعديلها.",
+  "reorderStep": "إعادة ترتيب الخطوة {index}",
+  "@reorderStep": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "pressAndDragToChangeStepOrder": "اضغط واسحب لتغيير ترتيب الخطوات",
+  "deleteStep": "حذف الخطوة {index}",
+  "@deleteStep": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "invalidStepTapToFix": "خطوة غير صالحة، اضغط لإصلاحها",
+  "sendIrCommand": "إرسال IR command",
+  "waitForUserConfirmation": "Wait for user confirmation",
+  "notImplemented": "Not implemented",
+  "frequencyKhz": "{value} kHz",
+  "@frequencyKhz": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "necProtocolShort": "NEC",
+  "msbShort": "MSB",
+  "layoutWide": "عريض",
+  "iconButton": "زر أيقونة",
+  "imageButton": "زر صورة",
+  "noSignalInfo": "No signal info",
+  "proceed": "Proceed",
+  "discard": "Discard",
+  "continueEditing": "Continue editing",
+  "unsavedChangesTitle": "Unsaved changes",
+  "unsavedMacroChangesMessage": "Discard your macro changes and leave this screen?",
+  "stopMacroBeforeLeaving": "Stop the macro before leaving this screen.",
+  "stopTestingBeforeLeaving": "Stop testing before leaving this screen.",
+  "idle": "خامل",
+  "start": "بدء",
+  "resume": "استئناف",
+  "pause": "إيقاف مؤقت",
+  "stopped": "Stopped",
+  "copy": "نسخ",
+  "send": "إرسال",
+  "step": "خطوة",
+  "addToRemote": "إضافة إلى جهاز التحكم",
+  "noDescriptionAvailable": "No description available.",
+  "notAvailableSymbol": "—",
+  "irFinderKaseikyoVendorInvalid": "يجب أن يكون مورد Kaseikyo من 4 أرقام hex بالضبط.",
+  "irFinderDatabaseNotReady": "قاعدة البيانات غير جاهزة بعد.",
+  "irFinderSelectBrandFirst": "اختر علامة تجارية أولاً من الإعداد.",
+  "irFinderBruteforceUnavailable": "البحث بالقوة الغاشمة غير متاح لهذا البروتوكول بعد.",
+  "irFinderInvalidPrefix": "بادئة غير صالحة.",
+  "irFinderBrandValue": "العلامة: {value}",
+  "@irFinderBrandValue": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "irFinderModelValue": "الطراز: {value}",
+  "@irFinderModelValue": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "irFinderKeyValue": "المفتاح: {value}",
+  "@irFinderKeyValue": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "irFinderRemoteNumber": "جهاز التحكم رقم {value}",
+  "@irFinderRemoteNumber": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "irFinderJumpOffsetHelper": "أدخل فهرساً يبدأ من الصفر داخل نتائج قاعدة البيانات المصفاة والمرتبة.",
+  "irFinderJumpCursorHelper": "أدخل مؤشراً hex يبدأ من الصفر داخل مساحة القوة الغاشمة.",
+  "irFinderSetupTab": "الإعداد",
+  "irFinderTestTab": "اختبار",
+  "irFinderResultsTab": "النتائج",
+  "irFinderContinueToTest": "تابع إلى الاختبار",
+  "irFinderKaseikyoVendorTitle": "مورد Kaseikyo",
+  "irFinderCustomVendorLabel": "مورد مخصص، 4 hex",
+  "irFinderBrowseDbCandidates": "تصفح مرشحي القاعدة…",
+  "irFinderEditSetup": "تعديل الإعداد",
+  "irFinderNoSavedHits": "لا توجد إصابات محفوظة بعد. في صفحة الاختبار، اضغط حفظ الإصابة عندما يستجيب الجهاز.",
+  "irFinderBackToTest": "عودة للاختبار",
+  "irFinderLargeSearchSpaceTitle": "مساحة بحث كبيرة",
+  "irFinderLargeSearchSpaceBody": "مساحة القوة الغاشمة هذه كبيرة جداً، {human} احتمالاً. سيظل IR Finder يحترم الحد الأقصى للمحاولات وفترة التهدئة، لكن انتبه لعدم إغراق أجهزة IR.\n\nالتوصية: استخدم وضع قاعدة البيانات أولاً، أو أدخل بايتات بادئة معروفة لتقليل المساحة.",
+  "@irFinderLargeSearchSpaceBody": {
+    "placeholders": {
+      "human": {}
+    }
+  },
+  "irFinderDatabaseSession": "جلسة قاعدة البيانات",
+  "irFinderBruteforceSession": "جلسة القوة الغاشمة",
+  "irFinderResumeLastSession": "استئناف آخر جلسة",
+  "irFinderResumeBrandModel": "العلامة: {brand} · الطراز: {model}",
+  "@irFinderResumeBrandModel": {
+    "placeholders": {
+      "brand": {},
+      "model": {}
+    }
+  },
+  "irFinderResumePrefix": "البادئة: {value}",
+  "@irFinderResumePrefix": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "irFinderResumeProgress": "التقدم: {progress} · بدأ: {when}",
+  "@irFinderResumeProgress": {
+    "placeholders": {
+      "progress": {},
+      "when": {}
+    }
+  },
+  "irFinderApplyResume": "تطبيق واستئناف",
+  "irFinderBruteforceMode": "قوة غاشمة",
+  "irFinderDatabaseAssistedMode": "بمساعدة قاعدة البيانات",
+  "irFinderProtocolTitle": "البروتوكول: {name}",
+  "@irFinderProtocolTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "irFinderProtocolLabel": "بروتوكول IR",
+  "irFinderProtocolHelper": "يتحكم في الترميز وبالتالي في مساحة البحث.",
+  "irFinderKnownPrefixLabel": "بادئة معروفة، بايتات hex اختيارية",
+  "irFinderKnownPrefixHint": "A1B2، A1 B2، A1:B2، 0xA1 0xB2",
+  "irFinderKnownPrefixHelperPayload": "الحمولة: {digits} رقم hex",
+  "@irFinderKnownPrefixHelperPayload": {
+    "placeholders": {
+      "digits": {
+        "type": "int"
+      }
+    }
+  },
+  "irFinderKnownPrefixHelperPayloadExample": "الحمولة: {digits} رقم hex · مثال: {example}",
+  "@irFinderKnownPrefixHelperPayloadExample": {
+    "placeholders": {
+      "digits": {
+        "type": "int"
+      },
+      "example": {}
+    }
+  },
+  "irFinderKnownPrefixHelperPayloadMax": "الحمولة: {digits} رقم hex · أقصى بادئة: {bytes} بايت",
+  "@irFinderKnownPrefixHelperPayloadMax": {
+    "placeholders": {
+      "digits": {
+        "type": "int"
+      },
+      "bytes": {
+        "type": "int"
+      }
+    }
+  },
+  "irFinderKnownPrefixHelperPayloadExampleMax": "الحمولة: {digits} رقم hex · مثال: {example} · أقصى بادئة: {bytes} بايت",
+  "@irFinderKnownPrefixHelperPayloadExampleMax": {
+    "placeholders": {
+      "digits": {
+        "type": "int"
+      },
+      "example": {},
+      "bytes": {
+        "type": "int"
+      }
+    }
+  },
+  "irFinderKnownPrefixHelperExample": "مثال: {example}",
+  "@irFinderKnownPrefixHelperExample": {
+    "placeholders": {
+      "example": {}
+    }
+  },
+  "irFinderKnownPrefixHelperFallback": "أدخل أي بايتات أولى معروفة لتقليل مساحة البحث.",
+  "irFinderDatabaseMode": "قاعدة البيانات",
+  "irFinderNormalizedPrefixValue": "البادئة المطبعة: {value}",
+  "@irFinderNormalizedPrefixValue": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "irFinderNormalizedPrefix": "البادئة المطبعة",
+  "irFinderBruteforceNotConfigured": "القوة الغاشمة غير مضبوطة لهذا البروتوكول بعد.",
+  "irFinderAllLimit": "الكل، {value}",
+  "@irFinderAllLimit": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "irFinderTestControls": "عناصر الاختبار",
+  "irFinderPayloadLength": "طول الحمولة: {digits} رقم hex.",
+  "@irFinderPayloadLength": {
+    "placeholders": {
+      "digits": {
+        "type": "int"
+      }
+    }
+  },
+  "irFinderSearchSpace": "مساحة البحث: {value} احتمالاً، بعد قيود البادئة.",
+  "@irFinderSearchSpace": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "irFinderCooldownMs": "التهدئة، ms",
+  "irFinderMaxAttemptsPerRun": "أقصى محاولات، لكل تشغيل",
+  "irFinderTestAllCombinations": "اختبر كل التركيبات",
+  "irFinderTestAllCombinationsHint": "يستمر حتى تنتهي مساحة البحث. الحد الفعلي: {value}",
+  "@irFinderTestAllCombinationsHint": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "irFinderAttempts": "المحاولات",
+  "irFinderAttemptsSliderRange": "نطاق المؤشر: من 1 إلى {max}، اكتب أي رقم للقيم الأكبر",
+  "@irFinderAttemptsSliderRange": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "irFinderMaxButton": "الحد الأقصى\n{value}",
+  "@irFinderMaxButton": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "irFinderEffectiveLimitThisRun": "الحد الفعلي لهذا التشغيل: {value}",
+  "@irFinderEffectiveLimitThisRun": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "irFinderBruteforceTip": "ملاحظة: استخدم وضع قاعدة البيانات أولاً؛ القوة الغاشمة أفضل مع بادئة معروفة، مثل أول 1 إلى 4 بايتات.",
+  "irFinderDatabaseInitFailed": "فشل تهيئة قاعدة البيانات.",
+  "irFinderPreparingDatabase": "جار تجهيز قاعدة بيانات IR المحلية…",
+  "irFinderDatabaseAssistedSearch": "بحث بمساعدة قاعدة البيانات",
+  "irFinderBrand": "العلامة",
+  "irFinderSelectBrand": "اختر العلامة",
+  "irFinderModelOptional": "الطراز، اختياري",
+  "irFinderSelectBrandFirstShort": "اختر علامة أولاً",
+  "irFinderSelectModelRecommended": "اختر طرازاً، موصى به",
+  "irFinderOnlySelectedProtocol": "البروتوكول المحدد فقط",
+  "irFinderOnlySelectedProtocolHint": "يصفّي المفاتيح إلى البروتوكول المحدد. عطله لتصفح كل البروتوكولات.",
+  "irFinderQuickWinsFirst": "النتائج السريعة أولاً",
+  "irFinderQuickWinsFirstHint": "يعطي أولوية لمفاتيح الطاقة والكتم والصوت والقنوات قبل المفاتيح الأعمق.",
+  "irFinderMaxKeysPerRun": "أقصى عدد مفاتيح للاختبار، لكل تشغيل",
+  "irFinderTesting": "جار الاختبار…",
+  "irFinderCooldown": "التهدئة",
+  "irFinderEta": "الوقت المتوقع",
+  "irFinderMode": "الوضع",
+  "irFinderRetryLast": "إعادة آخر محاولة",
+  "irFinderTrigger": "تشغيل",
+  "irFinderJump": "انتقال…",
+  "irFinderSaveHit": "حفظ الإصابة",
+  "irFinderEtaSeconds": "{seconds}ث",
+  "@irFinderEtaSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "irFinderEtaMinutesSeconds": "{minutes}د {seconds}ث",
+  "@irFinderEtaMinutesSeconds": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      },
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "irFinderEtaHoursMinutes": "{hours}س {minutes}د",
+  "@irFinderEtaHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "irFinderLastAttemptedCode": "آخر كود تمت تجربته: {value}",
+  "@irFinderLastAttemptedCode": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "irFinderStartTestingToSeeLastCode": "ابدأ الاختبار لرؤية آخر كود تمت تجربته.",
+  "irFinderFromDb": "من القاعدة: {value}",
+  "@irFinderFromDb": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "irFinderFromBruteforce": "من القوة الغاشمة، تم إنشاؤه بواسطة مشفر البروتوكول.",
+  "irFinderSendError": "خطأ إرسال: {error}",
+  "@irFinderSendError": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "irFinderSourceValue": "المصدر: {value}",
+  "@irFinderSourceValue": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "irFinderResultsNote": "تدعم النتائج الاختبار والنسخ فوراً. يمكن توسيع إضافة النتائج مباشرة إلى جهاز التحكم لاحقاً داخل مسار المحرر.",
+  "irFinderBrowseDbCandidatesTitle": "تصفح مرشحي القاعدة",
+  "irFinderFilterByLabelOrHex": "صفِّ حسب التسمية أو hex…",
+  "irFinderJumpHere": "انتقل هنا",
+  "irFinderSelectModel": "اختر الطراز",
+  "irFinderSearchBrands": "ابحث عن العلامات…",
+  "irFinderSearchModels": "ابحث عن الطرز…",
+  "iconPickerTitle": "اختر Icon",
+  "iconPickerSearchHint": "ابحث icons...",
+  "iconPickerNoIconsFound": "No icons موجود",
+  "iconPickerIconsAvailable": "{count} icons available",
+  "@iconPickerIconsAvailable": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "iconPickerCategoryAll": "الكل",
+  "iconPickerCategoryMedia": "وسائط",
+  "iconPickerCategoryVolume": "الصوت",
+  "iconPickerCategoryNavigation": "تنقل",
+  "iconPickerCategoryPower": "تشغيل",
+  "iconPickerCategoryNumbers": "Numbers",
+  "iconPickerCategorySettings": "الإعدادات",
+  "iconPickerCategoryDisplay": "Display",
+  "iconPickerCategoryInput": "إدخال",
+  "iconPickerCategoryFavorite": "مفضل",
+  "universalPowerTitle": "Universal تشغيل",
+  "universalPowerRunTab": "تشغيل",
+  "universalPowerUseResponsibly": "Use responsibly",
+  "universalPowerConsentBody": "يقوم Universal Power بتدوير أكواد الطاقة عبر IR. استخدمه فقط مع الأجهزة التي تملكها أو تتحكم بها. توقف فور استجابة الجهاز.",
+  "universalPowerConsentCheckbox": "أنا أملك الجهاز أو أتحكم به",
+  "universalPowerSetupBody": "يدوّر أكواد الطاقة للعلامة المحددة. توقف فور استجابة الجهاز.",
+  "universalPowerLastSent": "Last sent: {value}",
+  "@universalPowerLastSent": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "universalPowerNoCodesFound": "لم يتم العثور على أكواد طاقة. جرّب توسيع البحث.",
+  "universalPowerUnableToStart": "Unable إلى start.",
+  "universalPowerAllBrands": "الكل brands (no filter)",
+  "universalPowerClearBrandFilter": "مسح عامل تصفية العلامة",
+  "universalPowerBroadenSearch": "وسّع البحث عند الحاجة",
+  "universalPowerBroadenSearchHint": "If no power labels are موجود, include other keys.",
+  "universalPowerAdditionalPatternsDepth": "Additional patterns depth",
+  "universalPowerDepth1": "Priority only: POWER/OFF",
+  "universalPowerDepth2": "Include POWER aliases",
+  "universalPowerDepth3": "Include secondary power labels",
+  "universalPowerDepth4": "Include all labels (lowest priority)",
+  "universalPowerLoopUntilStopped": "Loop until stopped",
+  "universalPowerLoopUntilStoppedHint": "يستمر في تدوير الطابور حتى توقفه.",
+  "universalPowerDelayBetweenCodes": "تأخير between codes",
+  "universalPowerStart": "بدء Universal تشغيل",
+  "universalPowerRunStatus": "تشغيل status",
+  "universalPowerProgress": "التقدم: {value}",
+  "@universalPowerProgress": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "universalPowerPausedInBackground": "تم الإيقاف المؤقت لأن التطبيق انتقل إلى الخلفية.",
+  "universalPowerSendOneCode": "إرسال one code",
+  "universalPowerStopWhenDeviceResponds": "توقف فور استجابة الجهاز.",
+  "iconNamePlay": "تشغيل",
+  "iconNamePause": "إيقاف مؤقت",
+  "iconNameStop": "إيقاف",
+  "iconNameFastForward": "Fast Forward",
+  "iconNameRewind": "Rewind",
+  "iconNameSkipNext": "Skip Next",
+  "iconNameSkipPrevious": "Skip Previous",
+  "iconNameReplay": "إعادة تشغيل",
+  "iconNameForward10S": "Forward 10s",
+  "iconNameForward30S": "Forward 30s",
+  "iconNameReplay10S": "إعادة تشغيل 10s",
+  "iconNameReplay30S": "إعادة تشغيل 30s",
+  "iconNameRecord": "تسجيل",
+  "iconNameRecordAlt": "تسجيل Alt",
+  "iconNameEject": "إخراج",
+  "iconNameShuffle": "Shuffle",
+  "iconNameRepeat": "تكرار",
+  "iconNameRepeatOne": "تكرار واحد",
+  "iconNameVolumeUp": "رفع الصوت",
+  "iconNameVolumeDown": "خفض الصوت",
+  "iconNameVolumeOff": "الصوت Off",
+  "iconNameMute": "كتم",
+  "iconNameSpeaker": "Speaker",
+  "iconNameSurroundSound": "Surround Sound",
+  "iconNameEqualizer": "Equalizer",
+  "iconNameAudio": "صوت",
+  "iconNameMicrophone": "Microphone",
+  "iconNameMicOff": "Mic Off",
+  "iconNameUp": "أعلى",
+  "iconNameDown": "أسفل",
+  "iconNameLeft": "يسار",
+  "iconNameRight": "يمين",
+  "iconNameArrowUp": "Arrow أعلى",
+  "iconNameArrowDown": "Arrow أسفل",
+  "iconNameArrowLeft": "Arrow يسار",
+  "iconNameArrowRight": "Arrow يمين",
+  "iconNameNavigation": "تنقل",
+  "iconNameChevronLeft": "Chevron يسار",
+  "iconNameChevronRight": "Chevron يمين",
+  "iconNameExpandLess": "توسيع Less",
+  "iconNameExpandMore": "توسيع المزيد",
+  "iconNameCollapse": "Collapse",
+  "iconNameExpand": "توسيع",
+  "iconNameCircleUp": "Circle أعلى",
+  "iconNameCircleDown": "Circle أسفل",
+  "iconNameCircleLeft": "Circle يسار",
+  "iconNameCircleRight": "Circle يمين",
+  "iconNameOkSelect": "OK/اختر",
+  "iconNameConfirm": "Confirm",
+  "iconNameCancel": "إلغاء",
+  "iconNameClose": "إغلاق",
+  "iconNameHome": "الرئيسية",
+  "iconNameReturn": "رجوع",
+  "iconNameExit": "خروج",
+  "iconNameUndo": "Undo",
+  "iconNameRedo": "إعادة",
+  "iconNamePower": "تشغيل",
+  "iconNamePowerAlt": "تشغيل Alt",
+  "iconNamePowerOff": "تشغيل Off",
+  "iconNameOn": "تشغيل",
+  "iconNameOff": "إيقاف",
+  "iconNameToggleOn": "Toggle On",
+  "iconNameToggleOff": "Toggle Off",
+  "iconNameRestart": "Restart",
+  "iconNameNum1": "1",
+  "iconNameNum2": "2",
+  "iconNameNum3": "3",
+  "iconNameNum4": "4",
+  "iconNameNum5": "5",
+  "iconNameNum6": "6",
+  "iconNameNum7": "7",
+  "iconNameNum8": "8",
+  "iconNameNum9": "9",
+  "iconNameNum92": "9+",
+  "iconNameNum0": "0",
+  "iconNameOne": "واحد",
+  "iconNameTwo": "اثنان",
+  "iconNameThree": "ثلاثة",
+  "iconNameFour": "أربعة",
+  "iconNameFive": "خمسة",
+  "iconNameSix": "ستة",
+  "iconNamePlus": "زائد",
+  "iconNameMinus": "ناقص",
+  "iconNameAddCircle": "إضافة Circle",
+  "iconNameRemoveCircle": "Remove Circle",
+  "iconNameSettings": "الإعدادات",
+  "iconNameMenu": "القائمة",
+  "iconNameMoreVertical": "المزيد Vertical",
+  "iconNameMoreHorizontal": "المزيد Horizontal",
+  "iconNameTune": "ضبط",
+  "iconNameRemoteSettings": "جهاز التحكم الإعدادات",
+  "iconNameInfo": "معلومات",
+  "iconNameInfoOutline": "معلومات Outline",
+  "iconNameHelp": "مساعدة",
+  "iconNameHelpOutline": "مساعدة Outline",
+  "iconNameList": "قائمة",
+  "iconNameViewList": "عرض قائمة",
+  "iconNameViewGrid": "عرض Grid",
+  "iconNameApps": "تطبيقات",
+  "iconNameWidgets": "Widgets",
+  "iconNameTv": "تلفاز",
+  "iconNameMonitor": "Monitor",
+  "iconNameDesktop": "Desktop",
+  "iconNameBrightnessHigh": "Brightness High",
+  "iconNameBrightnessMedium": "Brightness Medium",
+  "iconNameBrightnessLow": "Brightness Low",
+  "iconNameAutoBrightness": "تلقائي Brightness",
+  "iconNameLightMode": "فاتح الوضع",
+  "iconNameDarkMode": "داكن الوضع",
+  "iconNameContrast": "Contrast",
+  "iconNameHdrOn": "HDR On",
+  "iconNameHdrOff": "HDR Off",
+  "iconNameAspectRatio": "Aspect Ratio",
+  "iconNameCrop": "قص",
+  "iconNameZoomIn": "Zoom In",
+  "iconNameZoomOut": "Zoom Out",
+  "iconNameFullscreen": "Fullscreen",
+  "iconNameExitFullscreen": "Exit Fullscreen",
+  "iconNameFitScreen": "Fit Screen",
+  "iconNamePip": "صورة داخل صورة",
+  "iconNameCropFree": "Crop Free",
+  "iconNameInput": "إدخال",
+  "iconNameCable": "كابل",
+  "iconNameCast": "بث",
+  "iconNameCastConnected": "Cast متصل",
+  "iconNameScreenShare": "Screen مشاركة",
+  "iconNameBluetooth": "Bluetooth",
+  "iconNameWifi": "WiFi",
+  "iconNameRouter": "Router",
+  "iconNameMemory": "ذاكرة",
+  "iconNameGameConsole": "Game Console",
+  "iconNameGaming": "ألعاب",
+  "iconNameMedia": "وسائط",
+  "iconNameMusicQueue": "موسيقى قائمة انتظار",
+  "iconNameVideoLibrary": "Video Library",
+  "iconNamePhotoLibrary": "Photo Library",
+  "iconNameComponent": "Component",
+  "iconNameHdmi": "HDMI",
+  "iconNameComposite": "Composite",
+  "iconNameAntenna": "Antenna",
+  "iconNameFavorite": "مفضل",
+  "iconNameFavoriteOutline": "مفضل Outline",
+  "iconNameStar": "نجمة",
+  "iconNameStarOutline": "Star Outline",
+  "iconNameBookmark": "Bookmark",
+  "iconNameBookmarkOutline": "Bookmark Outline",
+  "iconNameFlag": "علم",
+  "iconNameCheck": "تحقق",
+  "iconNameDone": "تم",
+  "iconNameDoneAll": "تم الكل",
+  "iconNameSchedule": "Schedule",
+  "iconNameTimer": "مؤقت",
+  "iconNameTime": "الوقت",
+  "iconNameAlarm": "منبه",
+  "iconNameNotifications": "Notifications",
+  "iconNameLock": "قفل",
+  "iconNameUnlock": "Unlock",
+  "iconNameLight": "فاتح",
+  "iconNameLightOutline": "فاتح Outline",
+  "iconNameWarmLight": "Warm فاتح",
+  "iconNameSunny": "مشمس",
+  "iconNameCloudy": "Cloudy",
+  "iconNameNight": "ليل",
+  "iconNameFlare": "توهج",
+  "iconNameGradient": "Gradient",
+  "iconNameInvertColors": "Invert Colors",
+  "iconNamePalette": "Palette",
+  "iconNameColor": "لون",
+  "iconNameTonality": "Tonality",
+  "iconNameSearch": "بحث",
+  "iconNameRefresh": "تحديث",
+  "iconNameSync": "مزامنة",
+  "iconNameUpdate": "Update",
+  "iconNameDownload": "Download",
+  "iconNameUpload": "Upload",
+  "iconNameCloud": "سحابة",
+  "iconNameFolder": "مجلد",
+  "iconNameDelete": "حذف",
+  "iconNameEdit": "تعديل",
+  "iconNameSave": "حفظ",
+  "iconNameShare": "مشاركة",
+  "iconNamePrint": "طباعة",
+  "iconNameLanguage": "اللغة",
+  "iconNameTranslate": "Translate",
+  "iconNameMicNone": "Mic None",
+  "iconNameSubtitles": "Subtitles",
+  "iconNameClosedCaption": "Closed Caption",
+  "iconNameMusic": "موسيقى",
+  "iconNameMovie": "فيلم",
+  "iconNameTheater": "Theater",
+  "iconNameLiveTv": "Live TV",
+  "iconNameRadio": "راديو",
+  "iconNameCamera": "كاميرا",
+  "iconNameVideoCamera": "Video كاميرا",
+  "iconNamePhotoCamera": "Photo كاميرا",
+  "iconNameSlowMotion": "Slow Motion",
+  "iconNameSpeed": "سرعة",
+  "iconNameVideoSettings": "Video الإعدادات",
+  "iconNameAudioTrack": "صوت Track",
+  "iconNameGraphicEq": "Graphic EQ",
+  "iconNameMusicVideo": "موسيقى Video",
+  "iconNamePlaylist": "Playlist",
+  "iconNameQueue": "قائمة انتظار",
+  "iconNameNum0Fa": "0 FA",
+  "iconNameNum1Fa": "1 FA",
+  "iconNameNum2Fa": "2 FA",
+  "iconNameNum3Fa": "3 FA",
+  "iconNameNum4Fa": "4 FA",
+  "iconNameNum5Fa": "5 FA",
+  "iconNameNum6Fa": "6 FA",
+  "iconNameNum7Fa": "7 FA",
+  "iconNameNum8Fa": "8 FA",
+  "iconNameNum9Fa": "9 FA",
+  "iconNameHashFa": "Hash # FA",
+  "iconNamePercentFa": "Percent % FA",
+  "iconNameDivideFa": "Divide ÷ FA",
+  "iconNameMultiplyFa": "Multiply × FA",
+  "iconNameEqualsFa": "Equals = FA",
+  "iconNameNotEqualFa": "Not Equal ≠ FA",
+  "iconNameGreaterThanFa": "Greater Than > FA",
+  "iconNameLessThanFa": "Less Than < FA",
+  "iconNameAsteriskFa": "Asterisk * FA",
+  "iconNameAFa": "A FA",
+  "iconNameBFa": "B FA",
+  "iconNameCFa": "C FA",
+  "iconNameDFa": "D FA",
+  "iconNameEFa": "E FA",
+  "iconNameFFa": "F FA",
+  "iconNameGFa": "G FA",
+  "iconNameHFa": "H FA",
+  "iconNameIFa": "I FA",
+  "iconNameJFa": "J FA",
+  "iconNameKFa": "K FA",
+  "iconNameLFa": "L FA",
+  "iconNameMFa": "M FA",
+  "iconNameNFa": "N FA",
+  "iconNameOFa": "O FA",
+  "iconNamePFa": "P FA",
+  "iconNameQFa": "Q FA",
+  "iconNameRFa": "R FA",
+  "iconNameSFa": "S FA",
+  "iconNameTFa": "T FA",
+  "iconNameUFa": "U FA",
+  "iconNameVFa": "V FA",
+  "iconNameWFa": "W FA",
+  "iconNameXFa": "X FA",
+  "iconNameYFa": "Y FA",
+  "iconNameZFa": "Z FA",
+  "iconNamePlayFa": "Play FA",
+  "iconNamePauseFa": "إيقاف مؤقت FA",
+  "iconNameStopFa": "إيقاف FA",
+  "iconNamePlayFaOutline": "Play FA Outline",
+  "iconNamePauseFaOutline": "إيقاف مؤقت FA Outline",
+  "iconNameStopFaOutline": "إيقاف FA Outline",
+  "iconNameBackwardFa": "Backward FA",
+  "iconNameForwardFa": "Forward FA",
+  "iconNamePreviousFa": "Previous FA",
+  "iconNameNextFa": "Next FA",
+  "iconNameRewindFa": "Rewind FA",
+  "iconNameFastForwardFa": "Fast Forward FA",
+  "iconNameRepeatFa": "تكرار FA",
+  "iconNameShuffleFa": "Shuffle FA",
+  "iconNameEjectFa": "Eject FA",
+  "iconNameFilmFa": "Film FA",
+  "iconNameVideoFa": "Video FA",
+  "iconNameMusicFa": "موسيقى FA",
+  "iconNameMicrophoneFa": "Microphone FA",
+  "iconNameCameraFa": "كاميرا FA",
+  "iconNameCameraRetroFa": "كاميرا Retro FA",
+  "iconNameVolumeHighFa": "الصوت High FA",
+  "iconNameVolumeLowFa": "الصوت Low FA",
+  "iconNameVolumeOffFa": "الصوت Off FA",
+  "iconNameMuteFa": "كتم FA",
+  "iconNameMicMuteFa": "Mic كتم FA",
+  "iconNameHeadphonesFa": "Headphones FA",
+  "iconNameSpeakerFa": "Speaker FA",
+  "iconNameUpFa": "أعلى FA",
+  "iconNameDownFa": "أسفل FA",
+  "iconNameLeftFa": "يسار FA",
+  "iconNameRightFa": "يمين FA",
+  "iconNameUpFaOutline": "أعلى FA Outline",
+  "iconNameDownFaOutline": "أسفل FA Outline",
+  "iconNameLeftFaOutline": "يسار FA Outline",
+  "iconNameRightFaOutline": "يمين FA Outline",
+  "iconNameArrowUpFa": "Arrow أعلى FA",
+  "iconNameArrowDownFa": "Arrow أسفل FA",
+  "iconNameArrowLeftFa": "Arrow يسار FA",
+  "iconNameArrowRightFa": "Arrow يمين FA",
+  "iconNameChevronUpFa": "Chevron أعلى FA",
+  "iconNameChevronDownFa": "Chevron أسفل FA",
+  "iconNameChevronLeftFa": "Chevron يسار FA",
+  "iconNameChevronRightFa": "Chevron يمين FA",
+  "iconNameOkFa": "OK FA",
+  "iconNameOkFaOutline": "OK FA Outline",
+  "iconNameCheckFa": "تحقق FA",
+  "iconNameCloseFa": "إغلاق FA",
+  "iconNameCloseCircleFa": "إغلاق Circle FA",
+  "iconNameHomeFa": "الرئيسية FA",
+  "iconNameUndoFa": "Undo FA",
+  "iconNameRedoFa": "Redo FA",
+  "iconNameRotateFa": "Rotate FA",
+  "iconNameSearchFa": "ابحث FA",
+  "iconNameRefreshFa": "Refresh FA",
+  "iconNamePowerOffFa": "تشغيل Off FA",
+  "iconNamePlugFa": "Plug FA",
+  "iconNameToggleOnFa": "Toggle On FA",
+  "iconNameToggleOffFa": "Toggle Off FA",
+  "iconNameSettingsFa": "الإعدادات FA",
+  "iconNameSettingsAltFa": "الإعدادات Alt FA",
+  "iconNameMenuFa": "القائمة FA",
+  "iconNameMoreFa": "المزيد FA",
+  "iconNameMoreVerticalFa": "المزيد Vertical FA",
+  "iconNameInfoFa": "معلومات FA",
+  "iconNameInfoFaOutline": "معلومات FA Outline",
+  "iconNameHelpFa": "مساعدة FA",
+  "iconNameHelpFaOutline": "مساعدة FA Outline",
+  "iconNameListFa": "قائمة FA",
+  "iconNameGridFa": "Grid FA",
+  "iconNameSlidersFa": "Sliders FA",
+  "iconNameTvFa": "TV FA",
+  "iconNameMonitorFa": "Monitor FA",
+  "iconNameDesktopFa": "Desktop FA",
+  "iconNameBrightnessFa": "Brightness FA",
+  "iconNameNightModeFa": "ليل الوضع FA",
+  "iconNameLightFa": "فاتح FA",
+  "iconNameLightFaOutline": "فاتح FA Outline",
+  "iconNameFlashFa": "Flash FA",
+  "iconNameFullscreenFa": "Fullscreen FA",
+  "iconNameExitFullscreenFa": "Exit Fullscreen FA",
+  "iconNameZoomInFa": "Zoom In FA",
+  "iconNameZoomOutFa": "Zoom Out FA",
+  "iconNameSubtitlesFa": "Subtitles FA",
+  "iconNamePictureInPictureFa": "Picture in Picture FA",
+  "iconNameColorFa": "لون FA",
+  "iconNamePaintFa": "Paint FA",
+  "iconNameInputFa": "إدخال FA",
+  "iconNameWifiFa": "WiFi FA",
+  "iconNameBluetoothFa": "Bluetooth FA",
+  "iconNameUsbFa": "USB FA",
+  "iconNameEthernetFa": "Ethernet FA",
+  "iconNameGamepadFa": "Gamepad FA",
+  "iconNameBroadcastFa": "Broadcast FA",
+  "iconNameSatelliteFa": "Satellite FA",
+  "iconNameAntennaFa": "Antenna FA",
+  "iconNameNetworkFa": "Network FA",
+  "iconNameCloudFa": "سحابة FA",
+  "iconNameStarFa": "Star FA",
+  "iconNameStarFaOutline": "Star FA Outline",
+  "iconNameHeartFa": "Heart FA",
+  "iconNameHeartFaOutline": "Heart FA Outline",
+  "iconNameBookmarkFa": "Bookmark FA",
+  "iconNameBookmarkFaOutline": "Bookmark FA Outline",
+  "iconNameFlagFa": "Flag FA",
+  "iconNameClockFa": "Clock FA",
+  "iconNameClockFaOutline": "Clock FA Outline",
+  "iconNameBellFa": "Bell FA",
+  "iconNameBellFaOutline": "Bell FA Outline",
+  "iconNameTimerFa": "مؤقت FA",
+  "iconNameLockFa": "قفل FA",
+  "iconNameUnlockFa": "Unlock FA",
+  "iconNameGalleryFa": "Gallery FA",
+  "iconNameImagesFa": "Images FA",
+  "iconNameImageFa": "Image FA",
+  "iconNameVideoFileFa": "Video ملف FA",
+  "iconNameAudioFileFa": "صوت ملف FA",
+  "iconNamePlayOutlineFa": "Play Outline FA",
+  "iconNamePlaySimpleFa": "Play Simple FA",
+  "iconNamePauseSimpleFa": "إيقاف مؤقت Simple FA",
+  "iconNameStopSimpleFa": "إيقاف Simple FA",
+  "iconNameRecordFa": "تسجيل FA",
+  "iconNameStopCircleFa": "إيقاف Circle FA",
+  "iconNameLoadingFa": "Loading FA",
+  "iconNameTextFa": "Text FA",
+  "iconNameTextSizeFa": "Text Size FA",
+  "iconNameLanguageFa": "اللغة FA",
+  "iconNameGlobeFa": "Globe FA",
+  "iconNameSubtitlesAltFa": "Subtitles Alt FA",
+  "iconNameSubtitlesAltOutlineFa": "Subtitles Alt Outline FA",
+  "iconNameChannelUpFa": "Channel أعلى FA",
+  "iconNameChannelDownFa": "Channel أسفل FA",
+  "iconNamePageUpFa": "Page أعلى FA",
+  "iconNamePageDownFa": "Page أسفل FA",
+  "iconNameGuideFa": "Guide FA",
+  "iconNameGridViewFa": "Grid عرض FA",
+  "iconNameGridAltFa": "Grid Alt FA",
+  "iconNameScheduleFa": "Schedule FA",
+  "iconNameCalendarFa": "Calendar FA",
+  "iconNameRedButtonFa": "Red زر FA",
+  "iconNameButtonOutlineFa": "زر Outline FA",
+  "iconNameSquareButtonFa": "Square زر FA",
+  "iconNameSquareOutlineFa": "Square Outline FA",
+  "iconNameDotCircleFa": "Dot Circle FA",
+  "iconNameToolsFa": "Tools FA",
+  "iconNameScrewdriverFa": "Screwdriver FA",
+  "iconNameHammerFa": "Hammer FA",
+  "iconNameToolboxFa": "Toolbox FA",
+  "iconNameCogFa": "Cog FA",
+  "iconNameAdjustFa": "Adjust FA",
+  "iconNameFilterFa": "تصفية FA",
+  "iconNameSortDownFa": "Sort أسفل FA",
+  "iconNameSortUpFa": "Sort أعلى FA",
+  "iconNameSleepFa": "Sleep FA",
+  "iconNameTimerStartFa": "مؤقت بدء FA",
+  "iconNameTimerHalfFa": "مؤقت Half FA",
+  "iconNameTimerEndFa": "مؤقت End FA",
+  "iconNameStopwatchFa": "Stopwatch FA",
+  "iconNameAlarmFa": "منبه FA",
+  "iconNameCropAltFa": "Crop Alt FA",
+  "iconNameCropFa": "Crop FA",
+  "iconNameSquareFullFa": "Square Full FA",
+  "iconNameFullscreenAltFa": "Fullscreen Alt FA",
+  "iconNameZoomPlusFa": "Zoom زائد FA",
+  "iconNameZoomMinusFa": "Zoom ناقص FA",
+  "iconNameMusicNoteFa": "موسيقى Note FA",
+  "iconNameCdFa": "CD FA",
+  "iconNameVinylFa": "Vinyl FA",
+  "iconNameRssFa": "RSS FA",
+  "iconNameMagicFa": "Magic FA",
+  "iconNameFingerprintFa": "Fingerprint FA",
+  "iconNameUserFa": "User FA",
+  "iconNameUsersFa": "Users FA",
+  "iconNameChildModeFa": "Child الوضع FA",
+  "iconNameCastFa": "Cast FA",
+  "iconNameStreamFa": "Stream FA",
+  "iconNameSignalFa": "إشارة FA",
+  "iconNameFeedFa": "Feed FA",
+  "iconNameCircleArrowUpFa": "Circle Arrow أعلى FA",
+  "iconNameCircleArrowDownFa": "Circle Arrow أسفل FA",
+  "iconNameCircleArrowLeftFa": "Circle Arrow يسار FA",
+  "iconNameCircleArrowRightFa": "Circle Arrow يمين FA",
+  "iconNameLongArrowUpFa": "Long Arrow أعلى FA",
+  "iconNameLongArrowDownFa": "Long Arrow أسفل FA",
+  "iconNameLongArrowLeftFa": "Long Arrow يسار FA",
+  "iconNameLongArrowRightFa": "Long Arrow يمين FA",
+  "iconNamePlusFa": "زائد FA",
+  "iconNameMinusFa": "ناقص FA",
+  "iconNamePlusCircleFa": "زائد Circle FA",
+  "iconNameMinusCircleFa": "ناقص Circle FA",
+  "iconNamePlusSquareFa": "زائد Square FA",
+  "iconNameMinusSquareFa": "ناقص Square FA",
+  "iconNameTimesFa": "Times FA",
+  "iconNameTimesCircleFa": "Times Circle FA",
+  "iconNameBatteryFullFa": "Battery Full FA",
+  "iconNameBattery34Fa": "Battery 3/4 FA",
+  "iconNameBatteryHalfFa": "Battery Half FA",
+  "iconNameBattery14Fa": "Battery 1/4 FA",
+  "iconNameBatteryEmptyFa": "Battery Empty FA",
+  "iconNameChargingFa": "Charging FA",
+  "iconNameCloudSunFa": "سحابة Sun FA",
+  "iconNameCloudMoonFa": "سحابة Moon FA",
+  "iconNameRainFa": "Rain FA",
+  "iconNameSnowflakeFa": "Snowflake FA",
+  "iconNameFireFa": "Fire FA",
+  "iconNameTemperatureFa": "Temperature FA",
+  "iconNameBoxFa": "Box FA",
+  "iconNameGiftFa": "Gift FA",
+  "iconNameTrophyFa": "Trophy FA",
+  "iconNameCrownFa": "Crown FA",
+  "iconNameGemFa": "Gem FA",
+  "unknownLabel": "غير معروف",
+  "selectedFilesLabel": "المحدد file(s)",
+  "folderNotFoundOrInaccessible": "مجلد not موجود or inaccessible.",
+  "importedRemoteDefaultName": "ImportedRemote",
+  "demoRemoteName": "Demo جهاز التحكم",
+  "protocolFieldsInvalid": "املأ حقول البروتوكول المطلوبة وتأكد أن التردد بين 15k و 60k إذا تم ضبطه.",
+  "unknownProtocolSelected": "تم تحديد بروتوكول غير معروف.",
+  "forceInAppVibrationTitle": "فرض الاهتزاز داخل التطبيق",
+  "forceInAppVibrationSubtitle": "استخدام الهزاز مباشرة حتى إذا كان اللمس الارتدادي للنظام معطلاً",
+  "forceInAppVibrationWarning": "خيار متقدم. قد يجعل التطبيق يهتز حتى عندما يكون اللمس الارتدادي في أندرويد معطلاً على مستوى النظام.",
+  "forceInAppVibrationBlockedMasterWarning": "Android system vibration is disabled. Force in-app vibration cannot override it on this device.",
+  "forceInAppVibrationNoVibratorWarning": "This device reports no vibrator hardware, so in-app vibration cannot work.",
+  "remoteButtonCountLabel": "{count, plural, one{{count} button} other{{count} buttons}}",
+  "@remoteButtonCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "macroStepCountLabel": "{count, plural, one{{count} step} other{{count} steps}}",
+  "@macroStepCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "continueSectionTitle": "Continue",
+  "@continueSectionTitle": {
+    "description": "Title for the recent continue strip on the remotes screen."
+  },
+  "continueSectionSubtitle": "Pick up where you left off.",
+  "@continueSectionSubtitle": {
+    "description": "Subtitle for the continue strip on the remotes screen."
+  },
+  "continueLastRemoteTitle": "Last remote",
+  "@continueLastRemoteTitle": {
+    "description": "Eyebrow label for the last opened remote card."
+  },
+  "continueLastMacroTitle": "Last macro",
+  "@continueLastMacroTitle": {
+    "description": "Eyebrow label for the last run macro card."
+  },
+  "continueLastIrFinderHitTitle": "Last IR Finder hit",
+  "@continueLastIrFinderHitTitle": {
+    "description": "Eyebrow label for the last saved IR Finder result card."
+  },
+  "continueTargetUnavailable": "That item is no longer available.",
+  "@continueTargetUnavailable": {
+    "description": "Shown when a continue card points to a deleted or missing target."
+  },
+  "continueUniversalPowerAllBrands": "All brands",
+  "@continueUniversalPowerAllBrands": {
+    "description": "Fallback label when the saved universal power context has no selected brand."
+  },
+  "untitledMacro": "Untitled Macro",
+  "@untitledMacro": {
+    "description": "Fallback title for a macro without a saved name."
+  },
+  "pinnedRemotesTitle": "Pinned remotes",
+  "@pinnedRemotesTitle": {
+    "description": "Title for the pinned remotes section on the remotes screen."
+  },
+  "pinnedRemotesSubtitle": "Keep your most important remotes one tap away.",
+  "@pinnedRemotesSubtitle": {
+    "description": "Subtitle for the pinned remotes section on the remotes screen."
+  },
+  "recentlyUsedRemotesTitle": "Recently used",
+  "@recentlyUsedRemotesTitle": {
+    "description": "Title for the recently used remotes section on the remotes screen."
+  },
+  "recentlyUsedRemotesSubtitle": "Jump back into the remotes you opened most recently.",
+  "@recentlyUsedRemotesSubtitle": {
+    "description": "Subtitle for the recently used remotes section on the remotes screen."
+  },
+  "pinRemote": "Pin remote",
+  "@pinRemote": {
+    "description": "Action label to pin a remote for quick access."
+  },
+  "unpinRemote": "Unpin remote",
+  "@unpinRemote": {
+    "description": "Action label to remove a remote from the pinned section."
+  },
+  "pinRemoteSubtitle": "Keep this remote at the top for faster access.",
+  "@pinRemoteSubtitle": {
+    "description": "Subtitle shown under the pin/unpin remote action."
+  },
+  "remoteAddedToPinned": "Remote pinned.",
+  "@remoteAddedToPinned": {
+    "description": "Snackbar shown after pinning a remote."
+  },
+  "remoteRemovedFromPinned": "Remote removed from pinned.",
+  "@remoteRemovedFromPinned": {
+    "description": "Snackbar shown after unpinning a remote."
+  },
+  "homeDeviceControlsTitle": "Quick controls",
+  "@homeDeviceControlsTitle": {
+    "description": "Title for the compact device controls row on the home surface."
+  },
+  "homeDeviceControlsSubtitle": "Power, mute, and volume without opening a remote.",
+  "@homeDeviceControlsSubtitle": {
+    "description": "Subtitle for the compact device controls row when controls are configured."
+  },
+  "homeDeviceControlsEmptySubtitle": "Set up power, mute, and volume buttons in Device Controls.",
+  "@homeDeviceControlsEmptySubtitle": {
+    "description": "Subtitle for the compact device controls row when no matching controls are configured."
+  },
+  "showDeviceControlsOnHome": "Show quick controls on home",
+  "@showDeviceControlsOnHome": {
+    "description": "Settings toggle title for showing the compact device controls row on the home surface."
+  },
+  "showDeviceControlsOnHomeSubtitle": "Show the compact Power, Mute, and Volume row on the main screen.",
+  "@showDeviceControlsOnHomeSubtitle": {
+    "description": "Settings toggle subtitle for showing the compact device controls row on the home surface."
+  },
+  "homeDeviceControlsShown": "Quick controls shown on home.",
+  "@homeDeviceControlsShown": {
+    "description": "Snackbar shown when the home quick controls row is enabled."
+  },
+  "homeDeviceControlsHidden": "Quick controls hidden from home.",
+  "@homeDeviceControlsHidden": {
+    "description": "Snackbar shown when the home quick controls row is disabled."
+  },
+  "power": "Power",
+  "@power": {
+    "description": "Short label for the power control."
+  },
+  "mute": "Mute",
+  "@mute": {
+    "description": "Short label for the mute control."
+  },
+  "volumeUp": "Vol +",
+  "@volumeUp": {
+    "description": "Short label for the volume up control."
+  },
+  "volumeDown": "Vol -",
+  "@volumeDown": {
+    "description": "Short label for the volume down control."
+  },
+  "manage": "Manage",
+  "@manage": {
+    "description": "Short action label for opening a management screen."
+  },
+  "hide": "Hide",
+  "@hide": {
+    "description": "Short action label for hiding a surface or section."
+  },
+  "lastActionTitle": "Last action",
+  "@lastActionTitle": {
+    "description": "Title for the compact last action strip shown after sending IR."
+  },
+  "lastActionSent": "Sent {title}",
+  "@lastActionSent": {
+    "description": "Compact message in the last action strip when only the button title is known.",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "lastActionSentTo": "Sent {remoteName} -> {title}",
+  "@lastActionSentTo": {
+    "description": "Compact message in the last action strip when both remote name and button title are known.",
+    "placeholders": {
+      "remoteName": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "repeatAction": "Repeat",
+  "@repeatAction": {
+    "description": "Short action label to resend the last IR action."
+  },
+  "globalSearchTitle": "Search everything",
+  "@globalSearchTitle": {
+    "description": "Title or tooltip for global search across remotes, buttons, and macros."
+  },
+  "globalSearchNoResults": "No results found.",
+  "@globalSearchNoResults": {
+    "description": "Empty state message for global search."
+  },
+  "globalSearchTypeRemote": "REMOTE",
+  "@globalSearchTypeRemote": {
+    "description": "Badge label for a remote search result."
+  },
+  "globalSearchTypeButton": "BUTTON",
+  "@globalSearchTypeButton": {
+    "description": "Badge label for a button search result."
+  },
+  "globalSearchTypeMacro": "MACRO",
+  "@globalSearchTypeMacro": {
+    "description": "Badge label for a macro search result."
+  },
+  "learningModeEntryTitle": "وضع التعلم",
+  "learningModeEntrySubtitle": "التقط زرًا من جهاز التحكم عن بعد الفعلي خطوة بخطوة",
+  "learningModeTitle": "وضع التعلم",
+  "learningModeHeroTitle": "تعلم زر التحكم عن بعد بشكل نظيف",
+  "learningModeHeroSubtitle": "قم بإعداد جهاز الاستقبال الخاص بك، وقم بإعداد جهاز التحكم عن بعد الأصلي، والتقط أمرًا واحدًا، ثم قم بمراجعته قبل حفظه في جهاز التحكم عن بعد.",
+  "learningModeReadyBadge": "المتلقي جاهز",
+  "learningModeNeedsPermissionBadge": "إذن USB مطلوب",
+  "learningModeSetupBadge": "يلزم إعداد جهاز الاستقبال",
+  "learningModeNoReceiverBadge": "لا يوجد استقبال التعلم",
+  "learningModeCheckingBadge": "فحص الأجهزة",
+  "learningModeFourStepFlow": "تدفق موجه من 4 خطوات",
+  "learningModeSaveAnywhereBadge": "المراجعة قبل الحفظ",
+  "learningModeGuideTitle": "التقط المكان الذي يجب أن يحدث فيه الالتقاط",
+  "learningModeStepHardwareShort": "الأجهزة",
+  "learningModeStepPrepareShort": "يحضر",
+  "learningModeStepCaptureShort": "يأسر",
+  "learningModeStepReviewShort": "مراجعة",
+  "learningModeStepHardwareTitle": "تحقق من أجهزة الاستقبال",
+  "learningModeStepHardwareSubtitle": "تأكد من توصيل جهاز استقبال تعليمي متوافق واعتماده قبل البدء.",
+  "learningModeCurrentSenderLabel": "الارسال الحالي",
+  "learningModeReceiverStatusLabel": "حالة التعلم",
+  "learningModeCheckingHardwareBody": "التحقق من حالة جهاز الإرسال وجهاز استقبال USB المتاحين.",
+  "learningModeHardwareReadyBody": "يتم توصيل دونجل USB IR وتهيئته. هذا هو المكان المناسب لبدء تدفق التعلم بمجرد توصيل أسلاك الالتقاط.",
+  "learningModeHardwarePermissionBody": "يوجد دونجل USB، لكن إذن Android لا يزال يمنعه. امنح إذن USB في قسم جهاز الإرسال قبل التعلم.",
+  "learningModeHardwareSetupBody": "تم اكتشاف جهاز دونجل جزئيًا، لكنه لا يزال بحاجة إلى الإعداد أو إعادة الاتصال قبل أن يبدأ التعلم بشكل موثوق.",
+  "learningModeHardwareNoReceiverBody": "لا يتوفر حاليًا أي جهاز استقبال متوافق. وضع التعلم مخصص لأجهزة الدونجل الخارجية المدعومة ذات القدرة على الاستقبال.",
+  "learningModeRefreshHardware": "تحديث حالة الأجهزة",
+  "learningModeHardwareTipTitle": "أفضل موضع",
+  "learningModeHardwareTipBody": "يوجد وضع التعلم ضمن جهاز إرسال الأشعة تحت الحمراء لأنه يعتمد على توفر الأجهزة ويتم استخدامه بشكل أقل من إرسال أجهزة التحكم عن بعد.",
+  "learningModeStepPrepareTitle": "تحضير جهاز التحكم عن بعد الأصلي",
+  "learningModeStepPrepareSubtitle": "قرر ما تتعلمه، ثم احتفظ بجهاز التحكم عن بعد الأصلي ثابتًا وقريبًا من جهاز الاستقبال.",
+  "learningModeButtonNameLabel": "اسم الزر",
+  "learningModeButtonNameHint": "على سبيل المثال: HDMI 1، الطاقة، القائمة",
+  "learningModeSinglePress": "ضغطة واحدة",
+  "learningModeHoldButton": "زر الضغط",
+  "learningModePreparationChecklistTitle": "قبل أن تلتقط",
+  "learningModePreparationItemDistance": "احتفظ بجهاز التحكم عن بعد الأصلي على بعد 2 إلى 5 سم تقريبًا من جهاز الاستقبال.",
+  "learningModePreparationItemOneButton": "تعلم زرًا واحدًا في كل مرة واستخدم ضغطة قصيرة ونظيفة أولاً.",
+  "learningModePreparationItemStill": "حافظ على ثبات كلا الجهازين لتجنب التقاط الصور الصاخبة أو الجزئية.",
+  "learningModeStepCaptureTitle": "التقط الإشارة",
+  "learningModeStepCaptureSubtitle": "استمع لأمر واحد، ثم قم بقفل النتيجة قبل مراجعتها.",
+  "learningModeCaptureReadyTitle": "جاهز للاستماع",
+  "learningModeCaptureReadyBody": "حالة أجهزتك تبدو جيدة. سيتم توصيل الواجهة الخلفية للالتقاط بهذه الخطوة التالية.",
+  "learningModeCaptureBlockedTitle": "الأجهزة ليست جاهزة بعد",
+  "learningModeCaptureBlockedBody": "لا يزال بإمكانك مراجعة التدفق الآن، ولكن يجب أن ينتظر الالتقاط حتى يصبح جهاز الاستقبال جاهزًا.",
+  "learningModeStartListening": "ابدأ بالاستماع",
+  "learningModeCaptureStubTitle": "التقاط الخلفية يأتي بعد ذلك",
+  "learningModeCaptureStubBody": "يتم دعم هذه الشاشة بالكامل أولاً حتى يمكن توصيل تدفق الالتقاط النهائي بحالات الأجهزة الحقيقية بدلاً من تثبيته لاحقًا.",
+  "learningModeCaptureStubMessage": "التقاط التعلم ليس سلكيًا بعد. تعمل هذه الشاشة على دعم التدفق الكامل أولاً.",
+  "learningModeStepReviewTitle": "مراجعة وحفظ",
+  "learningModeStepReviewSubtitle": "قم بتأكيد ما تعلمته، ثم اختر المكان الذي يجب أن يكون موجودًا فيه في مكتبتك البعيدة.",
+  "learningModeSaveToExistingRemote": "البعيد الموجود",
+  "learningModeCreateNewRemote": "ريموت جديد",
+  "learningModeProtocolPreviewTitle": "معاينة البروتوكول",
+  "learningModeProtocolPreviewBody": "ستظهر هنا تفاصيل البروتوكول الذي تم فك تشفيره بمجرد أن يلتقط جهاز الاستقبال ضغطة زر نظيفة.",
+  "learningModeRawPreviewTitle": "احتياطي الخام",
+  "learningModeRawPreviewBody": "إذا لم يكتمل فك التشفير، فسيظل التقاط التوقيت الأولي متاحًا هنا للمراجعة والحفظ.",
+  "learningModeSaveCapture": "حفظ الالتقاط",
+  "learningModeReviewTipTitle": "أين سيذهب هذا بعد ذلك",
+  "learningModeReviewTipBody": "يجب أن تقوم خطوة التنفيذ التالية بتوصيل لوحة المراجعة هذه بزر الإنشاء وأجهزة التحكم عن بعد الموجودة بحيث تنخفض الإشارة المستفادة مباشرة إلى مكتبتك.",
+  "learningModeFinishPreview": "إنهاء المعاينة",
+  "backAction": "Back",
+  "learningModeUnnamedCapture": "التقاط بدون اسم",
+  "learningModeStatusCheckingTitle": "فحص المتلقي",
+  "learningModeStatusNoReceiverTitle": "المتلقي غير جاهز",
+  "learningModeStatusPermissionTitle": "مطلوب إذن USB",
+  "learningModeStatusSetupTitle": "يحتاج المتلقي إلى الإعداد",
+  "learningModeStatusReadyTitle": "جاهز للتعلم",
+  "learningModeStatusListeningTitle": "الاستماع للإشارة",
+  "learningModeStatusCapturedTitle": "تم التقاط الإشارة",
+  "learningModeStatusReadyBody": "قم بتسمية الزر، وقم بتوجيه جهاز التحكم عن بعد الأصلي نحو جهاز الاستقبال، وابدأ في الاستماع عندما تكون جاهزًا.",
+  "learningModeStatusListeningBody": "اضغط على الزر البعيد الأصلي الآن. بمجرد توصيل الالتقاط، سيتم تثبيت هذه الحالة على الإشارة النظيفة التالية.",
+  "learningModeStatusCapturedBody": "معاينة الإشارة المكتسبة جاهزة لـ {buttonName}. أعد تشغيله، وتأكد من أنه يعمل، ثم احفظه في مكتبتك.",
+  "learningModeConnectReceiverTitle": "قم بتوصيل دونجل تعليمي متوافق",
+  "learningModeConnectReceiverBody": "يعتمد وضع التعلم على الأجهزة الخارجية التي يمكنها استقبال الأشعة تحت الحمراء. بمجرد اكتشاف جهاز الاستقبال والترخيص له، تصبح هذه الصفحة بمثابة تدفق مباشر للاستماع والاختبار والحفظ.",
+  "learningModeListenCardTitle": "استمع لزر واحد",
+  "learningModeListenCardBody": "قم بتعيين الملصق أولاً إذا كنت تريد ذلك، ثم ابدأ الاستماع واضغط على الزر الموجود على جهاز التحكم عن بعد الأصلي.",
+  "learningModeReadyToListenTitle": "جاهز للاستماع",
+  "learningModeReadyToListenBody": "هذا هو سطح الالتقاط الرئيسي. ابدأ الاستماع فقط عندما يكون جهاز التحكم عن بعد الأصلي موجهًا وثابتًا.",
+  "learningModeListeningNowTitle": "الاستماع الآن",
+  "learningModeListeningNowBody": "اضغط على زر التحكم عن بعد الأصلي مرة واحدة. استخدم التقاط المعاينة للتنقل عبر بقية السقالة قبل أن يتم توصيل واجهة الالتقاط الخلفية الحقيقية.",
+  "learningModePreviewCaptureAction": "معاينة الإشارة الملتقطة",
+  "learningModeCapturedSummary": "معاينة الإشارة المستفادة",
+  "learningModeResultActionsTitle": "اختبار وحفظ",
+  "learningModeResultActionsBody": "أعد تشغيل الإشارة التي تم تعلمها، وتأكد من استجابة الجهاز المستهدف، ثم احفظها كزر قابل لإعادة الاستخدام.",
+  "learningModeReplayAction": "إعادة التشغيل",
+  "learningModeReplayStubMessage": "إعادة التشغيل ليست سلكية بعد. هذه هي دعامة واجهة المستخدم لتدفق التعلم والاختبار والحفظ النهائي.",
+  "learningModeSaveStubMessage": "الحفظ ليس سلكيًا بعد. الخطوة التالية هي توصيل هذه الشاشة بـ \"إنشاء زر\" وأجهزة التحكم عن بعد الموجودة.",
+  "learningModeLearnAnotherAction": "تعلم زر آخر",
+  "@learningModeStatusCapturedBody": {
+    "placeholders": {
+      "buttonName": {}
+    }
+  },
+  "learningModeCaptureFailed": "فشل التقاط التعلم.",
+  "learningModeReplaySent": "تم إعادة تشغيل الإشارة المستفادة.",
+  "learningModeReplayFailed": "لا يمكن إعادة تشغيل الإشارة التي تم تعلمها.",
+  "learningModeNoRemotesAvailable": "لا توجد أجهزة التحكم عن بعد المحفوظة حتى الآن.",
+  "learningModeChooseRemoteTitle": "اختر جهاز التحكم عن بعد",
+  "learningModeNewRemoteTitle": "إنشاء جهاز تحكم عن بعد جديد",
+  "learningModeSaveSuccess": "تم حفظ الزر الذي تم تعلمه.",
+  "learningModeSaveFailed": "لا يمكن حفظ الزر الذي تم التعرف عليه.",
+  "remoteSetupIntro": "اختر الاسم والتخطيط أولاً. يمكنك إضافة الأزرار بعد ذلك.",
+  "startWithDefault": "ابدأ بالإعدادات الافتراضية",
+  "browseGithubStore": "تصفح متجر GitHub",
+  "addFirstButton": "أضف الزر الأول",
+  "moreWaysToStart": "المزيد من طرق البدء",
+  "unsavedRemoteSetupChangesMessage": "هل تريد تجاهل إعداد هذا الريموت الجديد ومغادرة هذه الشاشة؟",
+  "unsavedRemoteStudioChangesMessage": "هل تريد تجاهل تغييرات الريموت ومغادرة هذه الشاشة؟",
+  "firstButtonAdded": "تمت إضافة الزر الأول.",
+  "iconColorTitle": "لون الرمز",
+  "iconColorHelper": "اختر لونًا للرمز يبقى واضحًا فوق خلفية الزر.",
+  "colorRed": "أحمر",
+  "colorPink": "وردي",
+  "colorPurple": "أرجواني",
+  "colorDeepPurple": "أرجواني داكن",
+  "colorIndigo": "نيلي",
+  "colorBlue": "أزرق",
+  "colorLightBlue": "أزرق فاتح",
+  "colorCyan": "سماوي",
+  "colorTeal": "تركوازي",
+  "colorGreen": "أخضر",
+  "colorLightGreen": "أخضر فاتح",
+  "colorLime": "ليموني",
+  "colorYellow": "أصفر",
+  "colorAmber": "كهرماني",
+  "colorOrange": "برتقالي",
+  "colorDeepOrange": "برتقالي داكن",
+  "colorBrown": "بني",
+  "colorGrey": "رمادي",
+  "colorBlueGrey": "أزرق رمادي",
+  "colorBlack": "أسود",
+  "colorWhite": "أبيض",
+  "buttonColorSemantics": "لون الزر {colorName}",
+  "@buttonColorSemantics": {
+    "placeholders": {
+      "colorName": {}
+    }
+  },
+  "buttonColorSemanticsSelected": "لون الزر {colorName}، محدد",
+  "@buttonColorSemanticsSelected": {
+    "placeholders": {
+      "colorName": {}
+    }
+  },
+  "iconColorSemantics": "لون الرمز {colorName}",
+  "@iconColorSemantics": {
+    "placeholders": {
+      "colorName": {}
+    }
+  },
+  "iconColorSemanticsSelected": "لون الرمز {colorName}، محدد",
+  "@iconColorSemanticsSelected": {
+    "placeholders": {
+      "colorName": {}
+    }
+  },
+  "unavailable": "غير متاح",
+  "deviceInfoTitle": "معلومات الجهاز",
+  "deviceAdvancedRawViewTooltip": "عرض البيانات الخام المتقدم",
+  "deviceExportRawDumpTooltip": "تصدير التفريغ الخام",
+  "deviceUnableToReadDetails": "تعذر قراءة تفاصيل الجهاز.",
+  "deviceAudioClassDescriptorsTitle": "Audio class descriptors",
+  "deviceVideoClassDescriptorsTitle": "Video class descriptors",
+  "deviceCdcSerialDescriptorsTitle": "CDC / serial descriptors",
+  "deviceHubDescriptorsTitle": "Hub descriptors",
+  "deviceBosCapabilitiesTitle": "BOS & capabilities",
+  "deviceIdentityTitle": "الهوية",
+  "deviceIdentitySubtitle": "IDs, vendor/product strings, and continuity",
+  "deviceVendorIdLabel": "Vendor ID",
+  "deviceProductIdLabel": "Product ID",
+  "deviceVendorLabel": "Vendor",
+  "deviceProductLabel": "Product",
+  "deviceChipsetFamilyLabel": "Chipset family",
+  "deviceChipsetBasisLabel": "Chipset basis",
+  "deviceLikelyFunctionLabel": "Likely function",
+  "deviceFunctionBasisLabel": "Function basis",
+  "deviceSerialLabel": "Serial",
+  "deviceStableIdentityLabel": "Stable identity",
+  "deviceIdentityConfidenceLabel": "Identity confidence",
+  "deviceIdentityStrategyLabel": "Identity strategy",
+  "devicePhysicalLocationLabel": "Physical location",
+  "deviceInterfaceFingerprintLabel": "Interface fingerprint",
+  "devicePathContinuityLabel": "Path continuity",
+  "deviceNoPreviousPathRecorded": "No previous device path recorded",
+  "devicePreviousPathsLabel": "Previous paths",
+  "deviceUsbSpecificationTitle": "مواصفات USB",
+  "deviceUsbSpecificationSubtitle": "Version, speed, class/protocol",
+  "deviceUsbVersionLabel": "USB version",
+  "deviceSpeedLabel": "Speed",
+  "deviceDeviceClassLabel": "Device class",
+  "deviceSubclassLabel": "Subclass",
+  "deviceProtocolLabel": "Protocol",
+  "deviceInterfacesLabel": "Interfaces",
+  "deviceConfigurationsLabel": "Configurations",
+  "deviceLocationTitle": "الموقع",
+  "deviceLocationSubtitle": "Android identifiers and bus hints",
+  "devicePathLabel": "Device path",
+  "deviceAndroidDeviceIdLabel": "Android deviceId",
+  "devicePortNumberLabel": "Port number",
+  "deviceTypeLabel": "Type",
+  "deviceTypeInputManager": "Input device (keyboard/mouse via InputManager)",
+  "deviceTypeSysfs": "USB topology entry (sysfs)",
+  "deviceTypeUsbManager": "USB device (UsbManager)",
+  "deviceTopologyTitle": "البنية",
+  "deviceTopologySubtitle": "Bus layout, chain, parent and siblings",
+  "deviceSourceLabel": "Source",
+  "deviceSysfsNameLabel": "Sysfs name",
+  "deviceSysfsPathLabel": "Sysfs path",
+  "deviceDeviceNodeLabel": "Device node",
+  "deviceParentLabel": "Parent",
+  "deviceUpstreamHubLabel": "Upstream hub",
+  "deviceBusNumberLabel": "Bus number",
+  "deviceDeviceNumberLabel": "Device number",
+  "deviceTreeDepthLabel": "Tree depth",
+  "devicePortChainLabel": "Port chain",
+  "deviceDevpathLabel": "Devpath",
+  "deviceAuthorizedLabel": "Authorized",
+  "deviceRemovableLabel": "Removable",
+  "deviceMaxChildLabel": "Max child",
+  "devicePathShortLabel": "Path",
+  "deviceSiblingDevicesTitle": "Sibling devices",
+  "deviceDownstreamChildrenTitle": "Downstream children",
+  "deviceDescriptorTitle": "واصف الجهاز",
+  "deviceDescriptorSubtitle": "Raw USB descriptor fields",
+  "deviceShowDescriptorFields": "Show descriptor fields",
+  "deviceUsbSpecBcdLabel": "USB spec (bcdUSB)",
+  "deviceReleaseBcdLabel": "Device release (bcdDevice)",
+  "deviceEp0MaxPacketLabel": "EP0 max packet",
+  "deviceNumConfigurationsLabel": "Num configurations",
+  "deviceIManufacturerLabel": "iManufacturer",
+  "deviceIProductLabel": "iProduct",
+  "deviceISerialNumberLabel": "iSerialNumber",
+  "deviceUsbAudioTitle": "صوت USB",
+  "deviceUsbAudioSubtitle": "AudioManager / AudioDeviceInfo endpoint metadata",
+  "deviceUsbAudioClassLabel": "USB audio class",
+  "devicePlatformAudioApiLabel": "Platform audio API",
+  "deviceAvailable": "Available",
+  "deviceConnectedUsbAudioEndpointsLabel": "Connected USB audio endpoints",
+  "deviceMatchedEndpointsLabel": "Matched endpoints",
+  "deviceAudioManagerUnavailableNote": "AudioManager data is not available on this Android version or device.",
+  "deviceNoAudioEndpointMatchedNote": "No AudioDeviceInfo endpoint could be matched to this USB device yet.",
+  "deviceAndroidNoMatchedAudioEndpointNote": "Android does not report a matched USB audio endpoint for this device.",
+  "deviceUsbMidiTitle": "MIDI عبر USB",
+  "deviceUsbMidiSubtitle": "MidiManager device and port metadata",
+  "deviceProbableUsbMidiInterfaceLabel": "Probable USB MIDI interface",
+  "devicePlatformMidiApiLabel": "Platform MIDI API",
+  "deviceConnectedMidiDevicesLabel": "Connected MIDI devices",
+  "deviceMatchedMidiDevicesLabel": "Matched MIDI devices",
+  "deviceMidiManagerUnavailableNote": "MidiManager data is not available on this Android version or device.",
+  "deviceDescriptorsLookLikeMidiNote": "The USB descriptors look like MIDI, but Android did not expose a matching MidiManager device.",
+  "deviceAndroidNoMatchedMidiDeviceNote": "Android does not report a matched MIDI device for this USB device.",
+  "devicePowerTitle": "الطاقة",
+  "devicePowerSubtitle": "Configuration power budget",
+  "deviceMaxPowerConfig0Label": "Max power (config 0)",
+  "deviceConfigurationsTitle": "التهيئات",
+  "deviceConfigurationsSubtitle": "All reported USB configurations",
+  "deviceInterfacesEndpointsTitle": "الواجهات ونقاط النهاية",
+  "deviceInterfacesEndpointsSubtitle": "Parsed interface and endpoint descriptors",
+  "deviceInputDeviceTitle": "جهاز إدخال",
+  "deviceInputDeviceSubtitle": "Keyboard/mouse info from InputManager",
+  "deviceNameLabel": "Name",
+  "deviceDescriptorLabel": "Descriptor",
+  "deviceExternalLabel": "External",
+  "deviceSourcesLabel": "Sources",
+  "deviceKeyboardTypeLabel": "Keyboard type",
+  "deviceMotionRangesLabel": "Motion ranges",
+  "deviceShowMotionRanges": "Show motion ranges",
+  "deviceFrameworkLimitationsTitle": "قيود إطار عمل Android",
+  "deviceFrameworkLimitationsSubtitle": "الجهاز موجود، لكن Android يخفي جزءًا منه أو لا يتيحه",
+  "devicePermissionDiagnosticsTitle": "تشخيص الأذونات",
+  "devicePermissionDiagnosticsSubtitle": "البيان، وقت التشغيل، حالة USB، سلوك Android، وآخر فشل",
+  "deviceLoadingDiagnostics": "جارٍ تحميل التشخيص…",
+  "deviceShowPermissionDiagnostics": "إظهار تشخيص الأذونات",
+  "deviceAndroidVersionLabel": "إصدار Android",
+  "deviceUsbDetailLabel": "تفاصيل USB",
+  "deviceMicrophoneManifestLabel": "بيان الميكروفون",
+  "deviceMicrophoneRuntimeLabel": "إذن الميكروفون وقت التشغيل",
+  "deviceCameraManifestLabel": "بيان الكاميرا",
+  "deviceCameraRuntimeLabel": "إذن الكاميرا وقت التشغيل",
+  "deviceAndroidBehaviorLabel": "سلوك Android",
+  "deviceLastFailureReasonLabel": "سبب آخر فشل",
+  "deviceNoneRecorded": "لا يوجد سجل",
+  "deviceLastFailureDetailLabel": "تفاصيل آخر فشل",
+  "deviceLastFailureTimeLabel": "وقت آخر فشل",
+  "deviceWhyDataUnavailableTitle": "لماذا البيانات غير متاحة",
+  "deviceReconnectDiffTitle": "فروقات إعادة التوصيل",
+  "deviceReconnectDiffSubtitle": "مقارنة الجهاز الحالي بالحالة الملتقطة سابقًا",
+  "deviceStateTitle": "حالة الجهاز",
+  "deviceStateSubtitle": "التهيئة النشطة، بتات الحالة، وإعدادات alt",
+  "deviceActiveConfigurationLabel": "Active configuration",
+  "deviceStatusLabel": "Device status",
+  "deviceSelfPoweredLabel": "Self-powered",
+  "deviceRemoteWakeupLabel": "Remote wakeup",
+  "deviceInterfaceAlternateSettingsTitle": "Interface alternate settings",
+  "deviceStringDescriptorsTitle": "واصفات السلاسل",
+  "deviceStringDescriptorsSubtitle": "Languages and iManufacturer/iProduct/iSerial + iInterface",
+  "deviceLanguagesLabel": "Languages",
+  "devicePreferredLabel": "Preferred",
+  "deviceDeviceStringsTitle": "Device strings",
+  "deviceManufacturerLabel": "Manufacturer",
+  "deviceInterfaceStringsTitle": "Interface strings",
+  "deviceDescriptorTreeTitle": "Descriptor tree",
+  "deviceShowDescriptors": "Show descriptors",
+  "deviceHidReportDescriptorsTitle": "HID report descriptors",
+  "devicePermissionRequiredTitle": "إذن مطلوب",
+  "devicePermissionRequiredBody": "لقراءة السلاسل (الشركة المصنعة/المنتج/الرقم التسلسلي)، وتحليل الواصفات الخام، وجلب واصفات تقارير HID، يتطلب Android إذنًا لكل جهاز.",
+  "deviceCameraPermissionRequiredForUsbVideo": "إذن الكاميرا مطلوب لأجهزة فيديو USB على هذا الإصدار من Android.",
+  "devicePermissionNotGranted": "لم يتم منح الإذن",
+  "deviceGrantPermission": "منح الإذن",
+  "deviceAdvancedRawViewTitle": "عرض البيانات الخام المتقدم",
+  "deviceDescriptorNodesLabel": "Descriptor nodes",
+  "deviceControlTransfersLabel": "Control transfers",
+  "deviceHidReportDumpsLabel": "HID report dumps",
+  "deviceControlTransfersTitle": "Control transfers",
+  "deviceControlTransfersSubtitle": "Raw setup/result records from direct USB control reads",
+  "deviceDescriptorsSideBySideTitle": "Descriptors side by side",
+  "deviceDescriptorsSideBySideSubtitle": "Parsed fields next to the raw descriptor bytes",
+  "deviceHidReportDumpsTitle": "HID report dumps",
+  "deviceHidReportDumpsSubtitle": "Report descriptor hex with parsed summary",
+  "deviceAdvancedDataUnavailableTitle": "البيانات المتقدمة غير متاحة",
+  "deviceAdvancedDataUnavailableSubtitle": "لا تتوفر بيانات نقل تحكم خام أو حمولة واصفات لهذا الجهاز",
+  "deviceGrantPermissionReconnectNote": "امنح إذن USB وأعد توصيل الجهاز إذا كنت تريد أن يتيح Android بيانات الواصفات وعمليات النقل المباشرة.",
+  "deviceExportFormatJson": "حمولة JSON",
+  "deviceExportFormatReport": "تقرير نصي",
+  "deviceExportFormatRawHex": "واصفات hex خام",
+  "deviceRawDumpExportTitle": "تصدير التفريغ الخام",
+  "deviceRawDumpExportSubtitle": "صدّر لقطة هذا الجهاز الحي مباشرة من دون استخدام السجل.",
+  "deviceExportChipJson": "JSON",
+  "deviceExportChipReport": "تقرير",
+  "deviceExportChipRawHex": "Raw hex",
+  "deviceCopyAction": "نسخ",
+  "deviceYes": "نعم",
+  "deviceNo": "لا",
+  "deviceUsbPermissionLabel": "إذن USB",
+  "deviceMaxPowerShortLabel": "Max power",
+  "devicePreviousCaptureLabel": "the previous capture",
+  "deviceManifestStatusDeclared": "مُعلن",
+  "deviceManifestStatusMissing": "مفقود",
+  "deviceRuntimeStatusGranted": "ممنوح",
+  "deviceRuntimeStatusTemporarilyDenied": "مرفوض مؤقتًا",
+  "deviceRuntimeStatusPermanentlyDenied": "مرفوض نهائيًا",
+  "deviceRuntimeStatusNotRequired": "غير مطلوب على هذا الإصدار من Android",
+  "deviceIdentityConfidenceHigh": "عالٍ",
+  "deviceIdentityConfidenceMedium": "متوسط",
+  "deviceIdentityConfidenceLow": "منخفض",
+  "deviceIdentityStrategySerialNumber": "الرقم التسلسلي",
+  "deviceIdentityStrategyPhysicalPort": "Physical port + interface fingerprint",
+  "deviceIdentityStrategyInterfaceFingerprint": "Interface fingerprint",
+  "deviceIdentityStrategyModelFingerprint": "Model fingerprint",
+  "historyDetailTitle": "تفاصيل السجل",
+  "historyOpenLiveDeviceInfo": "فتح معلومات الجهاز الحي",
+  "historyIdentitySubtitle": "IDs, vendor/product strings",
+  "historyAdvancedDetailsNotCapturedTitle": "لم يتم التقاط التفاصيل المتقدمة",
+  "historyAdvancedDetailsNotCapturedBody": "لا يتضمن هذا السجل واصفات خام أو سلاسل أو تقارير HID. هذه الحقول تتطلب إذن USB وقت الالتقاط.",
+  "historyRawDumpExportSubtitle": "صدّر لقطة هذا الجهاز التاريخية مباشرة من السجل.",
+  "deviceDescriptorsCount": "{count} واصف",
+  "@deviceDescriptorsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceReenumeratedAcrossPaths": "Re-enumerated across {count} known path(s)",
+  "@deviceReenumeratedAcrossPaths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceAndroidVersionValue": "SDK {sdk} ({release})",
+  "@deviceAndroidVersionValue": {
+    "placeholders": {
+      "sdk": {},
+      "release": {}
+    }
+  },
+  "deviceChangesDetectedCompared": "تم اكتشاف {count} تغييرًا مقارنةً بـ {baseline}.",
+  "@deviceChangesDetectedCompared": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "baseline": {}
+    }
+  },
+  "deviceShowingFirstRanges": "يتم عرض أول {count} نطاقات.",
+  "@deviceShowingFirstRanges": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceFrameworkLimitationsDetected": "تم اكتشاف {count} قيود مرتبطة بإطار العمل لهذا الجهاز.",
+  "@deviceFrameworkLimitationsDetected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceShowPermissionDiagnosticsWithUnavailableData": "إظهار تشخيص الأذونات والبيانات غير المتاحة ({count})",
+  "@deviceShowPermissionDiagnosticsWithUnavailableData": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceNoDifferencesDetected": "لم يتم اكتشاف أي فروقات مقارنةً بـ {baseline}.",
+  "@deviceNoDifferencesDetected": {
+    "placeholders": {
+      "baseline": {}
+    }
+  },
+  "deviceAltSettingValue": "Alt {value}",
+  "@deviceAltSettingValue": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "deviceShowingFirstInterfaces": "يتم عرض أول {count} واجهات.",
+  "@deviceShowingFirstInterfaces": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceShowingFirstInterfaceStrings": "يتم عرض أول {count} سلاسل واجهات.",
+  "@deviceShowingFirstInterfaceStrings": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceDescriptorsParsed": "تم تحليل {count} واصفات",
+  "@deviceDescriptorsParsed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceInterfacesCount": "{count} واجهات",
+  "@deviceInterfacesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceCopiedToClipboard": "تم نسخ {title} إلى الحافظة.",
+  "@deviceCopiedToClipboard": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "deviceCaptureFrom": "الالتقاط من {date} {time}",
+  "@deviceCaptureFrom": {
+    "placeholders": {
+      "date": {},
+      "time": {}
+    }
+  },
+  "deviceInputSourcesLabel": "مصادر الإدخال",
+  "deviceShowingFirstDescriptors": "يتم عرض أول {count} واصفات.",
+  "@deviceShowingFirstDescriptors": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "usbDevInfoAppTitle": "معلومات USB",
+  "navigationErrorTitle": "خطأ في التنقل",
+  "homeHistoryTooltip": "السجل",
+  "homeSettingsTooltip": "الإعدادات",
+  "homeSearchHint": "ابحث عن الشركة، المنتج، VID:PID، مسار الجهاز…",
+  "homeClearSearchTooltip": "مسح",
+  "homeInputDeviceLabel": "جهاز إدخال",
+  "homeUsbDeviceLabel": "جهاز USB",
+  "homeUnknownVendor": "شركة غير معروفة",
+  "homeSysfsTopology": "طوبولوجيا sysfs",
+  "homePermissionGranted": "تم منح الإذن",
+  "homeNeedsPermission": "يحتاج إلى إذن",
+  "homeHiddenTopology": "طوبولوجيا مخفية",
+  "homeInputPath": "مسار الإدخال",
+  "homeNoUsbDevicesTitle": "لم يتم اكتشاف أجهزة USB",
+  "homeNoUsbDevicesBody": "وصّل جهاز USB ‏(OTG) أو ملحق USB، ثم اسحب للتحديث.\n\nنصيحة: امنح إذنًا لكل جهاز لقراءة السلاسل، وتحليل الواصفات الخام، وحصر التهيئات والواجهات ونقاط النهاية كاملة.",
+  "homeInterfacesCount": "{count} واجهات",
+  "homeInputSourcesLabel": "الإدخال: {sources}",
+  "homeFailedToLoad": "فشل تحميل الأجهزة:\n{error}",
+  "historyScreenTitle": "السجل",
+  "historyClearAllTooltip": "مسح الكل",
+  "historyPreviouslyInspectedTitle": "الأجهزة التي تم فحصها سابقًا",
+  "historyNothingRecordedYet": "لا يوجد شيء مسجل بعد",
+  "historyRecordedSingle": "تم تسجيل عنصر واحد",
+  "historyRecordedCount": "تم تسجيل {count} عناصر",
+  "historyOpenDevicePageHint": "افتح صفحة معلومات الجهاز لتسجيله هنا.",
+  "historySwipeToDeleteHint": "اسحب لليسار للحذف. استخدم التراجع للاستعادة.",
+  "historySearchHint": "ابحث بالاسم أو VID:PID أو الرقم التسلسلي أو المسار…",
+  "historyRemovedMessage": "تمت إزالته من السجل",
+  "historyClearDialogTitle": "مسح السجل؟",
+  "historyClearDialogBody": "سيؤدي هذا إلى إزالة جميع الأجهزة المسجلة.",
+  "historyClearAllAction": "مسح الكل",
+  "historyConnected": "متصل",
+  "historyNotConnected": "غير متصل",
+  "historyPermissionLabel": "الإذن",
+  "historyActionsTooltip": "الإجراءات",
+  "historyNoMatchesTitle": "لا توجد نتائج",
+  "historyNoHistoryTitle": "لا يوجد سجل بعد",
+  "historyNoMatchesBody": "جرّب مصطلح بحث مختلفًا.",
+  "historyNoHistoryBody": "افتح صفحة معلومات الجهاز لتسجيل إدخال هنا.",
+  "historyQueryLabel": "الاستعلام: \"{query}\"",
+  "historyFailedToLoad": "فشل تحميل السجل:\n{error}",
+  "usbSettingsSupportSubtitle": "ساعدنا في إبقاء هذا التطبيق سريعًا ومجانيًا ومُعتنى به",
+  "usbSettingsSupportBody": "من دون إعلانات، ومن دون تتبع، ويعمل بالكامل دون اتصال. دعمك يساعد في تمويل الصيانة، وإصلاحات توافق USB، وتسريع تحديثات قاعدة بيانات USB IDs.",
+  "usbSettingsSupportPillLightweight": "خفيف",
+  "usbUseDynamicColorsSubtitle": "استخدم ألوان Material You على Android 12+. عطّل هذا الخيار لاستخدام ألوان التطبيق الخاصة.",
+  "usbAboutFailedToOpenLink": "فشل فتح الرابط",
+  "usbAboutVersion": "الإصدار {version}",
+  "usbAboutLinksTitle": "الروابط",
+  "usbAboutLinksSubtitle": "المستودع، والمشكلات، والتبرعات",
+  "usbAboutRepositoryTitle": "المستودع",
+  "usbAboutReportIssueTitle": "الإبلاغ عن مشكلة",
+  "usbAboutIssuesLinkCopied": "تم نسخ رابط المشكلات",
+  "usbAboutDonateTitle": "تبرع عبر Liberapay",
+  "usbAboutLiberapayLinkCopied": "تم نسخ رابط Liberapay",
+  "usbAboutWhatThisAppIsTitle": "نبذة عن التطبيق",
+  "usbAboutWhatThisAppIsSubtitle": "أداة لاستكشاف أجهزة USB",
+  "usbAboutWhatThisAppIsBody": "يستعرض USBDevInfo أجهزة OTG/USB المضيفة، ويعرض الواصفات وتفاصيل الصنف والبروتوكول، ويتعرّف على VID/PID باستخدام قاعدة بيانات USB IDs تعمل دون اتصال، كما يحتفظ بسجل لعمليات التوصيل. بلا حسابات، وبلا تتبع، وبلا إعلانات.",
+  "usbAboutUsbHostPill": "مضيف USB",
+  "usbAboutDescriptorsPill": "الواصفات",
+  "usbAboutOfflineUsbIdsPill": "USB IDs دون اتصال",
+  "usbAboutBuildInformationTitle": "معلومات البناء",
+  "usbAboutBuildInformationSubtitle": "الإصدار، والحزمة، ووضع البناء",
+  "usbAboutAppLabel": "التطبيق",
+  "usbAboutVersionLabel": "الإصدار",
+  "usbAboutPackageLabel": "الحزمة",
+  "usbAboutBuildLabel": "البناء",
+  "usbAboutBuildModeRelease": "إصدار نهائي",
+  "usbAboutBuildModeProfile": "ملف شخصي",
+  "usbAboutBuildModeDebug": "تصحيح",
+  "usbAboutOtherAppsTitle": "تطبيقات أخرى من KaijinLab",
+  "usbAboutOtherAppsSubtitle": "المزيد من الأدوات المرتبطة بالأمان والعتاد",
+  "usbAboutOpenGithubRepository": "افتح مستودع GitHub",
+  "usbAboutLegalTitle": "معلومات قانونية",
+  "usbAboutLegalSubtitle": "تراخيص المصدر المفتوح والتنويهات",
+  "usbAboutViewThirdPartyLicenses": "عرض تراخيص الاعتمادات الخارجية",
+  "usbAboutCopyBuildDetailsTitle": "نسخ تفاصيل البناء",
+  "usbAboutCopyBuildDetailsSubtitle": "الإصدار + الحزمة + وضع البناء",
+  "usbAboutBuildDetailsCopied": "تم نسخ تفاصيل البناء",
+  "usbAboutCopyright": "© {year} KaijinLab • برنامج مفتوح المصدر"
+}

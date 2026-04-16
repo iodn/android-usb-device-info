@@ -5,9 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../core/localization/app_locale_controller.dart';
+import '../../core/localization/supported_app_locales.dart';
 import '../../core/theme/theme_mode_controller.dart';
 import '../../core/widgets/key_value_row.dart';
 import '../../core/theme/dynamic_color_controller.dart';
+import '../../l10n/app_localizations.dart';
+import '../../l10n/l10n.dart';
 import '../../data/db/usb_ids_update_controller.dart';
 import '../../core/usb/usb_attach_pref_controller.dart';
 import '../history/controllers/device_history_controller.dart';
@@ -32,6 +36,7 @@ class SettingsScreen extends ConsumerWidget {
   static const String _liberapayUrl = 'https://liberapay.com/KaijinLab/donate';
 
   Future<void> _launchUrl(BuildContext context, String url) async {
+    final l10n = context.l10n;
     try {
       final uri = Uri.parse(url);
       final canLaunch = await canLaunchUrl(uri);
@@ -39,7 +44,7 @@ class SettingsScreen extends ConsumerWidget {
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('No browser available'),
+            content: Text(l10n.noBrowserAvailable),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -51,7 +56,7 @@ class SettingsScreen extends ConsumerWidget {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to open: $e'),
+          content: Text(l10n.failedToOpen('$e')),
           backgroundColor: Theme.of(context).colorScheme.error,
           behavior: SnackBarBehavior.floating,
         ),
@@ -100,14 +105,15 @@ class SettingsScreen extends ConsumerWidget {
     HapticFeedback.selectionClick();
   }
 
-  String _getThemeName(ThemeMode mode) {
+  String _getThemeName(BuildContext context, ThemeMode mode) {
+    final l10n = context.l10n;
     switch (mode) {
       case ThemeMode.system:
-        return 'Auto Theme';
+        return l10n.themeAuto;
       case ThemeMode.light:
-        return 'Light Theme';
+        return l10n.themeLight;
       case ThemeMode.dark:
-        return 'Dark Theme';
+        return l10n.themeDark;
     }
   }
 
@@ -122,25 +128,27 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
-  String _getThemeDescription(ThemeMode mode) {
+  String _getThemeDescription(BuildContext context, ThemeMode mode) {
+    final l10n = context.l10n;
     switch (mode) {
       case ThemeMode.system:
-        return 'Follows your device settings';
+        return l10n.themeDescAuto;
       case ThemeMode.light:
-        return 'Always bright and clear';
+        return l10n.themeDescLight;
       case ThemeMode.dark:
-        return 'Easy on the eyes';
+        return l10n.themeDescDark;
     }
   }
 
-  String _getThemeHint(ThemeMode mode) {
+  String _getThemeHint(BuildContext context, ThemeMode mode) {
+    final l10n = context.l10n;
     switch (mode) {
       case ThemeMode.system:
-        return 'Theme automatically switches when you change your device settings between light and dark mode';
+        return l10n.themeHintAuto;
       case ThemeMode.light:
-        return 'Perfect for daytime use and well-lit environments';
+        return l10n.themeHintLight;
       case ThemeMode.dark:
-        return 'Reduces eye strain in low-light conditions and saves battery on OLED screens';
+        return l10n.themeHintDark;
     }
   }
 
@@ -150,20 +158,23 @@ class SettingsScreen extends ConsumerWidget {
     final themeMode = ref.watch(themeModeControllerProvider);
     final updateAsync = ref.watch(usbIdsUpdateControllerProvider);
     final historyAsync = ref.watch(deviceHistoryControllerProvider);
+    final localeOverride = ref.watch(appLocaleControllerProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(context.l10n.settingsTitle)),
       body: SafeArea(
         child: ListView(
           children: [
             const SizedBox(height: 10),
             _buildDonationsSection(context, ref),
             const SizedBox(height: 10),
-           _buildAppearanceSection(context, ref, themeMode),
-           const SizedBox(height: 10),
-           _buildUsbBehaviorSection(context, ref),
-           const SizedBox(height: 10),
-           _buildBackupSection(context, ref, historyAsync),
+            _buildAppearanceSection(context, ref, themeMode),
+            const SizedBox(height: 10),
+            _buildLocalizationSection(context, ref, localeOverride),
+            const SizedBox(height: 10),
+            _buildUsbBehaviorSection(context, ref),
+            const SizedBox(height: 10),
+            _buildBackupSection(context, ref, historyAsync),
             const SizedBox(height: 10),
             updateAsync.when(
               loading: () => const _LoadingSection(),
@@ -189,12 +200,13 @@ class SettingsScreen extends ConsumerWidget {
   Widget _buildDonationsSection(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final l10n = context.l10n;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SectionCard(
-        title: 'Support Development',
-        subtitle: 'Keep this app fast, free, and maintained',
+        title: l10n.supportDevelopmentTitle,
+        subtitle: l10n.usbSettingsSupportSubtitle,
         leading: Icon(Icons.volunteer_activism_rounded, color: cs.primary),
         child: Padding(
           padding: const EdgeInsets.all(14),
@@ -217,7 +229,7 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 ),
                 child: Text(
-                  'No ads, no tracking, fully offline. Your support helps fund maintenance, USB device compatibility fixes, and faster updates to the USB IDs database.',
+                  l10n.usbSettingsSupportBody,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: cs.onSecondaryContainer,
                     fontWeight: FontWeight.w600,
@@ -232,7 +244,7 @@ class SettingsScreen extends ConsumerWidget {
                     child: FilledButton.icon(
                       onPressed: () => _openDonationSheet(context),
                       icon: const Icon(Icons.favorite_rounded),
-                      label: const Text('Donate'),
+                      label: Text(l10n.donate),
                       style: FilledButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
@@ -245,10 +257,10 @@ class SettingsScreen extends ConsumerWidget {
                       onLongPress: () => _copyToClipboard(
                         context,
                         text: _repoUrl,
-                        message: 'Repository link copied',
+                        message: l10n.repositoryLinkCopied,
                       ),
                       icon: const Icon(Icons.star_border_rounded),
-                      label: const Text('Star Repo'),
+                      label: Text(l10n.starRepo),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
@@ -257,14 +269,14 @@ class SettingsScreen extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 12),
-              const Wrap(
+              Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  SupportPill(icon: Icons.lock_outline_rounded, label: 'Local-only'),
-                  SupportPill(icon: Icons.shield_outlined, label: 'No tracking'),
-                  SupportPill(icon: Icons.speed_rounded, label: 'Lightweight'),
-                  SupportPill(icon: Icons.code_rounded, label: 'Open-source'),
+                  SupportPill(icon: Icons.lock_outline_rounded, label: l10n.supportPillLocalOnly),
+                  SupportPill(icon: Icons.shield_outlined, label: l10n.supportPillNoTracking),
+                  SupportPill(icon: Icons.speed_rounded, label: l10n.usbSettingsSupportPillLightweight),
+                  SupportPill(icon: Icons.code_rounded, label: l10n.supportPillOpenSource),
                 ],
               ),
             ],
@@ -277,12 +289,13 @@ class SettingsScreen extends ConsumerWidget {
   Widget _buildAppearanceSection(BuildContext context, WidgetRef ref, ThemeMode mode) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final l10n = context.l10n;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SectionCard(
-        title: 'Appearance',
-        subtitle: 'Customize your visual experience',
+        title: l10n.appearanceTitle,
+        subtitle: l10n.appearanceSubtitle,
         leading: Icon(Icons.palette_outlined, color: cs.primary),
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -321,7 +334,7 @@ class SettingsScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _getThemeName(mode),
+                            _getThemeName(context, mode),
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w800,
                               color: cs.onPrimaryContainer,
@@ -329,7 +342,7 @@ class SettingsScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            _getThemeDescription(mode),
+                            _getThemeDescription(context, mode),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: cs.onPrimaryContainer.withOpacity(0.8),
                             ),
@@ -346,7 +359,7 @@ class SettingsScreen extends ConsumerWidget {
                   Expanded(
                     child: _ThemeCard(
                       icon: Icons.auto_awesome_rounded,
-                      label: 'Auto',
+                      label: l10n.themeChoiceAuto,
                       isSelected: mode == ThemeMode.system,
                       onTap: () => _changeTheme(ref, ThemeMode.system),
                       theme: theme,
@@ -356,7 +369,7 @@ class SettingsScreen extends ConsumerWidget {
                   Expanded(
                     child: _ThemeCard(
                       icon: Icons.light_mode_rounded,
-                      label: 'Light',
+                      label: l10n.themeChoiceLight,
                       isSelected: mode == ThemeMode.light,
                       onTap: () => _changeTheme(ref, ThemeMode.light),
                       theme: theme,
@@ -366,7 +379,7 @@ class SettingsScreen extends ConsumerWidget {
                   Expanded(
                     child: _ThemeCard(
                       icon: Icons.dark_mode_rounded,
-                      label: 'Dark',
+                      label: l10n.themeChoiceDark,
                       isSelected: mode == ThemeMode.dark,
                       onTap: () => _changeTheme(ref, ThemeMode.dark),
                       theme: theme,
@@ -375,18 +388,18 @@ class SettingsScreen extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 12),
-             SwitchListTile.adaptive(
-               secondary: const Icon(Icons.wallpaper_rounded),
-               title: const Text('Use dynamic colors'),
-               subtitle: const Text('Match Material You palette on Android 12+. Disable to use the app palette.'),
-               value: ref.watch(dynamicColorsControllerProvider),
-               onChanged: (v) async {
-                 await ref.read(dynamicColorsControllerProvider.notifier).setEnabled(v);
-                 HapticFeedback.selectionClick();
-               },
-             ),
-             const SizedBox(height: 12),
-             Container(
+              SwitchListTile.adaptive(
+                secondary: const Icon(Icons.wallpaper_rounded),
+                title: Text(l10n.useDynamicColors),
+                subtitle: Text(l10n.usbUseDynamicColorsSubtitle),
+                value: ref.watch(dynamicColorsControllerProvider),
+                onChanged: (v) async {
+                  await ref.read(dynamicColorsControllerProvider.notifier).setEnabled(v);
+                  HapticFeedback.selectionClick();
+                },
+              ),
+              const SizedBox(height: 12),
+              Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: cs.surfaceContainerHighest.withOpacity(0.4),
@@ -400,7 +413,7 @@ class SettingsScreen extends ConsumerWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        _getThemeHint(mode),
+                        _getThemeHint(context, mode),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: cs.onSurfaceVariant,
                           height: 1.3,
@@ -409,6 +422,85 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocalizationSection(
+    BuildContext context,
+    WidgetRef ref,
+    Locale? localeOverride,
+  ) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final l10n = context.l10n;
+    final activeLocale = Localizations.localeOf(context);
+    final supported = AppLocalizations.supportedLocales
+        .map(supportedAppLocaleFor)
+        .whereType<SupportedAppLocale>()
+        .toList(growable: false);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: SectionCard(
+        title: l10n.localizationTitle,
+        subtitle: l10n.localizationSubtitle,
+        leading: Icon(Icons.language_rounded, color: cs.primary),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SwitchListTile.adaptive(
+                contentPadding: EdgeInsets.zero,
+                secondary: const Icon(Icons.translate_rounded),
+                title: Text(l10n.useSystemLanguageTitle),
+                subtitle: Text(
+                  localeOverride == null
+                      ? l10n.useSystemLanguageEnabled(
+                          supportedLocaleLabel(activeLocale),
+                        )
+                      : l10n.useSystemLanguageDisabled,
+                ),
+                value: localeOverride == null,
+                onChanged: (enabled) async {
+                  await ref.read(appLocaleControllerProvider.notifier).setOverrideLocale(
+                        enabled ? null : AppLocaleController.englishFallback(AppLocalizations.supportedLocales),
+                      );
+                  HapticFeedback.selectionClick();
+                },
+              ),
+              const SizedBox(height: 10),
+              DropdownButtonFormField<String>(
+                initialValue: AppLocaleController.encodeLocaleCode(
+                  localeOverride ??
+                      AppLocaleController.englishFallback(AppLocalizations.supportedLocales),
+                ),
+                isExpanded: true,
+                decoration: InputDecoration(
+                  labelText: l10n.chooseAppLanguage,
+                  helperText: localeOverride == null ? l10n.languagePickerDisabledHint : l10n.localizationHint,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                ),
+                items: [
+                  for (final item in supported)
+                    DropdownMenuItem<String>(
+                      value: AppLocaleController.encodeLocaleCode(item.locale),
+                      child: Text(supportedLocaleLabel(item.locale)),
+                    ),
+                ],
+                onChanged: localeOverride == null
+                    ? null
+                    : (value) async {
+                        final locale = AppLocaleController.decodeLocaleCode(value);
+                        if (locale == null) return;
+                        await ref.read(appLocaleControllerProvider.notifier).setOverrideLocale(locale);
+                        HapticFeedback.selectionClick();
+                      },
               ),
             ],
           ),

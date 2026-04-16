@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
 
+import '../../l10n/l10n.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/key_value_row.dart';
 import '../../core/widgets/section_card.dart';
@@ -308,7 +309,7 @@ class HistoryEntryDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('History detail'),
+        title: Text(context.l10n.historyDetailTitle),
         actions: [
           historyAsync.maybeWhen(
             data: (items) {
@@ -334,7 +335,7 @@ class HistoryEntryDetailScreen extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    tooltip: 'Export raw dump',
+                    tooltip: context.l10n.deviceExportRawDumpTooltip,
                     onPressed: () => _showHistoryRawDumpExportSheet(
                       context,
                       entry: entry,
@@ -344,7 +345,7 @@ class HistoryEntryDetailScreen extends ConsumerWidget {
                     icon: const Icon(Icons.ios_share_rounded),
                   ),
                   IconButton(
-                    tooltip: 'Open live device info',
+                    tooltip: context.l10n.historyOpenLiveDeviceInfo,
                     onPressed: connected ? () => _openLive(context, currentMatch) : null,
                     icon: const Icon(Icons.open_in_new_rounded),
                   ),
@@ -415,14 +416,15 @@ class _Body extends StatelessWidget {
     final theme = Theme.of(context);
 
     final adv = _HistoryAdvanced.fromEntry(entry);
+    final l10n = context.l10n;
 
     final title = (resolved.productName ?? entry.productNameRaw ?? '').trim().isNotEmpty
         ? (resolved.productName ?? entry.productNameRaw)!
-        : (entry.isInputDevice ? 'Input device' : 'USB device');
+        : (entry.isInputDevice ? l10n.homeInputDeviceLabel : l10n.homeUsbDeviceLabel);
 
     final subtitle = (resolved.vendorName ?? entry.manufacturerNameRaw ?? '').trim().isNotEmpty
         ? (resolved.vendorName ?? entry.manufacturerNameRaw)!
-        : 'Unknown vendor';
+        : l10n.homeUnknownVendor;
 
     final isInput = entry.isInputDevice;
 
@@ -484,7 +486,7 @@ class _Body extends StatelessWidget {
                         children: [
                           _Chip(
                             icon: connected ? Icons.cable_rounded : Icons.cable_outlined,
-                            label: connected ? 'Connected' : 'Not connected',
+                            label: connected ? l10n.historyConnected : l10n.historyNotConnected,
                             tonal: !connected,
                           ),
                           if (isInput)
@@ -495,16 +497,16 @@ class _Body extends StatelessWidget {
                                       ? Icons.keyboard_rounded
                                       : Icons.input_rounded,
                               label: (entry.inputSources == null || entry.inputSources!.isEmpty)
-                                  ? 'Input device'
-                                  : 'Input: ${entry.inputSources!.join(', ')}',
+                                  ? l10n.homeInputDeviceLabel
+                                  : l10n.homeInputSourcesLabel(entry.inputSources!.join(', ')),
                               tonal: true,
                             )
                           else
                             (entry.isHiddenDevice
-                                ? const _Chip(icon: Icons.account_tree_rounded, label: 'Sysfs topology', tonal: true)
+                                ? _Chip(icon: Icons.account_tree_rounded, label: l10n.homeSysfsTopology, tonal: true)
                                 : entry.hasPermission
-                                ? const _Chip(icon: Icons.verified_rounded, label: 'Permission', tonal: false)
-                                : const _Chip(icon: Icons.lock_outline_rounded, label: 'Needs permission', tonal: true)),
+                                ? _Chip(icon: Icons.verified_rounded, label: l10n.historyPermissionLabel, tonal: false)
+                                : _Chip(icon: Icons.lock_outline_rounded, label: l10n.homeNeedsPermission, tonal: true)),
                         ],
                       ),
                       if (onOpenLive != null) ...[
@@ -514,7 +516,7 @@ class _Body extends StatelessWidget {
                           child: FilledButton.tonalIcon(
                             onPressed: onOpenLive,
                             icon: const Icon(Icons.open_in_new_rounded),
-                            label: const Text('Open live device info'),
+                            label: Text(l10n.historyOpenLiveDeviceInfo),
                           ),
                         ),
                       ],
@@ -530,11 +532,11 @@ class _Body extends StatelessWidget {
           _PermissionHintCard(isConnected: connected, onOpenLive: onOpenLive),
           const SizedBox(height: 12),
         ],
-        _identitySection(),
+        _identitySection(context),
         const SizedBox(height: 12),
-        _usbSpecSection(),
+        _usbSpecSection(context),
         const SizedBox(height: 12),
-        _locationSection(),
+        _locationSection(context),
         if (!isInput) ...[
           if (hasDescriptor) ...[
             const SizedBox(height: 12),
@@ -578,59 +580,62 @@ class _Body extends StatelessWidget {
     );
   }
 
-  Widget _identitySection() {
+  Widget _identitySection(BuildContext context) {
+    final l10n = context.l10n;
     return SectionCard(
-      title: 'Identity',
-      subtitle: 'IDs, vendor/product strings',
+      title: l10n.deviceIdentityTitle,
+      subtitle: l10n.historyIdentitySubtitle,
       leading: const Icon(Icons.badge_outlined),
       child: Column(
         children: [
-          KeyValueRow(label: 'Vendor ID', value: Fmt.decAndHex16(entry.vendorId)),
-          KeyValueRow(label: 'Product ID', value: Fmt.decAndHex16(entry.productId)),
-          KeyValueRow(label: 'Vendor', value: Fmt.formatNullable(resolved.vendorName ?? entry.manufacturerNameRaw)),
-          KeyValueRow(label: 'Product', value: Fmt.formatNullable(resolved.productName ?? entry.productNameRaw)),
-          KeyValueRow(label: 'Serial', value: Fmt.formatNullable(entry.serialNumber)),
+          KeyValueRow(label: l10n.deviceVendorIdLabel, value: Fmt.decAndHex16(entry.vendorId)),
+          KeyValueRow(label: l10n.deviceProductIdLabel, value: Fmt.decAndHex16(entry.productId)),
+          KeyValueRow(label: l10n.deviceVendorLabel, value: Fmt.formatNullable(resolved.vendorName ?? entry.manufacturerNameRaw)),
+          KeyValueRow(label: l10n.deviceProductLabel, value: Fmt.formatNullable(resolved.productName ?? entry.productNameRaw)),
+          KeyValueRow(label: l10n.deviceSerialLabel, value: Fmt.formatNullable(entry.serialNumber)),
         ],
       ),
     );
   }
 
-  Widget _usbSpecSection() {
+  Widget _usbSpecSection(BuildContext context) {
+    final l10n = context.l10n;
     return SectionCard(
-      title: 'USB specification',
-      subtitle: 'Version, speed, class/protocol',
+      title: l10n.deviceUsbSpecificationTitle,
+      subtitle: l10n.deviceUsbSpecificationSubtitle,
       leading: const Icon(Icons.tune_rounded),
       child: Column(
         children: [
-          KeyValueRow(label: 'USB version', value: Fmt.formatNullable(entry.usbVersion)),
-          KeyValueRow(label: 'Speed', value: Fmt.speedLabel(entry.speed)),
-          KeyValueRow(label: 'Device class', value: _join(resolved.className, entry.deviceClass)),
-          KeyValueRow(label: 'Subclass', value: _join(resolved.subclassName, entry.deviceSubclass)),
-          KeyValueRow(label: 'Protocol', value: _join(resolved.protocolName, entry.deviceProtocol)),
-          KeyValueRow(label: 'Interfaces', value: '${entry.interfaceCount}'),
-          KeyValueRow(label: 'Configurations', value: '${entry.configurationCount}'),
+          KeyValueRow(label: l10n.deviceUsbVersionLabel, value: Fmt.formatNullable(entry.usbVersion)),
+          KeyValueRow(label: l10n.deviceSpeedLabel, value: Fmt.speedLabel(entry.speed)),
+          KeyValueRow(label: l10n.deviceDeviceClassLabel, value: _join(context, resolved.className, entry.deviceClass)),
+          KeyValueRow(label: l10n.deviceSubclassLabel, value: _join(context, resolved.subclassName, entry.deviceSubclass)),
+          KeyValueRow(label: l10n.deviceProtocolLabel, value: _join(context, resolved.protocolName, entry.deviceProtocol)),
+          KeyValueRow(label: l10n.deviceInterfacesLabel, value: '${entry.interfaceCount}'),
+          KeyValueRow(label: l10n.deviceConfigurationsLabel, value: '${entry.configurationCount}'),
         ],
       ),
     );
   }
 
-  Widget _locationSection() {
+  Widget _locationSection(BuildContext context) {
+    final l10n = context.l10n;
     return SectionCard(
-      title: 'Location',
-      subtitle: 'Android identifiers and bus hints',
+      title: l10n.deviceLocationTitle,
+      subtitle: l10n.deviceLocationSubtitle,
       leading: const Icon(Icons.pin_drop_outlined),
       child: Column(
         children: [
-          KeyValueRow(label: 'Device path', value: entry.deviceName),
-          KeyValueRow(label: 'Android deviceId', value: entry.deviceId == null ? 'Unknown' : '${entry.deviceId}'),
-          KeyValueRow(label: 'Port number', value: entry.portNumber == null ? 'Unknown' : '${entry.portNumber}'),
+          KeyValueRow(label: l10n.devicePathLabel, value: entry.deviceName),
+          KeyValueRow(label: l10n.deviceAndroidDeviceIdLabel, value: entry.deviceId == null ? l10n.unknown : '${entry.deviceId}'),
+          KeyValueRow(label: l10n.devicePortNumberLabel, value: entry.portNumber == null ? l10n.unknown : '${entry.portNumber}'),
           KeyValueRow(
-            label: 'Type',
+            label: l10n.deviceTypeLabel,
             value: entry.isInputDevice
-                ? 'Input device (keyboard/mouse via InputManager)'
+                ? l10n.deviceTypeInputManager
                 : entry.isHiddenDevice
-                    ? 'USB topology entry (sysfs)'
-                    : 'USB device (UsbManager)',
+                    ? l10n.deviceTypeSysfs
+                    : l10n.deviceTypeUsbManager,
             allowCopy: false,
           ),
         ],
@@ -963,8 +968,8 @@ class _Body extends StatelessWidget {
     );
   }
 
-  static String _join(String? name, int id) {
-    final n = (name == null || name.trim().isEmpty) ? 'Unknown' : name;
+  static String _join(BuildContext context, String? name, int id) {
+    final n = (name == null || name.trim().isEmpty) ? context.l10n.unknown : name;
     return '$n (${Fmt.decAndHex8(id)})';
   }
 }
@@ -978,6 +983,7 @@ class _PermissionHintCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return Card(
       elevation: 0,
@@ -993,7 +999,7 @@ class _PermissionHintCard extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Advanced details not captured',
+                    l10n.historyAdvancedDetailsNotCapturedTitle,
                     style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onErrorContainer),
                   ),
                 ),
@@ -1001,7 +1007,7 @@ class _PermissionHintCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'This history entry does not include raw descriptors, strings, or HID reports. These fields require USB permission at capture time.',
+              l10n.historyAdvancedDetailsNotCapturedBody,
               style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onErrorContainer),
             ),
             if (isConnected && onOpenLive != null) ...[
@@ -1011,7 +1017,7 @@ class _PermissionHintCard extends StatelessWidget {
                 child: FilledButton.icon(
                   onPressed: onOpenLive,
                   icon: const Icon(Icons.open_in_new_rounded),
-                  label: const Text('Open live device info'),
+                  label: Text(l10n.historyOpenLiveDeviceInfo),
                 ),
               ),
             ],
@@ -1259,15 +1265,16 @@ class _HistoryRawDumpExportSheetState extends State<_HistoryRawDumpExportSheet> 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final content = switch (_format) {
       _HistoryRawDumpExportFormat.json => widget.prettyJson,
       _HistoryRawDumpExportFormat.report => widget.plainText,
       _HistoryRawDumpExportFormat.hex => widget.rawHex,
     };
     final title = switch (_format) {
-      _HistoryRawDumpExportFormat.json => 'JSON payload',
-      _HistoryRawDumpExportFormat.report => 'Plain text report',
-      _HistoryRawDumpExportFormat.hex => 'Raw hex descriptors',
+      _HistoryRawDumpExportFormat.json => l10n.deviceExportFormatJson,
+      _HistoryRawDumpExportFormat.report => l10n.deviceExportFormatReport,
+      _HistoryRawDumpExportFormat.hex => l10n.deviceExportFormatRawHex,
     };
 
     return Padding(
@@ -1275,10 +1282,10 @@ class _HistoryRawDumpExportSheetState extends State<_HistoryRawDumpExportSheet> 
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Raw dump export', style: theme.textTheme.titleLarge),
+          Text(l10n.deviceRawDumpExportTitle, style: theme.textTheme.titleLarge),
           const SizedBox(height: 6),
           Text(
-            'Export this historical device snapshot directly from history.',
+            l10n.historyRawDumpExportSubtitle,
             style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: 16),
@@ -1287,17 +1294,17 @@ class _HistoryRawDumpExportSheetState extends State<_HistoryRawDumpExportSheet> 
             runSpacing: 8,
             children: [
               _ExportFormatChip(
-                label: 'JSON',
+                label: l10n.deviceExportChipJson,
                 selected: _format == _HistoryRawDumpExportFormat.json,
                 onTap: () => setState(() => _format = _HistoryRawDumpExportFormat.json),
               ),
               _ExportFormatChip(
-                label: 'Report',
+                label: l10n.deviceExportChipReport,
                 selected: _format == _HistoryRawDumpExportFormat.report,
                 onTap: () => setState(() => _format = _HistoryRawDumpExportFormat.report),
               ),
               _ExportFormatChip(
-                label: 'Raw hex',
+                label: l10n.deviceExportChipRawHex,
                 selected: _format == _HistoryRawDumpExportFormat.hex,
                 onTap: () => setState(() => _format = _HistoryRawDumpExportFormat.hex),
               ),
@@ -1317,12 +1324,12 @@ class _HistoryRawDumpExportSheetState extends State<_HistoryRawDumpExportSheet> 
                   await Clipboard.setData(ClipboardData(text: content));
                   if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('$title copied to clipboard.')),
+                    SnackBar(content: Text(l10n.deviceCopiedToClipboard(title))),
                   );
                   HapticFeedback.selectionClick();
                 },
                 icon: const Icon(Icons.copy_rounded),
-                label: const Text('Copy'),
+                label: Text(l10n.deviceCopyAction),
               ),
             ],
           ),

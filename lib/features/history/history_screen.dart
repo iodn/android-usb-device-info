@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../l10n/l10n.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/section_card.dart';
 import '../../data/usb/usb_repository.dart';
@@ -78,16 +79,16 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('History'),
+        title: Text(context.l10n.historyScreenTitle),
         actions: [
           historyAsync.maybeWhen(
             data: (items) => IconButton(
-              tooltip: 'Clear all',
+              tooltip: context.l10n.historyClearAllTooltip,
               onPressed: items.isEmpty ? null : () => _confirmClearAll(context),
               icon: const Icon(Icons.delete_sweep_rounded),
             ),
             orElse: () => IconButton(
-              tooltip: 'Clear all',
+              tooltip: context.l10n.historyClearAllTooltip,
               onPressed: null,
               icon: const Icon(Icons.delete_sweep_rounded),
             ),
@@ -104,8 +105,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                 ? items
                 : items
                     .where((e) {
-                      final title = _titleFor(e).toLowerCase();
-                      final subtitle = _subtitleFor(e).toLowerCase();
+                      final title = _titleFor(context, e).toLowerCase();
+                      final subtitle = _subtitleFor(context, e).toLowerCase();
                       final ids = '${e.vendorId}:${e.productId}'.toLowerCase();
                       return title.contains(q) ||
                           subtitle.contains(q) ||
@@ -130,16 +131,20 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
                   child: SectionCard(
-                    title: 'Previously inspected devices',
-                    subtitle: items.isEmpty ? 'Nothing recorded yet' : '${items.length} item${items.length == 1 ? '' : 's'}',
+                    title: context.l10n.historyPreviouslyInspectedTitle,
+                    subtitle: items.isEmpty
+                        ? context.l10n.historyNothingRecordedYet
+                        : items.length == 1
+                            ? context.l10n.historyRecordedSingle
+                            : context.l10n.historyRecordedCount(items.length),
                     leading: const Icon(Icons.history_rounded),
                     child: Row(
                       children: [
                         Expanded(
                           child: Text(
                             items.isEmpty
-                                ? 'Open a device info page to record it here.'
-                                : 'Swipe left to delete. Use Undo to restore.',
+                                ? context.l10n.historyOpenDevicePageHint
+                                : context.l10n.historySwipeToDeleteHint,
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 ),
@@ -149,7 +154,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                         FilledButton.tonalIcon(
                           onPressed: items.isEmpty ? null : () => _confirmClearAll(context),
                           icon: const Icon(Icons.delete_outline_rounded),
-                          label: const Text('Clear'),
+                          label: Text(context.l10n.clearAction),
                         ),
                       ],
                     ),
@@ -162,12 +167,12 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                     onChanged: (_) => setState(() {}),
                     textInputAction: TextInputAction.search,
                     decoration: InputDecoration(
-                      hintText: 'Search name, VID:PID, serial, path…',
+                      hintText: context.l10n.historySearchHint,
                       prefixIcon: const Icon(Icons.search_rounded),
                       suffixIcon: _search.text.isEmpty
                           ? null
                           : IconButton(
-                              tooltip: 'Clear',
+                              tooltip: context.l10n.clearAction,
                               onPressed: () {
                                 _search.clear();
                                 setState(() {});
@@ -206,12 +211,15 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     );
   }
 
-  String _titleFor(DeviceHistoryEntry e) {
-    return e.productNameResolved ?? e.productNameRaw ?? (e.isInputDevice ? 'Input device' : 'USB device');
+  String _titleFor(BuildContext context, DeviceHistoryEntry e) {
+    final l10n = context.l10n;
+    return e.productNameResolved ??
+        e.productNameRaw ??
+        (e.isInputDevice ? l10n.homeInputDeviceLabel : l10n.homeUsbDeviceLabel);
   }
 
-  String _subtitleFor(DeviceHistoryEntry e) {
-    return e.vendorName ?? e.manufacturerNameRaw ?? 'Unknown vendor';
+  String _subtitleFor(BuildContext context, DeviceHistoryEntry e) {
+    return e.vendorName ?? e.manufacturerNameRaw ?? context.l10n.homeUnknownVendor;
   }
 
   void _openEntry(BuildContext context, DeviceHistoryEntry entry) {
@@ -225,9 +233,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     if (removed == null) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Removed from history'),
+        content: Text(context.l10n.historyRemovedMessage),
         action: SnackBarAction(
-          label: 'Undo',
+          label: context.l10n.undo,
           onPressed: () {
             ref.read(deviceHistoryControllerProvider.notifier).restore(removed, index: index);
           },
@@ -242,9 +250,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     if (removed == null) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Removed from history'),
+        content: Text(context.l10n.historyRemovedMessage),
         action: SnackBarAction(
-          label: 'Undo',
+          label: context.l10n.undo,
           onPressed: () {
             ref.read(deviceHistoryControllerProvider.notifier).restore(removed);
           },
@@ -257,16 +265,16 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Clear history?'),
-        content: const Text('This will remove all recorded devices.'),
+        title: Text(context.l10n.historyClearDialogTitle),
+        content: Text(context.l10n.historyClearDialogBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Clear all'),
+            child: Text(context.l10n.historyClearAllAction),
           ),
         ],
       ),
@@ -295,19 +303,22 @@ class _HistoryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final title = entry.productNameResolved ?? entry.productNameRaw ?? (entry.isInputDevice ? 'Input device' : 'USB device');
-    final subtitle = entry.vendorName ?? entry.manufacturerNameRaw ?? 'Unknown vendor';
+    final l10n = context.l10n;
+    final title = entry.productNameResolved ??
+        entry.productNameRaw ??
+        (entry.isInputDevice ? l10n.homeInputDeviceLabel : l10n.homeUsbDeviceLabel);
+    final subtitle = entry.vendorName ?? entry.manufacturerNameRaw ?? l10n.homeUnknownVendor;
     final idLine = '${Fmt.hex16(entry.vendorId)} : ${Fmt.hex16(entry.productId)}';
     final dt = DateFormat('MMM d, HH:mm').format(entry.testedAt);
 
     final connChip = _Chip(
       icon: connected ? Icons.cable_rounded : Icons.cable_outlined,
-      label: connected ? 'Connected' : 'Not connected',
+      label: connected ? l10n.historyConnected : l10n.historyNotConnected,
       tonal: !connected,
     );
 
     final permChip = entry.isHiddenDevice
-        ? const _Chip(icon: Icons.account_tree_rounded, label: 'Sysfs topology', tonal: true)
+        ? _Chip(icon: Icons.account_tree_rounded, label: l10n.homeSysfsTopology, tonal: true)
         : entry.isInputDevice
         ? _Chip(
             icon: (entry.inputSources ?? const []).contains('mouse')
@@ -316,13 +327,13 @@ class _HistoryTile extends StatelessWidget {
                     ? Icons.keyboard_rounded
                     : Icons.input_rounded,
             label: (entry.inputSources == null || entry.inputSources!.isEmpty)
-                ? 'Input device'
-                : 'Input: ${entry.inputSources!.join(', ')}',
+                ? l10n.homeInputDeviceLabel
+                : l10n.homeInputSourcesLabel(entry.inputSources!.join(', ')),
             tonal: true,
           )
         : (entry.hasPermission
-            ? const _Chip(icon: Icons.verified_rounded, label: 'Permission', tonal: false)
-            : const _Chip(icon: Icons.lock_outline_rounded, label: 'Needs permission', tonal: true));
+            ? _Chip(icon: Icons.verified_rounded, label: l10n.historyPermissionLabel, tonal: false)
+            : _Chip(icon: Icons.lock_outline_rounded, label: l10n.homeNeedsPermission, tonal: true));
 
     return Dismissible(
       key: ValueKey(entry.id),
@@ -383,7 +394,7 @@ class _HistoryTile extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 PopupMenuButton<String>(
-                  tooltip: 'Actions',
+                  tooltip: l10n.historyActionsTooltip,
                   onSelected: (v) {
                     switch (v) {
                       case 'open':
@@ -394,9 +405,9 @@ class _HistoryTile extends StatelessWidget {
                         break;
                     }
                   },
-                  itemBuilder: (_) => const [
-                    PopupMenuItem(value: 'open', child: Text('Open')),
-                    PopupMenuItem(value: 'delete', child: Text('Delete')),
+                  itemBuilder: (_) => [
+                    PopupMenuItem(value: 'open', child: Text(l10n.open)),
+                    PopupMenuItem(value: 'delete', child: Text(l10n.delete)),
                   ],
                   child: Icon(Icons.more_vert_rounded, color: theme.colorScheme.onSurfaceVariant),
                 ),
@@ -532,8 +543,9 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final title = hasItems ? 'No matches' : 'No history yet';
-    final body = hasItems ? 'Try a different search term.' : 'Open a device info page to record an entry here.';
+    final l10n = context.l10n;
+    final title = hasItems ? l10n.historyNoMatchesTitle : l10n.historyNoHistoryTitle;
+    final body = hasItems ? l10n.historyNoMatchesBody : l10n.historyNoHistoryBody;
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
       children: [
@@ -549,7 +561,7 @@ class _EmptyState extends StatelessWidget {
         if (hasItems && query.isNotEmpty) ...[
           const SizedBox(height: 8),
           Text(
-            'Query: "$query"',
+            l10n.historyQueryLabel(query),
             textAlign: TextAlign.center,
             style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
@@ -568,7 +580,7 @@ class _ErrorState extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Text('Failed to load history:\n$error'),
+        child: Text(context.l10n.historyFailedToLoad(error)),
       ),
     );
   }

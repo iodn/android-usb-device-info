@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../l10n/l10n.dart';
 import '../../core/utils/formatters.dart';
 import '../../data/usb/usb_repository.dart';
 import '../device/device_detail_screen.dart';
@@ -33,15 +34,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('USBDevInfo'),
+        title: Text(context.l10n.usbDevInfoAppTitle),
         actions: [
           IconButton(
-            tooltip: 'History',
+            tooltip: context.l10n.homeHistoryTooltip,
             onPressed: () => context.goNamed(HistoryScreen.routeName),
             icon: const Icon(Icons.history_rounded),
           ),
           IconButton(
-            tooltip: 'Settings',
+            tooltip: context.l10n.homeSettingsTooltip,
             onPressed: () => context.goNamed(SettingsScreen.routeName),
             icon: const Icon(Icons.settings_rounded),
           ),
@@ -71,7 +72,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => ref.read(deviceListControllerProvider.notifier).refresh(),
         icon: const Icon(Icons.refresh_rounded),
-        label: const Text('Refresh'),
+        label: Text(context.l10n.refresh),
       ),
     );
   }
@@ -90,6 +91,7 @@ class _SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: ValueListenableBuilder<TextEditingValue>(
@@ -101,12 +103,12 @@ class _SearchBar extends StatelessWidget {
             onChanged: onChanged,
             textInputAction: TextInputAction.search,
             decoration: InputDecoration(
-              hintText: 'Search vendor, product, VID:PID, device path…',
+              hintText: l10n.homeSearchHint,
               prefixIcon: const Icon(Icons.search_rounded),
               suffixIcon: isEmpty
                   ? null
                   : IconButton(
-                      tooltip: 'Clear',
+                      tooltip: l10n.homeClearSearchTooltip,
                       onPressed: onClear,
                       icon: const Icon(Icons.close_rounded),
                     ),
@@ -147,8 +149,14 @@ class _DeviceTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final d = item.device;
-    final title = item.productName ?? d.productName ?? (d.isInputDevice ? 'Input device' : 'USB Device');
-    final subtitle = item.vendorName ?? d.manufacturerName ?? item.deviceClassName ?? 'Unknown vendor';
+    final l10n = context.l10n;
+    final title = item.productName ??
+        d.productName ??
+        (d.isInputDevice ? l10n.homeInputDeviceLabel : l10n.homeUsbDeviceLabel);
+    final subtitle = item.vendorName ??
+        d.manufacturerName ??
+        item.deviceClassName ??
+        l10n.homeUnknownVendor;
     final idLine = '${Fmt.hex16(d.vendorId)} : ${Fmt.hex16(d.productId)}';
     final chipsetFamily = item.chipsetFamily;
     final likelyFunction = item.likelyFunction;
@@ -159,10 +167,12 @@ class _DeviceTile extends ConsumerWidget {
     final capabilities = d.capabilities ?? const <String>[];
 
     final permissionChip = isHidden
-        ? const _StatusChip(label: 'Sysfs topology', icon: Icons.account_tree_rounded, tonal: true)
+        ? _StatusChip(label: l10n.homeSysfsTopology, icon: Icons.account_tree_rounded, tonal: true)
         : isInput
         ? _StatusChip(
-            label: sources.isEmpty ? 'Input device' : 'Input: ${sources.join(', ')}',
+            label: sources.isEmpty
+                ? l10n.homeInputDeviceLabel
+                : l10n.homeInputSourcesLabel(sources.join(', ')),
             icon: sources.contains('mouse')
                 ? Icons.mouse_rounded
                 : sources.contains('keyboard')
@@ -171,8 +181,12 @@ class _DeviceTile extends ConsumerWidget {
             tonal: true,
           )
         : (d.hasPermission
-            ? const _StatusChip(label: 'Permission granted', icon: Icons.verified_rounded)
-            : const _StatusChip(label: 'Needs permission', icon: Icons.lock_outline_rounded, tonal: true));
+            ? _StatusChip(label: l10n.homePermissionGranted, icon: Icons.verified_rounded)
+            : _StatusChip(
+                label: l10n.homeNeedsPermission,
+                icon: Icons.lock_outline_rounded,
+                tonal: true,
+              ));
 
     return InkWell(
       borderRadius: BorderRadius.circular(24),
@@ -234,7 +248,11 @@ class _DeviceTile extends ConsumerWidget {
                         _InfoPill(icon: Icons.fingerprint_rounded, label: idLine),
                         _InfoPill(
                           icon: Icons.usb_rounded,
-                          label: isHidden ? 'Hidden topology' : isInput ? 'Input path' : '${d.interfaceCount} interfaces',
+                          label: isHidden
+                              ? l10n.homeHiddenTopology
+                              : isInput
+                                  ? l10n.homeInputPath
+                                  : l10n.homeInterfacesCount(d.interfaceCount),
                         ),
                         permissionChip,
                       ],
@@ -451,21 +469,20 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
       children: [
         Icon(Icons.usb_off_rounded, size: 64, color: theme.colorScheme.onSurfaceVariant),
         const SizedBox(height: 12),
         Text(
-          'No USB devices detected',
+          l10n.homeNoUsbDevicesTitle,
           textAlign: TextAlign.center,
           style: theme.textTheme.titleLarge,
         ),
         const SizedBox(height: 8),
         Text(
-          'Connect a USB device (OTG) or a USB accessory, then pull to refresh.\n\n'
-          'Tip: grant permission per device to read strings, parse raw descriptors, '
-          'and enumerate full configurations/interfaces/endpoints.',
+          l10n.homeNoUsbDevicesBody,
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
         ),
@@ -490,7 +507,7 @@ class _ErrorState extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Text('Failed to load devices:\n$error'),
+        child: Text(context.l10n.homeFailedToLoad(error)),
       ),
     );
   }

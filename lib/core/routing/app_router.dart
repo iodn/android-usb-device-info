@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../l10n/l10n.dart';
 import '../../features/device/device_detail_screen.dart';
 import '../../features/history/history_entry_detail_screen.dart';
 import '../../features/history/history_screen.dart';
@@ -80,10 +81,10 @@ class _RouterErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Navigation error')),
+      appBar: AppBar(title: Text(context.l10n.navigationErrorTitle)),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Text(error?.toString() ?? 'Unknown error'),
+        child: Text(error?.toString() ?? context.l10n.unknownError),
       ),
     );
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../l10n/l10n.dart';
+
 class KeyValueRow extends StatelessWidget {
   const KeyValueRow({
     super.key,
@@ -68,7 +70,7 @@ class KeyValueRow extends StatelessWidget {
     await Clipboard.setData(ClipboardData(text: value));
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Copied')),
+      SnackBar(content: Text(context.l10n.codeCopied)),
     );
   }
 }

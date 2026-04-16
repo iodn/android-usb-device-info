@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/l10n.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/key_value_row.dart';
 import '../../core/widgets/section_card.dart';
@@ -89,10 +90,10 @@ class _DeviceDetailScreenState extends ConsumerState<DeviceDetailScreen> {
     final exportRaw = rawAsync.asData?.value;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Device info'),
+        title: Text(context.l10n.deviceInfoTitle),
         actions: [
           IconButton(
-            tooltip: 'Advanced raw view',
+            tooltip: context.l10n.deviceAdvancedRawViewTooltip,
             onPressed: exportView == null
                 ? null
                 : () => Navigator.of(context).push(
@@ -106,7 +107,7 @@ class _DeviceDetailScreenState extends ConsumerState<DeviceDetailScreen> {
             icon: const Icon(Icons.developer_mode_rounded),
           ),
           IconButton(
-            tooltip: 'Export raw dump',
+            tooltip: context.l10n.deviceExportRawDumpTooltip,
             onPressed: exportView == null
                 ? null
                 : () => _showRawDumpExportSheet(
@@ -144,7 +145,7 @@ class _ErrorBody extends StatelessWidget {
       children: [
         const Icon(Icons.error_outline_rounded, size: 48),
         const SizedBox(height: 12),
-        Text('Unable to read device details.', style: Theme.of(context).textTheme.titleLarge),
+        Text(context.l10n.deviceUnableToReadDetails, style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
         Text(error),
       ],
@@ -174,9 +175,10 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
     final raw = widget.raw;
     final s = view.details.summary;
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
-    final title = view.productName ?? s.productName ?? (s.isInputDevice ? 'Input device' : 'USB Device');
-    final subtitle = view.vendorName ?? s.manufacturerName ?? 'Unknown vendor';
+    final title = view.productName ?? s.productName ?? (s.isInputDevice ? l10n.homeInputDeviceLabel : l10n.homeUsbDeviceLabel);
+    final subtitle = view.vendorName ?? s.manufacturerName ?? l10n.homeUnknownVendor;
 
     final isInput = s.isInputDevice;
     final needsPermission = !isInput && !s.isHiddenDevice && !s.hasPermission;
@@ -358,8 +360,8 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
             const SizedBox(height: 12),
             _classDescriptorSection(
               context,
-              title: 'Audio class descriptors',
-              subtitle: '${classSections.audio.length} descriptor(s)',
+              title: l10n.deviceAudioClassDescriptorsTitle,
+              subtitle: l10n.deviceDescriptorsCount(classSections.audio.length),
               icon: Icons.headset_rounded,
               descriptors: classSections.audio,
             ),
@@ -368,8 +370,8 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
             const SizedBox(height: 12),
             _classDescriptorSection(
               context,
-              title: 'Video class descriptors',
-              subtitle: '${classSections.video.length} descriptor(s)',
+              title: l10n.deviceVideoClassDescriptorsTitle,
+              subtitle: l10n.deviceDescriptorsCount(classSections.video.length),
               icon: Icons.videocam_rounded,
               descriptors: classSections.video,
             ),
@@ -378,8 +380,8 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
             const SizedBox(height: 12),
             _classDescriptorSection(
               context,
-              title: 'CDC / serial descriptors',
-              subtitle: '${classSections.cdc.length} descriptor(s)',
+              title: l10n.deviceCdcSerialDescriptorsTitle,
+              subtitle: l10n.deviceDescriptorsCount(classSections.cdc.length),
               icon: Icons.settings_ethernet_rounded,
               descriptors: classSections.cdc,
             ),
@@ -388,8 +390,8 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
             const SizedBox(height: 12),
             _classDescriptorSection(
               context,
-              title: 'Hub descriptors',
-              subtitle: '${classSections.hub.length} descriptor(s)',
+              title: l10n.deviceHubDescriptorsTitle,
+              subtitle: l10n.deviceDescriptorsCount(classSections.hub.length),
               icon: Icons.hub_rounded,
               descriptors: classSections.hub,
             ),
@@ -398,8 +400,8 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
             const SizedBox(height: 12),
             _classDescriptorSection(
               context,
-              title: 'BOS & capabilities',
-              subtitle: '${classSections.bos.length} descriptor(s)',
+              title: l10n.deviceBosCapabilitiesTitle,
+              subtitle: l10n.deviceDescriptorsCount(classSections.bos.length),
               icon: Icons.extension_rounded,
               descriptors: classSections.bos,
             ),
@@ -428,6 +430,7 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
   }
 
   Widget _identitySection(BuildContext context, DeviceHistoryEntry? historyMatch) {
+    final l10n = context.l10n;
     final s = view.details.summary;
     final vendor = view.vendorName ?? s.manufacturerName;
     final product = view.productName ?? s.productName;
@@ -440,46 +443,46 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
     ].where((p) => p.trim().isNotEmpty).toSet().toList(growable: false);
     final previousPaths = knownPaths.where((p) => p != s.deviceName).toList(growable: false);
     return SectionCard(
-      title: 'Identity',
-      subtitle: 'IDs, vendor/product strings, and continuity',
+      title: l10n.deviceIdentityTitle,
+      subtitle: l10n.deviceIdentitySubtitle,
       leading: const Icon(Icons.badge_outlined),
       child: Column(
         children: [
-          KeyValueRow(label: 'Vendor ID', value: Fmt.decAndHex16(s.vendorId)),
-          KeyValueRow(label: 'Product ID', value: Fmt.decAndHex16(s.productId)),
-          KeyValueRow(label: 'Vendor', value: Fmt.formatNullable(vendor)),
-          KeyValueRow(label: 'Product', value: Fmt.formatNullable(product)),
+          KeyValueRow(label: l10n.deviceVendorIdLabel, value: Fmt.decAndHex16(s.vendorId)),
+          KeyValueRow(label: l10n.deviceProductIdLabel, value: Fmt.decAndHex16(s.productId)),
+          KeyValueRow(label: l10n.deviceVendorLabel, value: Fmt.formatNullable(vendor)),
+          KeyValueRow(label: l10n.deviceProductLabel, value: Fmt.formatNullable(product)),
           KeyValueRow(
-            label: 'Chipset family',
+            label: l10n.deviceChipsetFamilyLabel,
             value: chipsetFamily == null
-                ? 'Unknown'
+                ? l10n.unknown
                 : '${chipsetFamily.family} (${chipsetFamily.confidence})',
           ),
           if (chipsetFamily != null)
-            KeyValueRow(label: 'Chipset basis', value: chipsetFamily.reason),
+            KeyValueRow(label: l10n.deviceChipsetBasisLabel, value: chipsetFamily.reason),
           KeyValueRow(
-            label: 'Likely function',
+            label: l10n.deviceLikelyFunctionLabel,
             value: likelyFunction == null
-                ? 'Unknown'
+                ? l10n.unknown
                 : '${likelyFunction.label} (${likelyFunction.confidence})',
           ),
           if (likelyFunction != null)
-            KeyValueRow(label: 'Function basis', value: likelyFunction.reason),
-          KeyValueRow(label: 'Serial', value: Fmt.formatNullable(s.serialNumber)),
-          KeyValueRow(label: 'Stable identity', value: stableIdentityKey.isEmpty ? 'Unavailable' : stableIdentityKey),
-          KeyValueRow(label: 'Identity confidence', value: _identityConfidenceLabel(s.identityConfidence)),
-          KeyValueRow(label: 'Identity strategy', value: _identityStrategyLabel(s.identityStrategy)),
-          KeyValueRow(label: 'Physical location', value: _formatNullableString(s.physicalLocationKey)),
-          KeyValueRow(label: 'Interface fingerprint', value: _formatNullableString(s.interfaceFingerprint)),
+            KeyValueRow(label: l10n.deviceFunctionBasisLabel, value: likelyFunction.reason),
+          KeyValueRow(label: l10n.deviceSerialLabel, value: Fmt.formatNullable(s.serialNumber)),
+          KeyValueRow(label: l10n.deviceStableIdentityLabel, value: stableIdentityKey.isEmpty ? l10n.unavailable : stableIdentityKey),
+          KeyValueRow(label: l10n.deviceIdentityConfidenceLabel, value: _identityConfidenceLabel(context, s.identityConfidence)),
+          KeyValueRow(label: l10n.deviceIdentityStrategyLabel, value: _identityStrategyLabel(context, s.identityStrategy)),
+          KeyValueRow(label: l10n.devicePhysicalLocationLabel, value: _formatNullableString(context, s.physicalLocationKey)),
+          KeyValueRow(label: l10n.deviceInterfaceFingerprintLabel, value: _formatNullableString(context, s.interfaceFingerprint)),
           KeyValueRow(
-            label: 'Path continuity',
+            label: l10n.devicePathContinuityLabel,
             value: previousPaths.isEmpty
-                ? 'No previous device path recorded'
-                : 'Re-enumerated across ${previousPaths.length + 1} known path(s)',
+                ? l10n.deviceNoPreviousPathRecorded
+                : l10n.deviceReenumeratedAcrossPaths(previousPaths.length + 1),
           ),
           if (previousPaths.isNotEmpty)
             KeyValueRow(
-              label: 'Previous paths',
+              label: l10n.devicePreviousPathsLabel,
               value: previousPaths.join('\n'),
             ),
         ],
@@ -488,43 +491,45 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
   }
 
   Widget _usbSpecSection(BuildContext context) {
+    final l10n = context.l10n;
     final s = view.details.summary;
     return SectionCard(
-      title: 'USB specification',
-      subtitle: 'Version, speed, class/protocol',
+      title: l10n.deviceUsbSpecificationTitle,
+      subtitle: l10n.deviceUsbSpecificationSubtitle,
       leading: const Icon(Icons.tune_rounded),
       child: Column(
         children: [
-          KeyValueRow(label: 'USB version', value: Fmt.formatNullable(s.usbVersion)),
-          KeyValueRow(label: 'Speed', value: Fmt.speedLabel(s.speed)),
-          KeyValueRow(label: 'Device class', value: _joinNameAndIds(view.deviceClassName, s.deviceClass)),
-          KeyValueRow(label: 'Subclass', value: _joinNameAndIds(view.deviceSubclassName, s.deviceSubclass)),
-          KeyValueRow(label: 'Protocol', value: _joinNameAndIds(view.deviceProtocolName, s.deviceProtocol)),
-          KeyValueRow(label: 'Interfaces', value: '${s.interfaceCount}'),
-          KeyValueRow(label: 'Configurations', value: '${s.configurationCount}'),
+          KeyValueRow(label: l10n.deviceUsbVersionLabel, value: Fmt.formatNullable(s.usbVersion)),
+          KeyValueRow(label: l10n.deviceSpeedLabel, value: Fmt.speedLabel(s.speed)),
+          KeyValueRow(label: l10n.deviceDeviceClassLabel, value: _joinNameAndIds(context, view.deviceClassName, s.deviceClass)),
+          KeyValueRow(label: l10n.deviceSubclassLabel, value: _joinNameAndIds(context, view.deviceSubclassName, s.deviceSubclass)),
+          KeyValueRow(label: l10n.deviceProtocolLabel, value: _joinNameAndIds(context, view.deviceProtocolName, s.deviceProtocol)),
+          KeyValueRow(label: l10n.deviceInterfacesLabel, value: '${s.interfaceCount}'),
+          KeyValueRow(label: l10n.deviceConfigurationsLabel, value: '${s.configurationCount}'),
         ],
       ),
     );
   }
 
   Widget _locationSection(BuildContext context) {
+    final l10n = context.l10n;
     final s = view.details.summary;
     return SectionCard(
-      title: 'Location',
-      subtitle: 'Android identifiers and bus hints',
+      title: l10n.deviceLocationTitle,
+      subtitle: l10n.deviceLocationSubtitle,
       leading: const Icon(Icons.pin_drop_outlined),
       child: Column(
         children: [
-          KeyValueRow(label: 'Device path', value: s.deviceName),
-          KeyValueRow(label: 'Android deviceId', value: s.deviceId == null ? 'Unknown' : '${s.deviceId}'),
-          KeyValueRow(label: 'Port number', value: s.portNumber == null ? 'Unknown' : '${s.portNumber}'),
+          KeyValueRow(label: l10n.devicePathLabel, value: s.deviceName),
+          KeyValueRow(label: l10n.deviceAndroidDeviceIdLabel, value: s.deviceId == null ? l10n.unknown : '${s.deviceId}'),
+          KeyValueRow(label: l10n.devicePortNumberLabel, value: s.portNumber == null ? l10n.unknown : '${s.portNumber}'),
           KeyValueRow(
-            label: 'Type',
+            label: l10n.deviceTypeLabel,
             value: s.isInputDevice
-                ? 'Input device (keyboard/mouse via InputManager)'
+                ? l10n.deviceTypeInputManager
                 : s.isHiddenDevice
-                    ? 'USB topology entry (sysfs)'
-                    : 'USB device (UsbManager)',
+                    ? l10n.deviceTypeSysfs
+                    : l10n.deviceTypeUsbManager,
             allowCopy: false,
           ),
         ],
@@ -533,39 +538,40 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
   }
 
   Widget _topologySection(BuildContext context, Map<String, dynamic> topology) {
+    final l10n = context.l10n;
     final children = _asList(topology['children']).whereType<String>().toList(growable: false);
     final siblings = _asList(topology['siblings']).whereType<String>().toList(growable: false);
     final portChain = _asList(topology['portChain']).map(_asInt).whereType<int>().toList(growable: false);
     final busNumber = _asInt(topology['busNumber']);
     final treeDepth = _asInt(topology['treeDepth']);
     final upstreamHub = topology['upstreamHub'] as String?;
-    final portChainLabel = portChain.isEmpty ? 'Unknown' : portChain.join(' → ');
+    final portChainLabel = portChain.isEmpty ? l10n.unknown : portChain.join(' → ');
     final topologyPath = _buildTopologyPath(busNumber, portChain);
     return SectionCard(
-      title: 'Topology',
-      subtitle: 'Bus layout, chain, parent and siblings',
+      title: l10n.deviceTopologyTitle,
+      subtitle: l10n.deviceTopologySubtitle,
       leading: const Icon(Icons.account_tree_rounded),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          KeyValueRow(label: 'Source', value: _formatNullableString(topology['source'] as String?)),
-          KeyValueRow(label: 'Sysfs name', value: _formatNullableString(topology['sysfsName'] as String?)),
-          KeyValueRow(label: 'Sysfs path', value: _formatNullableString(topology['sysfsPath'] as String?)),
-          KeyValueRow(label: 'Device node', value: _formatNullableString(topology['devPath'] as String?)),
-          KeyValueRow(label: 'Parent', value: _formatNullableString(topology['parentSysfsName'] as String?)),
-          KeyValueRow(label: 'Upstream hub', value: _formatNullableString(upstreamHub)),
-          KeyValueRow(label: 'Bus number', value: _asInt(topology['busNumber'])?.toString() ?? 'Unknown'),
-          KeyValueRow(label: 'Device number', value: _asInt(topology['deviceNumber'])?.toString() ?? 'Unknown'),
-          KeyValueRow(label: 'Tree depth', value: treeDepth?.toString() ?? 'Unknown'),
-          KeyValueRow(label: 'Port chain', value: portChainLabel),
-          KeyValueRow(label: 'Devpath', value: _formatNullableString(topology['devpath'] as String?)),
-          KeyValueRow(label: 'Authorized', value: _asInt(topology['authorized'])?.toString() ?? 'Unknown'),
-          KeyValueRow(label: 'Removable', value: _formatNullableString(topology['removable'] as String?)),
-          KeyValueRow(label: 'Max child', value: _asInt(topology['maxChild'])?.toString() ?? 'Unknown'),
+          KeyValueRow(label: l10n.deviceSourceLabel, value: _formatNullableString(context, topology['source'] as String?)),
+          KeyValueRow(label: l10n.deviceSysfsNameLabel, value: _formatNullableString(context, topology['sysfsName'] as String?)),
+          KeyValueRow(label: l10n.deviceSysfsPathLabel, value: _formatNullableString(context, topology['sysfsPath'] as String?)),
+          KeyValueRow(label: l10n.deviceDeviceNodeLabel, value: _formatNullableString(context, topology['devPath'] as String?)),
+          KeyValueRow(label: l10n.deviceParentLabel, value: _formatNullableString(context, topology['parentSysfsName'] as String?)),
+          KeyValueRow(label: l10n.deviceUpstreamHubLabel, value: _formatNullableString(context, upstreamHub)),
+          KeyValueRow(label: l10n.deviceBusNumberLabel, value: _asInt(topology['busNumber'])?.toString() ?? l10n.unknown),
+          KeyValueRow(label: l10n.deviceDeviceNumberLabel, value: _asInt(topology['deviceNumber'])?.toString() ?? l10n.unknown),
+          KeyValueRow(label: l10n.deviceTreeDepthLabel, value: treeDepth?.toString() ?? l10n.unknown),
+          KeyValueRow(label: l10n.devicePortChainLabel, value: portChainLabel),
+          KeyValueRow(label: l10n.deviceDevpathLabel, value: _formatNullableString(context, topology['devpath'] as String?)),
+          KeyValueRow(label: l10n.deviceAuthorizedLabel, value: _asInt(topology['authorized'])?.toString() ?? l10n.unknown),
+          KeyValueRow(label: l10n.deviceRemovableLabel, value: _formatNullableString(context, topology['removable'] as String?)),
+          KeyValueRow(label: l10n.deviceMaxChildLabel, value: _asInt(topology['maxChild'])?.toString() ?? l10n.unknown),
           if (topologyPath != null) ...[
             const SizedBox(height: 8),
             Text(
-              'Path',
+              l10n.devicePathShortLabel,
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -575,12 +581,12 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
           ],
           if (siblings.isNotEmpty) ...[
             const SizedBox(height: 12),
-            _TopologyList(title: 'Sibling devices', values: siblings),
+            _TopologyList(title: l10n.deviceSiblingDevicesTitle, values: siblings),
           ],
           if (children.isNotEmpty)
             ...[
               const SizedBox(height: 12),
-              _TopologyList(title: 'Downstream children', values: children),
+              _TopologyList(title: l10n.deviceDownstreamChildrenTitle, values: children),
             ],
         ],
       ),
@@ -588,25 +594,26 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
   }
 
   Widget _descriptorSection(BuildContext context) {
+    final l10n = context.l10n;
     final d = view.details.deviceDescriptor;
     final theme = Theme.of(context);
     if (d == null) return const SizedBox.shrink();
     return SectionCard(
-      title: 'Device descriptor',
-      subtitle: 'Raw USB descriptor fields',
+      title: l10n.deviceDescriptorTitle,
+      subtitle: l10n.deviceDescriptorSubtitle,
       leading: const Icon(Icons.article_outlined),
       child: _ExpandableBlock(
-        title: 'Show descriptor fields',
+        title: l10n.deviceShowDescriptorFields,
         initiallyExpanded: true,
         child: Column(
           children: [
-            KeyValueRow(label: 'USB spec (bcdUSB)', value: d.usbVersion ?? 'Unknown'),
-            KeyValueRow(label: 'Device release (bcdDevice)', value: d.deviceRelease ?? 'Unknown'),
-            KeyValueRow(label: 'EP0 max packet', value: d.maxPacketSize0 == null ? 'Unknown' : '${d.maxPacketSize0}'),
-            KeyValueRow(label: 'Num configurations', value: d.numConfigurations == null ? 'Unknown' : '${d.numConfigurations}'),
-            KeyValueRow(label: 'iManufacturer', value: d.iManufacturer == null ? 'Unknown' : '${d.iManufacturer}'),
-            KeyValueRow(label: 'iProduct', value: d.iProduct == null ? 'Unknown' : '${d.iProduct}'),
-            KeyValueRow(label: 'iSerialNumber', value: d.iSerialNumber == null ? 'Unknown' : '${d.iSerialNumber}'),
+            KeyValueRow(label: l10n.deviceUsbSpecBcdLabel, value: d.usbVersion ?? l10n.unknown),
+            KeyValueRow(label: l10n.deviceReleaseBcdLabel, value: d.deviceRelease ?? l10n.unknown),
+            KeyValueRow(label: l10n.deviceEp0MaxPacketLabel, value: d.maxPacketSize0 == null ? l10n.unknown : '${d.maxPacketSize0}'),
+            KeyValueRow(label: l10n.deviceNumConfigurationsLabel, value: d.numConfigurations == null ? l10n.unknown : '${d.numConfigurations}'),
+            KeyValueRow(label: l10n.deviceIManufacturerLabel, value: d.iManufacturer == null ? l10n.unknown : '${d.iManufacturer}'),
+            KeyValueRow(label: l10n.deviceIProductLabel, value: d.iProduct == null ? l10n.unknown : '${d.iProduct}'),
+            KeyValueRow(label: l10n.deviceISerialNumberLabel, value: d.iSerialNumber == null ? l10n.unknown : '${d.iSerialNumber}'),
           ],
         ),
       ),
@@ -614,6 +621,7 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
   }
 
   Widget _audioSection(BuildContext context, Map<String, dynamic> audio) {
+    final l10n = context.l10n;
     final theme = Theme.of(context);
     final matched = _asList(audio['matchedEndpoints']);
     final connectedCount = _asInt(audio['connectedUsbAudioEndpointCount']) ?? matched.length;
@@ -622,22 +630,22 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
     final isUsbAudioClass = audio['isUsbAudioClass'] == true;
     final availabilityNote = (audio['availabilityNote'] as String?)?.trim();
     return SectionCard(
-      title: 'USB audio',
-      subtitle: 'AudioManager / AudioDeviceInfo endpoint metadata',
+      title: l10n.deviceUsbAudioTitle,
+      subtitle: l10n.deviceUsbAudioSubtitle,
       leading: const Icon(Icons.headset_rounded),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          KeyValueRow(label: 'USB audio class', value: isUsbAudioClass ? 'Yes' : 'No'),
-          KeyValueRow(label: 'Platform audio API', value: platformAvailable ? 'Available' : 'Unavailable'),
-          KeyValueRow(label: 'Connected USB audio endpoints', value: '$connectedCount'),
-          KeyValueRow(label: 'Matched endpoints', value: '$matchedCount'),
+          KeyValueRow(label: l10n.deviceUsbAudioClassLabel, value: _yesNoLabel(context, isUsbAudioClass)),
+          KeyValueRow(label: l10n.devicePlatformAudioApiLabel, value: platformAvailable ? l10n.deviceAvailable : l10n.unavailable),
+          KeyValueRow(label: l10n.deviceConnectedUsbAudioEndpointsLabel, value: '$connectedCount'),
+          KeyValueRow(label: l10n.deviceMatchedEndpointsLabel, value: '$matchedCount'),
           if (!platformAvailable) ...[
             const SizedBox(height: 8),
             Text(
               availabilityNote?.isNotEmpty == true
                   ? availabilityNote!
-                  : 'AudioManager data is not available on this Android version or device.',
+                  : l10n.deviceAudioManagerUnavailableNote,
               style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             ),
           ] else if (matched.isEmpty) ...[
@@ -646,8 +654,8 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
               availabilityNote?.isNotEmpty == true
                   ? availabilityNote!
                   : isUsbAudioClass
-                      ? 'No AudioDeviceInfo endpoint could be matched to this USB device yet.'
-                      : 'Android does not report a matched USB audio endpoint for this device.',
+                      ? l10n.deviceNoAudioEndpointMatchedNote
+                      : l10n.deviceAndroidNoMatchedAudioEndpointNote,
               style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             ),
           ] else ...[
@@ -663,6 +671,7 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
   }
 
   Widget _midiSection(BuildContext context, Map<String, dynamic> midi) {
+    final l10n = context.l10n;
     final theme = Theme.of(context);
     final matched = _asList(midi['matchedDevices']);
     final connectedCount = _asInt(midi['connectedMidiDeviceCount']) ?? matched.length;
@@ -671,22 +680,22 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
     final platformAvailable = midi['platformAvailable'] != false;
     final availabilityNote = (midi['availabilityNote'] as String?)?.trim();
     return SectionCard(
-      title: 'USB MIDI',
-      subtitle: 'MidiManager device and port metadata',
+      title: l10n.deviceUsbMidiTitle,
+      subtitle: l10n.deviceUsbMidiSubtitle,
       leading: const Icon(Icons.piano_rounded),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          KeyValueRow(label: 'Probable USB MIDI interface', value: probable ? 'Yes' : 'No'),
-          KeyValueRow(label: 'Platform MIDI API', value: platformAvailable ? 'Available' : 'Unavailable'),
-          KeyValueRow(label: 'Connected MIDI devices', value: '$connectedCount'),
-          KeyValueRow(label: 'Matched MIDI devices', value: '$matchedCount'),
+          KeyValueRow(label: l10n.deviceProbableUsbMidiInterfaceLabel, value: _yesNoLabel(context, probable)),
+          KeyValueRow(label: l10n.devicePlatformMidiApiLabel, value: platformAvailable ? l10n.deviceAvailable : l10n.unavailable),
+          KeyValueRow(label: l10n.deviceConnectedMidiDevicesLabel, value: '$connectedCount'),
+          KeyValueRow(label: l10n.deviceMatchedMidiDevicesLabel, value: '$matchedCount'),
           if (!platformAvailable) ...[
             const SizedBox(height: 8),
             Text(
               availabilityNote?.isNotEmpty == true
                   ? availabilityNote!
-                  : 'MidiManager data is not available on this Android version or device.',
+                  : l10n.deviceMidiManagerUnavailableNote,
               style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             ),
           ] else if (matched.isEmpty) ...[
@@ -695,8 +704,8 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
               availabilityNote?.isNotEmpty == true
                   ? availabilityNote!
                   : probable
-                      ? 'The USB descriptors look like MIDI, but Android did not expose a matching MidiManager device.'
-                      : 'Android does not report a matched MIDI device for this USB device.',
+                      ? l10n.deviceDescriptorsLookLikeMidiNote
+                      : l10n.deviceAndroidNoMatchedMidiDeviceNote,
               style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             ),
           ] else ...[
@@ -712,27 +721,29 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
   }
 
   Widget _powerSection(BuildContext context) {
+    final l10n = context.l10n;
     final s = view.details.summary;
     if (s.maxPowerMa == null) return const SizedBox.shrink();
     return SectionCard(
-      title: 'Power',
-      subtitle: 'Configuration power budget',
+      title: l10n.devicePowerTitle,
+      subtitle: l10n.devicePowerSubtitle,
       leading: const Icon(Icons.bolt_rounded),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          KeyValueRow(label: 'Max power (config 0)', value: '${s.maxPowerMa} mA'),
+          KeyValueRow(label: l10n.deviceMaxPowerConfig0Label, value: '${s.maxPowerMa} mA'),
         ],
       ),
     );
   }
 
   Widget _configurationsSection(BuildContext context) {
+    final l10n = context.l10n;
     final cfgs = view.details.configurations;
     if (cfgs.isEmpty) return const SizedBox.shrink();
     return SectionCard(
-      title: 'Configurations',
-      subtitle: 'All reported USB configurations',
+      title: l10n.deviceConfigurationsTitle,
+      subtitle: l10n.deviceConfigurationsSubtitle,
       leading: const Icon(Icons.layers_outlined),
       child: Column(
         children: [
@@ -746,11 +757,12 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
   }
 
   Widget _interfacesSection(BuildContext context) {
+    final l10n = context.l10n;
     final ifaces = view.details.interfaces;
     if (ifaces.isEmpty) return const SizedBox.shrink();
     return SectionCard(
-      title: 'Interfaces & endpoints',
-      subtitle: 'Parsed interface and endpoint descriptors',
+      title: l10n.deviceInterfacesEndpointsTitle,
+      subtitle: l10n.deviceInterfacesEndpointsSubtitle,
       leading: const Icon(Icons.account_tree_outlined),
       child: Column(
         children: [
@@ -768,28 +780,29 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
   }
 
   Widget _inputDeviceSection(BuildContext context) {
+    final l10n = context.l10n;
     final theme = Theme.of(context);
     final input = view.details.input;
     final s = view.details.summary;
     if (input == null) return const SizedBox.shrink();
     return SectionCard(
-      title: 'Input device',
-      subtitle: 'Keyboard/mouse info from InputManager',
+      title: l10n.deviceInputDeviceTitle,
+      subtitle: l10n.deviceInputDeviceSubtitle,
       leading: const Icon(Icons.keyboard_alt_outlined),
       child: Column(
         children: [
-          KeyValueRow(label: 'Name', value: Fmt.formatNullable(input.name)),
-          KeyValueRow(label: 'Descriptor', value: Fmt.formatNullable(input.descriptor)),
-          KeyValueRow(label: 'External', value: input.isExternal ? 'Yes' : 'No'),
+          KeyValueRow(label: l10n.deviceNameLabel, value: Fmt.formatNullable(input.name)),
+          KeyValueRow(label: l10n.deviceDescriptorLabel, value: Fmt.formatNullable(input.descriptor)),
+          KeyValueRow(label: l10n.deviceExternalLabel, value: _yesNoLabel(context, input.isExternal)),
           KeyValueRow(label: 'VID', value: Fmt.decAndHex16(s.vendorId)),
           KeyValueRow(label: 'PID', value: Fmt.decAndHex16(s.productId)),
-          KeyValueRow(label: 'Sources', value: input.sources.isEmpty ? 'Unknown' : input.sources.join(', ')),
-          KeyValueRow(label: 'Keyboard type', value: '${input.keyboardType}'),
-          KeyValueRow(label: 'Motion ranges', value: '${input.motionRanges.length}'),
+          KeyValueRow(label: l10n.deviceSourcesLabel, value: input.sources.isEmpty ? l10n.unknown : input.sources.join(', ')),
+          KeyValueRow(label: l10n.deviceKeyboardTypeLabel, value: '${input.keyboardType}'),
+          KeyValueRow(label: l10n.deviceMotionRangesLabel, value: '${input.motionRanges.length}'),
           if (input.motionRanges.isNotEmpty) ...[
             const SizedBox(height: 8),
             _ExpandableBlock(
-              title: 'Show motion ranges',
+              title: l10n.deviceShowMotionRanges,
               child: Column(
                 children: [
                   for (final r in input.motionRanges.take(16)) ...[
@@ -804,7 +817,7 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Showing first 16 ranges.',
+                          l10n.deviceShowingFirstRanges(16),
                           style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                         ),
                       ),
@@ -838,16 +851,17 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
     BuildContext context,
     List<_FrameworkLimitation> limitations,
   ) {
+    final l10n = context.l10n;
     final theme = Theme.of(context);
     return SectionCard(
-      title: 'Android framework limitations',
-      subtitle: 'The device is present, but Android is hiding or not exposing part of it',
+      title: l10n.deviceFrameworkLimitationsTitle,
+      subtitle: l10n.deviceFrameworkLimitationsSubtitle,
       leading: const Icon(Icons.visibility_off_rounded),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${limitations.length} framework-related limitation${limitations.length == 1 ? '' : 's'} detected for this device.',
+            l10n.deviceFrameworkLimitationsDetected(limitations.length),
             style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: 12),
@@ -870,13 +884,14 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
     required bool cameraWasGranted,
   }) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     if (diagnostics.isEmpty) {
       return SectionCard(
-        title: 'Permission diagnostics',
-        subtitle: 'Manifest, runtime, USB state, Android behavior, and last failure',
+        title: l10n.devicePermissionDiagnosticsTitle,
+        subtitle: l10n.devicePermissionDiagnosticsSubtitle,
         leading: const Icon(Icons.admin_panel_settings_rounded),
         child: Text(
-          'Loading diagnostics…',
+          l10n.deviceLoadingDiagnostics,
           style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
         ),
       );
@@ -897,12 +912,12 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
     final lastFailureMessage = (lastFailure['message'] as String?)?.trim();
     final lastFailureTime = _asInt(lastFailure['timestampMs']);
     final diagnosticsTitle = availabilityIssues.isEmpty
-        ? 'Show permission diagnostics'
-        : 'Show permission diagnostics & unavailable data (${availabilityIssues.length})';
+        ? l10n.deviceShowPermissionDiagnostics
+        : l10n.deviceShowPermissionDiagnosticsWithUnavailableData(availabilityIssues.length);
 
     return SectionCard(
-      title: 'Permission diagnostics',
-      subtitle: 'Manifest, runtime, USB state, Android behavior, and last failure',
+      title: l10n.devicePermissionDiagnosticsTitle,
+      subtitle: l10n.devicePermissionDiagnosticsSubtitle,
       leading: const Icon(Icons.admin_panel_settings_rounded),
       child: _ExpandableBlock(
         title: diagnosticsTitle,
@@ -916,37 +931,40 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
             ],
             const SizedBox(height: 12),
             KeyValueRow(
-              label: 'Device class',
-              value: _formatNullableString(device['deviceClassLabel'] as String?),
+              label: l10n.deviceDeviceClassLabel,
+              value: _formatNullableString(context, device['deviceClassLabel'] as String?),
             ),
             KeyValueRow(
-              label: 'Android version',
-              value: 'SDK ${_asInt(android['sdkInt'])?.toString() ?? '?'} (${_formatNullableString(android['release'] as String?)})',
+              label: l10n.deviceAndroidVersionLabel,
+              value: l10n.deviceAndroidVersionValue(
+                _asInt(android['sdkInt'])?.toString() ?? '?',
+                _formatNullableString(context, android['release'] as String?),
+              ),
             ),
             KeyValueRow(
-              label: 'USB detail',
-              value: _formatNullableString(usb['detail'] as String?),
+              label: l10n.deviceUsbDetailLabel,
+              value: _formatNullableString(context, usb['detail'] as String?),
             ),
             KeyValueRow(
-              label: 'Microphone manifest',
-              value: _manifestStatusLabel(_asMap(diagnostics['microphone'])['manifestStatus'] as String?),
+              label: l10n.deviceMicrophoneManifestLabel,
+              value: _manifestStatusLabel(context, _asMap(diagnostics['microphone'])['manifestStatus'] as String?),
             ),
             KeyValueRow(
-              label: 'Microphone runtime',
-              value: _runtimeStatusLabel(_asMap(diagnostics['microphone'])['runtimeStatus'] as String?),
+              label: l10n.deviceMicrophoneRuntimeLabel,
+              value: _runtimeStatusLabel(context, _asMap(diagnostics['microphone'])['runtimeStatus'] as String?),
             ),
             KeyValueRow(
-              label: 'Camera manifest',
-              value: _manifestStatusLabel(_asMap(diagnostics['camera'])['manifestStatus'] as String?),
+              label: l10n.deviceCameraManifestLabel,
+              value: _manifestStatusLabel(context, _asMap(diagnostics['camera'])['manifestStatus'] as String?),
             ),
             KeyValueRow(
-              label: 'Camera runtime',
-              value: _runtimeStatusLabel(_asMap(diagnostics['camera'])['runtimeStatus'] as String?),
+              label: l10n.deviceCameraRuntimeLabel,
+              value: _runtimeStatusLabel(context, _asMap(diagnostics['camera'])['runtimeStatus'] as String?),
             ),
             if (behaviorNotes.isNotEmpty) ...[
               const SizedBox(height: 10),
               Text(
-                'Android behavior',
+                l10n.deviceAndroidBehaviorLabel,
                 style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
               ),
               const SizedBox(height: 8),
@@ -960,23 +978,23 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
             ],
             const SizedBox(height: 8),
             KeyValueRow(
-              label: 'Last failure reason',
-              value: lastFailureReason?.isNotEmpty == true ? lastFailureReason! : 'None recorded',
+              label: l10n.deviceLastFailureReasonLabel,
+              value: lastFailureReason?.isNotEmpty == true ? lastFailureReason! : l10n.deviceNoneRecorded,
             ),
             if (lastFailureMessage?.isNotEmpty == true)
               KeyValueRow(
-                label: 'Last failure detail',
+                label: l10n.deviceLastFailureDetailLabel,
                 value: lastFailureMessage!,
               ),
             if (lastFailureTime != null && lastFailureTime > 0)
               KeyValueRow(
-                label: 'Last failure time',
+                label: l10n.deviceLastFailureTimeLabel,
                 value: _formatTimestamp(lastFailureTime),
               ),
             if (availabilityIssues.isNotEmpty) ...[
               const SizedBox(height: 16),
               Text(
-                'Why data is unavailable',
+                l10n.deviceWhyDataUnavailableTitle,
                 style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
               ),
               const SizedBox(height: 10),
@@ -995,23 +1013,24 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
     final baseline = _asMap(historyMatch.previousSnapshot);
     if (baseline.isEmpty) return const SizedBox.shrink();
 
-    final fields = _buildReconnectDiffFields(view, baseline);
+    final fields = _buildReconnectDiffFields(context, view, baseline);
     final changedFields = fields.where((field) => field.changed).toList(growable: false);
     final baselineTime = DateTime.tryParse((baseline['testedAt'] as String?) ?? '');
     final baselineLabel = _reconnectBaselineLabel(context, baselineTime);
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return SectionCard(
-      title: 'Reconnect diff',
-      subtitle: 'Current device compared with the previous captured state',
+      title: l10n.deviceReconnectDiffTitle,
+      subtitle: l10n.deviceReconnectDiffSubtitle,
       leading: const Icon(Icons.compare_arrows_rounded),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             changedFields.isEmpty
-                ? 'No differences detected compared with $baselineLabel.'
-                : '${changedFields.length} change${changedFields.length == 1 ? '' : 's'} detected compared with $baselineLabel.',
+                ? l10n.deviceNoDifferencesDetected(baselineLabel)
+                : l10n.deviceChangesDetectedCompared(changedFields.length, baselineLabel),
             style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
           if (changedFields.isNotEmpty) ...[
@@ -1080,6 +1099,7 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
 
   Widget _advancedStatusSection(BuildContext context, Map<String, dynamic> state) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final activeCfg = state['activeConfiguration'];
     final status = _asMap(state['deviceStatus']);
     final ifAlt = _asList(state['interfaceAltSettings']);
@@ -1090,30 +1110,30 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
     final rawStatus = status['raw'];
 
     return SectionCard(
-      title: 'Device state',
-      subtitle: 'Active config, status bits, alt settings',
+      title: l10n.deviceStateTitle,
+      subtitle: l10n.deviceStateSubtitle,
       leading: const Icon(Icons.memory_rounded),
       child: Column(
         children: [
-          KeyValueRow(label: 'Active configuration', value: activeCfg == null ? 'Unknown' : '$activeCfg'),
+          KeyValueRow(label: l10n.deviceActiveConfigurationLabel, value: activeCfg == null ? l10n.unknown : '$activeCfg'),
           KeyValueRow(
-            label: 'Device status',
+            label: l10n.deviceStatusLabel,
             value: rawStatus == null
-                ? 'Unknown'
+                ? l10n.unknown
                 : '${Fmt.decAndHex16(rawStatus is int ? rawStatus : int.tryParse('$rawStatus') ?? 0)}',
           ),
-          KeyValueRow(label: 'Self-powered', value: selfPowered == null ? 'Unknown' : (selfPowered == true ? 'Yes' : 'No')),
-          KeyValueRow(label: 'Remote wakeup', value: remoteWake == null ? 'Unknown' : (remoteWake == true ? 'Yes' : 'No')),
+          KeyValueRow(label: l10n.deviceSelfPoweredLabel, value: selfPowered == null ? l10n.unknown : _yesNoLabel(context, selfPowered == true)),
+          KeyValueRow(label: l10n.deviceRemoteWakeupLabel, value: remoteWake == null ? l10n.unknown : _yesNoLabel(context, remoteWake == true)),
           if (ifAlt.isNotEmpty) ...[
             const SizedBox(height: 8),
             _ExpandableBlock(
-              title: 'Interface alternate settings',
+              title: l10n.deviceInterfaceAlternateSettingsTitle,
               child: Column(
                 children: [
                   for (final it in ifAlt.take(32)) ...[
                     KeyValueRow(
                       label: 'IF ${_asInt(_asMap(it)['interfaceNumber']) ?? '?'}',
-                      value: 'Alt ${_asInt(_asMap(it)['alternateSetting'])?.toString() ?? 'Unknown'}',
+                      value: l10n.deviceAltSettingValue(_asInt(_asMap(it)['alternateSetting'])?.toString() ?? l10n.unknown),
                       allowCopy: false,
                     ),
                   ],
@@ -1121,7 +1141,7 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Showing first 32 interfaces.',
+                        l10n.deviceShowingFirstInterfaces(32),
                         style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                       ),
                     ),
@@ -1136,6 +1156,7 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
 
   Widget _advancedStringsSection(BuildContext context, Map<String, dynamic> strings) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     final langs = _asList(strings['languageIds']).map((e) => _asInt(e)).whereType<int>().toList(growable: false);
     final preferred = _asInt(strings['preferredLanguageId']);
@@ -1145,47 +1166,47 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
     if (langs.isEmpty && dev.isEmpty && ifs.isEmpty) return const SizedBox.shrink();
 
     return SectionCard(
-      title: 'String descriptors',
-      subtitle: 'Languages and iManufacturer/iProduct/iSerial + iInterface',
+      title: l10n.deviceStringDescriptorsTitle,
+      subtitle: l10n.deviceStringDescriptorsSubtitle,
       leading: const Icon(Icons.translate_rounded),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (langs.isNotEmpty)
             KeyValueRow(
-              label: 'Languages',
+              label: l10n.deviceLanguagesLabel,
               value: langs.map(Fmt.hex16).join(', '),
             ),
           if (preferred != null)
             KeyValueRow(
-              label: 'Preferred',
+              label: l10n.devicePreferredLabel,
               value: Fmt.hex16(preferred),
             ),
           if (dev.isNotEmpty) ...[
             const SizedBox(height: 8),
-            Text('Device strings', style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+            Text(l10n.deviceDeviceStringsTitle, style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
             const SizedBox(height: 8),
-            KeyValueRow(label: 'Manufacturer', value: Fmt.formatNullable(dev['manufacturer'] as String?)),
-            KeyValueRow(label: 'Product', value: Fmt.formatNullable(dev['product'] as String?)),
-            KeyValueRow(label: 'Serial', value: Fmt.formatNullable(dev['serial'] as String?)),
+            KeyValueRow(label: l10n.deviceManufacturerLabel, value: Fmt.formatNullable(dev['manufacturer'] as String?)),
+            KeyValueRow(label: l10n.deviceProductLabel, value: Fmt.formatNullable(dev['product'] as String?)),
+            KeyValueRow(label: l10n.deviceSerialLabel, value: Fmt.formatNullable(dev['serial'] as String?)),
           ],
           if (ifs.isNotEmpty) ...[
             const SizedBox(height: 10),
             _ExpandableBlock(
-              title: 'Interface strings',
+              title: l10n.deviceInterfaceStringsTitle,
               child: Column(
                 children: [
                   for (final it in ifs.take(48)) ...[
                     KeyValueRow(
                       label: 'IF ${_asInt(_asMap(it)['interfaceNumber']) ?? '?'} (Alt ${_asInt(_asMap(it)['alternateSetting']) ?? 0})',
-                      value: (_asMap(it)['value'] as String?)?.trim().isEmpty ?? true ? 'Unknown' : (_asMap(it)['value'] as String),
+                      value: (_asMap(it)['value'] as String?)?.trim().isEmpty ?? true ? l10n.unknown : (_asMap(it)['value'] as String),
                     ),
                   ],
                   if (ifs.length > 48)
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Showing first 48 interface strings.',
+                        l10n.deviceShowingFirstInterfaceStrings(48),
                         style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                       ),
                     ),
@@ -1200,13 +1221,14 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
 
   Widget _advancedDescriptorTreeSection(BuildContext context, List<dynamic> tree) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     if (tree.isEmpty) return const SizedBox.shrink();
     return SectionCard(
-      title: 'Descriptor tree',
-      subtitle: '${tree.length} descriptors parsed',
+      title: l10n.deviceDescriptorTreeTitle,
+      subtitle: l10n.deviceDescriptorsParsed(tree.length),
       leading: const Icon(Icons.schema_rounded),
       child: _ExpandableBlock(
-        title: 'Show descriptors',
+        title: l10n.deviceShowDescriptors,
         child: Column(
           children: [
             for (final n in tree.take(64)) ...[
@@ -1217,7 +1239,7 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Showing first 64 descriptors.',
+                  l10n.deviceShowingFirstDescriptors(64),
                   style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
               ),
@@ -1228,11 +1250,12 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
   }
 
   Widget _advancedHidReportsSection(BuildContext context, List<dynamic> reports) {
+    final l10n = context.l10n;
     final theme = Theme.of(context);
     if (reports.isEmpty) return const SizedBox.shrink();
     return SectionCard(
-      title: 'HID report descriptors',
-      subtitle: '${reports.length} interface(s)',
+      title: l10n.deviceHidReportDescriptorsTitle,
+      subtitle: l10n.deviceInterfacesCount(reports.length),
       leading: const Icon(Icons.keyboard_command_key_rounded),
       child: Column(
         children: [
@@ -1245,8 +1268,8 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
     );
   }
 
-  String _joinNameAndIds(String? name, int id) {
-    final n = (name == null || name.trim().isEmpty) ? 'Unknown' : name;
+  String _joinNameAndIds(BuildContext context, String? name, int id) {
+    final n = (name == null || name.trim().isEmpty) ? context.l10n.unknown : name;
     return '$n (${Fmt.decAndHex8(id)})';
   }
 
@@ -1300,6 +1323,7 @@ class _PermissionBanner extends ConsumerWidget {
     final events = _eventStream();
     final runtimeAsync = ref.watch(runtimePermissionDiagnosticsProvider(diagnosticsArgs));
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     return Card(
       elevation: 0,
       color: theme.colorScheme.errorContainer,
@@ -1314,7 +1338,7 @@ class _PermissionBanner extends ConsumerWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Permission required',
+                    l10n.devicePermissionRequiredTitle,
                     style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onErrorContainer),
                   ),
                 ),
@@ -1322,7 +1346,7 @@ class _PermissionBanner extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'To read strings (manufacturer/product/serial), parse raw descriptors, and fetch HID report descriptors, Android requires per-device permission.',
+              l10n.devicePermissionRequiredBody,
               style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onErrorContainer),
             ),
             const SizedBox(height: 12),
@@ -1361,8 +1385,8 @@ class _PermissionBanner extends ConsumerWidget {
                             if (!context.mounted) return;
                             if (!cameraOk) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Camera permission is required for USB video devices on this Android version.'),
+                                SnackBar(
+                                  content: Text(l10n.deviceCameraPermissionRequiredForUsbVideo),
                                 ),
                               );
                               ref.invalidate(runtimePermissionDiagnosticsProvider(diagnosticsArgs));
@@ -1384,7 +1408,7 @@ class _PermissionBanner extends ConsumerWidget {
                           );
                           if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(ok ? 'Permission granted' : 'Permission not granted')),
+                            SnackBar(content: Text(ok ? l10n.homePermissionGranted : l10n.devicePermissionNotGranted)),
                           );
                           ref.invalidate(runtimePermissionDiagnosticsProvider(diagnosticsArgs));
                           if (ok) {
@@ -1393,7 +1417,7 @@ class _PermissionBanner extends ConsumerWidget {
                           }
                         },
                         icon: const Icon(Icons.vpn_key_rounded),
-                        label: const Text('Grant permission'),
+                        label: Text(l10n.deviceGrantPermission),
                       ),
                     ),
                   ],
@@ -1722,33 +1746,33 @@ String _buildRawHexDump(
   return buffer.toString().trimRight();
 }
 
-String _manifestStatusLabel(String? status) {
+String _manifestStatusLabel(BuildContext context, String? status) {
   switch (status) {
     case 'declared':
-      return 'Declared';
+      return context.l10n.deviceManifestStatusDeclared;
     case 'missing':
-      return 'Missing';
+      return context.l10n.deviceManifestStatusMissing;
     default:
-      return 'Unknown';
+      return context.l10n.unknown;
   }
 }
 
-String _runtimeStatusLabel(String? status) {
+String _runtimeStatusLabel(BuildContext context, String? status) {
   switch (status) {
     case 'granted':
-      return 'Granted';
+      return context.l10n.deviceRuntimeStatusGranted;
     case 'temporarily_denied':
-      return 'Temporarily denied';
+      return context.l10n.deviceRuntimeStatusTemporarilyDenied;
     case 'permanently_denied':
-      return 'Permanently denied';
+      return context.l10n.deviceRuntimeStatusPermanentlyDenied;
     case 'not_required':
-      return 'Not required on this Android version';
+      return context.l10n.deviceRuntimeStatusNotRequired;
     case 'missing':
-      return 'Not granted';
+      return context.l10n.devicePermissionNotGranted;
     case 'unavailable':
-      return 'Unavailable';
+      return context.l10n.unavailable;
     default:
-      return 'Unknown';
+      return context.l10n.unknown;
   }
 }
 
@@ -2083,15 +2107,16 @@ class _AdvancedRawViewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final tree = _asList(raw?['descriptorTree']).map(_asMap).where((item) => item.isNotEmpty).toList(growable: false);
     final controlTransfers = _asList(raw?['controlTransfers']).map(_asMap).where((item) => item.isNotEmpty).toList(growable: false);
     final hidReports = _asList(raw?['hidReports']).map(_asMap).where((item) => item.isNotEmpty).toList(growable: false);
     final availabilityIssues = _asList(raw?['availabilityIssues']).map(_asMap).where((item) => item.isNotEmpty).toList(growable: false);
-    final title = view.productName ?? view.details.summary.productName ?? 'USB device';
+    final title = view.productName ?? view.details.summary.productName ?? l10n.homeUsbDeviceLabel;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Advanced raw view'),
+        title: Text(l10n.deviceAdvancedRawViewTitle),
       ),
       body: SafeArea(
         child: ListView(
@@ -2103,17 +2128,17 @@ class _AdvancedRawViewScreen extends StatelessWidget {
               leading: const Icon(Icons.developer_mode_rounded),
               child: Column(
                 children: [
-                  KeyValueRow(label: 'Descriptor nodes', value: '${tree.length}'),
-                  KeyValueRow(label: 'Control transfers', value: '${controlTransfers.length}'),
-                  KeyValueRow(label: 'HID report dumps', value: '${hidReports.length}'),
+                  KeyValueRow(label: l10n.deviceDescriptorNodesLabel, value: '${tree.length}'),
+                  KeyValueRow(label: l10n.deviceControlTransfersLabel, value: '${controlTransfers.length}'),
+                  KeyValueRow(label: l10n.deviceHidReportDumpsLabel, value: '${hidReports.length}'),
                 ],
               ),
             ),
             const SizedBox(height: 12),
             if (controlTransfers.isNotEmpty) ...[
               SectionCard(
-                title: 'Control transfers',
-                subtitle: 'Raw setup/result records from direct USB control reads',
+                title: l10n.deviceControlTransfersTitle,
+                subtitle: l10n.deviceControlTransfersSubtitle,
                 leading: const Icon(Icons.swap_horiz_rounded),
                 child: Column(
                   children: [
@@ -2128,8 +2153,8 @@ class _AdvancedRawViewScreen extends StatelessWidget {
             ],
             if (tree.isNotEmpty) ...[
               SectionCard(
-                title: 'Descriptors side by side',
-                subtitle: 'Parsed fields next to the raw descriptor bytes',
+                title: l10n.deviceDescriptorsSideBySideTitle,
+                subtitle: l10n.deviceDescriptorsSideBySideSubtitle,
                 leading: const Icon(Icons.view_sidebar_rounded),
                 child: Column(
                   children: [
@@ -2144,8 +2169,8 @@ class _AdvancedRawViewScreen extends StatelessWidget {
             ],
             if (hidReports.isNotEmpty) ...[
               SectionCard(
-                title: 'HID report dumps',
-                subtitle: 'Report descriptor hex with parsed summary',
+                title: l10n.deviceHidReportDumpsTitle,
+                subtitle: l10n.deviceHidReportDumpsSubtitle,
                 leading: const Icon(Icons.keyboard_command_key_rounded),
                 child: Column(
                   children: [
@@ -2160,13 +2185,13 @@ class _AdvancedRawViewScreen extends StatelessWidget {
             ],
             if (controlTransfers.isEmpty && tree.isEmpty && hidReports.isEmpty)
               SectionCard(
-                title: 'Advanced data unavailable',
-                subtitle: 'No raw control-transfer or descriptor payload is available for this device',
+                title: l10n.deviceAdvancedDataUnavailableTitle,
+                subtitle: l10n.deviceAdvancedDataUnavailableSubtitle,
                 leading: const Icon(Icons.info_outline_rounded),
                 child: Text(
                   availabilityIssues.isNotEmpty
-                      ? availabilityIssues.map((issue) => (issue['message'] as String?) ?? 'Unavailable').join('\n\n')
-                      : 'Grant USB permission and reconnect the device if you want Android to expose direct descriptor and transfer data.',
+                      ? availabilityIssues.map((issue) => (issue['message'] as String?) ?? l10n.unavailable).join('\n\n')
+                      : l10n.deviceGrantPermissionReconnectNote,
                 ),
               ),
           ],
@@ -2777,15 +2802,16 @@ class _MidiPortRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Card(
       elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
-            KeyValueRow(label: 'Type', value: (port['typeName'] as String?) ?? 'Unknown'),
-            KeyValueRow(label: 'Port number', value: '${_asInt(port['portNumber']) ?? 0}'),
-            KeyValueRow(label: 'Name', value: _formatNullableString(port['name'] as String?)),
+            KeyValueRow(label: l10n.deviceTypeLabel, value: (port['typeName'] as String?) ?? l10n.unknown),
+            KeyValueRow(label: l10n.devicePortNumberLabel, value: '${_asInt(port['portNumber']) ?? 0}'),
+            KeyValueRow(label: l10n.deviceNameLabel, value: _formatNullableString(context, port['name'] as String?)),
           ],
         ),
       ),
@@ -2978,15 +3004,16 @@ class _DeviceRawDumpExportSheetState extends State<_DeviceRawDumpExportSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final content = switch (_format) {
       _RawDumpExportFormat.json => widget.prettyJson,
       _RawDumpExportFormat.report => widget.plainText,
       _RawDumpExportFormat.hex => widget.rawHex,
     };
     final title = switch (_format) {
-      _RawDumpExportFormat.json => 'JSON payload',
-      _RawDumpExportFormat.report => 'Plain text report',
-      _RawDumpExportFormat.hex => 'Raw hex descriptors',
+      _RawDumpExportFormat.json => l10n.deviceExportFormatJson,
+      _RawDumpExportFormat.report => l10n.deviceExportFormatReport,
+      _RawDumpExportFormat.hex => l10n.deviceExportFormatRawHex,
     };
 
     return Padding(
@@ -2994,10 +3021,10 @@ class _DeviceRawDumpExportSheetState extends State<_DeviceRawDumpExportSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Raw dump export', style: theme.textTheme.titleLarge),
+          Text(l10n.deviceRawDumpExportTitle, style: theme.textTheme.titleLarge),
           const SizedBox(height: 6),
           Text(
-            'Export this live device snapshot directly without using history.',
+            l10n.deviceRawDumpExportSubtitle,
             style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: 16),
@@ -3006,17 +3033,17 @@ class _DeviceRawDumpExportSheetState extends State<_DeviceRawDumpExportSheet> {
             runSpacing: 8,
             children: [
               _ExportFormatChip(
-                label: 'JSON',
+                label: l10n.deviceExportChipJson,
                 selected: _format == _RawDumpExportFormat.json,
                 onTap: () => setState(() => _format = _RawDumpExportFormat.json),
               ),
               _ExportFormatChip(
-                label: 'Report',
+                label: l10n.deviceExportChipReport,
                 selected: _format == _RawDumpExportFormat.report,
                 onTap: () => setState(() => _format = _RawDumpExportFormat.report),
               ),
               _ExportFormatChip(
-                label: 'Raw hex',
+                label: l10n.deviceExportChipRawHex,
                 selected: _format == _RawDumpExportFormat.hex,
                 onTap: () => setState(() => _format = _RawDumpExportFormat.hex),
               ),
@@ -3036,12 +3063,12 @@ class _DeviceRawDumpExportSheetState extends State<_DeviceRawDumpExportSheet> {
                   await Clipboard.setData(ClipboardData(text: content));
                   if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('$title copied to clipboard.')),
+                    SnackBar(content: Text(l10n.deviceCopiedToClipboard(title))),
                   );
                   HapticFeedback.selectionClick();
                 },
                 icon: const Icon(Icons.copy_rounded),
-                label: const Text('Copy'),
+                label: Text(l10n.deviceCopyAction),
               ),
             ],
           ),
@@ -3221,10 +3248,13 @@ String _formatAny(dynamic v) {
   return s.isEmpty ? 'Unknown' : s;
 }
 
-String _formatNullableString(String? v) {
+String _formatNullableString(BuildContext context, String? v) {
   final s = (v ?? '').trim();
-  return s.isEmpty ? 'Unknown' : s;
+  return s.isEmpty ? context.l10n.unknown : s;
 }
+
+String _yesNoLabel(BuildContext context, bool value) =>
+    value ? context.l10n.deviceYes : context.l10n.deviceNo;
 
 String? _buildTopologyPath(int? busNumber, List<int> portChain) {
   if (busNumber == null) return null;
@@ -3624,85 +3654,86 @@ bool _hasReconnectBaseline(DeviceHistoryEntry entry) {
 }
 
 List<_ReconnectDiffField> _buildReconnectDiffFields(
+  BuildContext context,
   UsbDeviceDetailViewData view,
   Map<String, dynamic> baseline,
 ) {
   final s = view.details.summary;
   final fields = <_ReconnectDiffField?>[
     _makeReconnectDiffField(
-      label: 'Device path',
-      previous: _formatNullableString(baseline['deviceName'] as String?),
+      label: context.l10n.devicePathLabel,
+      previous: _formatNullableString(context, baseline['deviceName'] as String?),
       current: s.deviceName,
     ),
     _makeReconnectDiffField(
-      label: 'USB permission',
-      previous: _permissionGrantedLabel(baseline['hasPermission'] == true),
-      current: _permissionGrantedLabel(s.hasPermission),
+      label: context.l10n.deviceUsbPermissionLabel,
+      previous: _permissionGrantedLabel(context, baseline['hasPermission'] == true),
+      current: _permissionGrantedLabel(context, s.hasPermission),
     ),
     _makeReconnectDiffField(
-      label: 'USB version',
-      previous: _formatNullableString(baseline['usbVersion'] as String?),
-      current: _formatNullableString(s.usbVersion),
+      label: context.l10n.deviceUsbVersionLabel,
+      previous: _formatNullableString(context, baseline['usbVersion'] as String?),
+      current: _formatNullableString(context, s.usbVersion),
     ),
     _makeReconnectDiffField(
-      label: 'Speed',
+      label: context.l10n.deviceSpeedLabel,
       previous: Fmt.speedLabel(baseline['speed'] as String?),
       current: Fmt.speedLabel(s.speed),
     ),
     _makeReconnectDiffField(
-      label: 'Interfaces',
-      previous: _asInt(baseline['interfaceCount'])?.toString() ?? 'Unknown',
+      label: context.l10n.deviceInterfacesLabel,
+      previous: _asInt(baseline['interfaceCount'])?.toString() ?? context.l10n.unknown,
       current: '${s.interfaceCount}',
     ),
     _makeReconnectDiffField(
-      label: 'Configurations',
-      previous: _asInt(baseline['configurationCount'])?.toString() ?? 'Unknown',
+      label: context.l10n.deviceConfigurationsLabel,
+      previous: _asInt(baseline['configurationCount'])?.toString() ?? context.l10n.unknown,
       current: '${s.configurationCount}',
     ),
     _makeReconnectDiffField(
-      label: 'Max power',
-      previous: _formatMilliampLabel(_asInt(baseline['maxPowerMa'])),
-      current: _formatMilliampLabel(s.maxPowerMa),
+      label: context.l10n.deviceMaxPowerShortLabel,
+      previous: _formatMilliampLabel(context, _asInt(baseline['maxPowerMa'])),
+      current: _formatMilliampLabel(context, s.maxPowerMa),
     ),
     _makeReconnectDiffField(
-      label: 'Android deviceId',
-      previous: _asInt(baseline['deviceId'])?.toString() ?? 'Unknown',
-      current: s.deviceId?.toString() ?? 'Unknown',
+      label: context.l10n.deviceAndroidDeviceIdLabel,
+      previous: _asInt(baseline['deviceId'])?.toString() ?? context.l10n.unknown,
+      current: s.deviceId?.toString() ?? context.l10n.unknown,
     ),
     _makeReconnectDiffField(
-      label: 'Port number',
-      previous: _asInt(baseline['portNumber'])?.toString() ?? 'Unknown',
-      current: s.portNumber?.toString() ?? 'Unknown',
+      label: context.l10n.devicePortNumberLabel,
+      previous: _asInt(baseline['portNumber'])?.toString() ?? context.l10n.unknown,
+      current: s.portNumber?.toString() ?? context.l10n.unknown,
     ),
     _makeReconnectDiffField(
-      label: 'Serial',
-      previous: _formatNullableString(baseline['serialNumber'] as String?),
-      current: _formatNullableString(s.serialNumber),
+      label: context.l10n.deviceSerialLabel,
+      previous: _formatNullableString(context, baseline['serialNumber'] as String?),
+      current: _formatNullableString(context, s.serialNumber),
     ),
     _makeReconnectDiffField(
-      label: 'Stable identity',
-      previous: _formatNullableString(baseline['stableIdentityKey'] as String?),
-      current: _formatNullableString(s.stableIdentityKey),
+      label: context.l10n.deviceStableIdentityLabel,
+      previous: _formatNullableString(context, baseline['stableIdentityKey'] as String?),
+      current: _formatNullableString(context, s.stableIdentityKey),
     ),
     _makeReconnectDiffField(
-      label: 'Identity confidence',
-      previous: _identityConfidenceLabel(baseline['identityConfidence'] as String?),
-      current: _identityConfidenceLabel(s.identityConfidence),
+      label: context.l10n.deviceIdentityConfidenceLabel,
+      previous: _identityConfidenceLabel(context, baseline['identityConfidence'] as String?),
+      current: _identityConfidenceLabel(context, s.identityConfidence),
     ),
     _makeReconnectDiffField(
-      label: 'Physical location',
-      previous: _formatNullableString(baseline['physicalLocationKey'] as String?),
-      current: _formatNullableString(s.physicalLocationKey),
+      label: context.l10n.devicePhysicalLocationLabel,
+      previous: _formatNullableString(context, baseline['physicalLocationKey'] as String?),
+      current: _formatNullableString(context, s.physicalLocationKey),
     ),
     _makeReconnectDiffField(
-      label: 'Interface fingerprint',
-      previous: _formatNullableString(baseline['interfaceFingerprint'] as String?),
-      current: _formatNullableString(s.interfaceFingerprint),
+      label: context.l10n.deviceInterfaceFingerprintLabel,
+      previous: _formatNullableString(context, baseline['interfaceFingerprint'] as String?),
+      current: _formatNullableString(context, s.interfaceFingerprint),
     ),
     _makeReconnectDiffField(
-      label: 'Input sources',
-      previous: _formatStringList(baseline['inputSources']),
-      current: _formatStringList(s.inputSources),
+      label: context.l10n.deviceInputSourcesLabel,
+      previous: _formatStringList(context, baseline['inputSources']),
+      current: _formatStringList(context, s.inputSources),
     ),
   ];
   return fields.whereType<_ReconnectDiffField>().where((field) => field.changed).toList(growable: false);
@@ -3725,7 +3756,7 @@ _ReconnectDiffField? _makeReconnectDiffField({
 }
 
 String _reconnectBaselineLabel(BuildContext context, DateTime? baselineTime) {
-  if (baselineTime == null) return 'the previous capture';
+  if (baselineTime == null) return context.l10n.devicePreviousCaptureLabel;
   final local = baselineTime.toLocal();
   final localizations = MaterialLocalizations.of(context);
   final alwaysUse24HourFormat = MediaQuery.maybeOf(context)?.alwaysUse24HourFormat ?? true;
@@ -3734,16 +3765,17 @@ String _reconnectBaselineLabel(BuildContext context, DateTime? baselineTime) {
     TimeOfDay.fromDateTime(local),
     alwaysUse24HourFormat: alwaysUse24HourFormat,
   );
-  return 'the capture from $date $time';
+  return context.l10n.deviceCaptureFrom(date, time);
 }
 
-String _permissionGrantedLabel(bool granted) => granted ? 'Granted' : 'Not granted';
+String _permissionGrantedLabel(BuildContext context, bool granted) =>
+    granted ? context.l10n.deviceRuntimeStatusGranted : context.l10n.devicePermissionNotGranted;
 
-String _formatMilliampLabel(int? value) => value == null ? 'Unknown' : '$value mA';
+String _formatMilliampLabel(BuildContext context, int? value) => value == null ? context.l10n.unknown : '$value mA';
 
-String _formatStringList(List<String>? values) {
+String _formatStringList(BuildContext context, List<String>? values) {
   final list = (values ?? const <String>[]).map((value) => value.trim()).where((value) => value.isNotEmpty).toList(growable: false);
-  return list.isEmpty ? 'Unknown' : list.join(', ');
+  return list.isEmpty ? context.l10n.unknown : list.join(', ');
 }
 
 List<_FrameworkLimitation> _collectFrameworkLimitations({
@@ -3879,31 +3911,31 @@ DeviceHistoryEntry? _findMatchingHistoryEntry(UsbDeviceSummary summary, List<Dev
   return null;
 }
 
-String _identityConfidenceLabel(String? confidence) {
+String _identityConfidenceLabel(BuildContext context, String? confidence) {
   switch (confidence) {
     case 'high':
-      return 'High';
+      return context.l10n.deviceIdentityConfidenceHigh;
     case 'medium':
-      return 'Medium';
+      return context.l10n.deviceIdentityConfidenceMedium;
     case 'low':
-      return 'Low';
+      return context.l10n.deviceIdentityConfidenceLow;
     default:
-      return 'Unknown';
+      return context.l10n.unknown;
   }
 }
 
-String _identityStrategyLabel(String? strategy) {
+String _identityStrategyLabel(BuildContext context, String? strategy) {
   switch (strategy) {
     case 'serial_number':
-      return 'Serial number';
+      return context.l10n.deviceIdentityStrategySerialNumber;
     case 'physical_port':
-      return 'Physical port + interface fingerprint';
+      return context.l10n.deviceIdentityStrategyPhysicalPort;
     case 'interface_fingerprint':
-      return 'Interface fingerprint';
+      return context.l10n.deviceIdentityStrategyInterfaceFingerprint;
     case 'model_fingerprint':
-      return 'Model fingerprint';
+      return context.l10n.deviceIdentityStrategyModelFingerprint;
     default:
-      return 'Unknown';
+      return context.l10n.unknown;
   }
 }
 
