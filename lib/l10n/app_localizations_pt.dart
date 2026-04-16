@@ -4961,16 +4961,18 @@ class AppLocalizationsPt extends AppLocalizations {
       'Não foi possível ler os detalhes do dispositivo.';
 
   @override
-  String get deviceAudioClassDescriptorsTitle => 'Audio class descriptors';
+  String get deviceAudioClassDescriptorsTitle =>
+      'Descritores de classe de áudio';
 
   @override
-  String get deviceVideoClassDescriptorsTitle => 'Video class descriptors';
+  String get deviceVideoClassDescriptorsTitle =>
+      'Descritores de classe de vídeo';
 
   @override
-  String get deviceCdcSerialDescriptorsTitle => 'CDC / serial descriptors';
+  String get deviceCdcSerialDescriptorsTitle => 'Descritores CDC / série';
 
   @override
-  String get deviceHubDescriptorsTitle => 'Hub descriptors';
+  String get deviceHubDescriptorsTitle => 'Descritores de hub';
 
   @override
   String get deviceBosCapabilitiesTitle => 'BOS & capabilities';
@@ -5196,22 +5198,22 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get deviceConnectedUsbAudioEndpointsLabel =>
-      'Connected USB audio endpoints';
+      'Endpoints de áudio USB ligados';
 
   @override
-  String get deviceMatchedEndpointsLabel => 'Matched endpoints';
+  String get deviceMatchedEndpointsLabel => 'Endpoints correspondentes';
 
   @override
   String get deviceAudioManagerUnavailableNote =>
-      'AudioManager data is not available on this Android version or device.';
+      'Os dados do AudioManager não estão disponíveis nesta versão do Android ou neste dispositivo.';
 
   @override
   String get deviceNoAudioEndpointMatchedNote =>
-      'No AudioDeviceInfo endpoint could be matched to this USB device yet.';
+      'Ainda não foi possível associar nenhum endpoint AudioDeviceInfo a este dispositivo USB.';
 
   @override
   String get deviceAndroidNoMatchedAudioEndpointNote =>
-      'Android does not report a matched USB audio endpoint for this device.';
+      'O Android não indica nenhum endpoint de áudio USB correspondente para este dispositivo.';
 
   @override
   String get deviceUsbMidiTitle => 'MIDI USB';
@@ -5222,28 +5224,29 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get deviceProbableUsbMidiInterfaceLabel =>
-      'Probable USB MIDI interface';
+      'Interface USB MIDI provável';
 
   @override
-  String get devicePlatformMidiApiLabel => 'Platform MIDI API';
+  String get devicePlatformMidiApiLabel => 'API MIDI da plataforma';
 
   @override
-  String get deviceConnectedMidiDevicesLabel => 'Connected MIDI devices';
+  String get deviceConnectedMidiDevicesLabel => 'Dispositivos MIDI ligados';
 
   @override
-  String get deviceMatchedMidiDevicesLabel => 'Matched MIDI devices';
+  String get deviceMatchedMidiDevicesLabel =>
+      'Dispositivos MIDI correspondentes';
 
   @override
   String get deviceMidiManagerUnavailableNote =>
-      'MidiManager data is not available on this Android version or device.';
+      'Os dados do MidiManager não estão disponíveis nesta versão do Android ou neste dispositivo.';
 
   @override
   String get deviceDescriptorsLookLikeMidiNote =>
-      'The USB descriptors look like MIDI, but Android did not expose a matching MidiManager device.';
+      'Os descritores USB parecem ser MIDI, mas o Android não expôs um dispositivo MidiManager correspondente.';
 
   @override
   String get deviceAndroidNoMatchedMidiDeviceNote =>
-      'Android does not report a matched MIDI device for this USB device.';
+      'O Android não indica nenhum dispositivo MIDI correspondente para este dispositivo USB.';
 
   @override
   String get devicePowerTitle => 'Energia';
@@ -5279,7 +5282,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get deviceNameLabel => 'Name';
 
   @override
-  String get deviceDescriptorLabel => 'Descriptor';
+  String get deviceDescriptorLabel => 'Descritor';
 
   @override
   String get deviceExternalLabel => 'External';
@@ -5318,6 +5321,21 @@ class AppLocalizationsPt extends AppLocalizations {
   String get deviceShowPermissionDiagnostics => 'Show permission diagnostics';
 
   @override
+  String get devicePermissionStateTemporary => 'Temporário';
+
+  @override
+  String get devicePermissionStatePermanent => 'Permanente';
+
+  @override
+  String get devicePermissionStateReenumerated => 'Reenumerado';
+
+  @override
+  String get devicePermissionStateNotInApp => 'Não disponível na app';
+
+  @override
+  String get devicePermissionStateRevoked => 'Revogado';
+
+  @override
   String get deviceAndroidVersionLabel => 'Android version';
 
   @override
@@ -5354,6 +5372,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get deviceWhyDataUnavailableTitle => 'Why data is unavailable';
 
   @override
+  String get deviceWhyDataUnavailableSubtitle =>
+      'Limitação exata do Android ou do dispositivo para campos ocultos';
+
+  @override
   String get deviceReconnectDiffTitle => 'Diferença após religação';
 
   @override
@@ -5381,7 +5403,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get deviceInterfaceAlternateSettingsTitle =>
-      'Interface alternate settings';
+      'Definições alternativas da interface';
 
   @override
   String get deviceStringDescriptorsTitle => 'Descritores de cadeia';
@@ -5403,16 +5425,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get deviceManufacturerLabel => 'Manufacturer';
 
   @override
-  String get deviceInterfaceStringsTitle => 'Interface strings';
+  String get deviceInterfaceStringsTitle => 'Strings da interface';
 
   @override
-  String get deviceDescriptorTreeTitle => 'Descriptor tree';
+  String get deviceDescriptorTreeTitle => 'Árvore de descritores';
 
   @override
-  String get deviceShowDescriptors => 'Show descriptors';
+  String get deviceShowDescriptors => 'Mostrar descritores';
 
   @override
-  String get deviceHidReportDescriptorsTitle => 'HID report descriptors';
+  String get deviceHidReportDescriptorsTitle => 'Descritores de relatório HID';
 
   @override
   String get devicePermissionRequiredTitle => 'Permissão necessária';
@@ -5435,41 +5457,41 @@ class AppLocalizationsPt extends AppLocalizations {
   String get deviceAdvancedRawViewTitle => 'Visualização bruta avançada';
 
   @override
-  String get deviceDescriptorNodesLabel => 'Descriptor nodes';
+  String get deviceDescriptorNodesLabel => 'Nós do descritor';
 
   @override
-  String get deviceControlTransfersLabel => 'Control transfers';
+  String get deviceControlTransfersLabel => 'Transferências de controlo';
 
   @override
-  String get deviceHidReportDumpsLabel => 'HID report dumps';
+  String get deviceHidReportDumpsLabel => 'Dumps de relatórios HID';
 
   @override
-  String get deviceControlTransfersTitle => 'Control transfers';
+  String get deviceControlTransfersTitle => 'Transferências de controlo';
 
   @override
   String get deviceControlTransfersSubtitle =>
       'Raw setup/result records from direct USB control reads';
 
   @override
-  String get deviceDescriptorsSideBySideTitle => 'Descriptors side by side';
+  String get deviceDescriptorsSideBySideTitle => 'Descritores lado a lado';
 
   @override
   String get deviceDescriptorsSideBySideSubtitle =>
-      'Parsed fields next to the raw descriptor bytes';
+      'Campos analisados ao lado dos bytes brutos do descritor';
 
   @override
-  String get deviceHidReportDumpsTitle => 'HID report dumps';
+  String get deviceHidReportDumpsTitle => 'Dumps de relatórios HID';
 
   @override
   String get deviceHidReportDumpsSubtitle =>
-      'Report descriptor hex with parsed summary';
+      'Hex do descritor de relatório com resumo analisado';
 
   @override
   String get deviceAdvancedDataUnavailableTitle => 'Advanced data unavailable';
 
   @override
   String get deviceAdvancedDataUnavailableSubtitle =>
-      'No raw control-transfer or descriptor payload is available for this device';
+      'Não há dados brutos de transferências de controlo nem descritores disponíveis para este dispositivo.';
 
   @override
   String get deviceGrantPermissionReconnectNote =>
@@ -5495,10 +5517,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get deviceExportChipJson => 'JSON';
 
   @override
-  String get deviceExportChipReport => 'Report';
+  String get deviceExportChipReport => 'Relatório';
 
   @override
-  String get deviceExportChipRawHex => 'Raw hex';
+  String get deviceExportChipRawHex => 'Hex bruto';
 
   @override
   String get deviceCopyAction => 'Copiar';
@@ -5555,7 +5577,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get deviceIdentityStrategyInterfaceFingerprint =>
-      'Interface fingerprint';
+      'Impressão digital da interface';
 
   @override
   String get deviceIdentityStrategyModelFingerprint => 'Model fingerprint';
@@ -5584,7 +5606,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String deviceDescriptorsCount(int count) {
-    return '$count descriptor(s)';
+    return '$count descritor(es)';
   }
 
   @override
@@ -5639,7 +5661,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String deviceDescriptorsParsed(int count) {
-    return '$count descriptors parsed';
+    return '$count descritores analisados';
   }
 
   @override
@@ -5661,9 +5683,642 @@ class AppLocalizationsPt extends AppLocalizations {
   String get deviceInputSourcesLabel => 'Input sources';
 
   @override
-  String deviceShowingFirstDescriptors(int count) {
-    return 'Showing first $count descriptors.';
+  String deviceShowingFirstFields(int count) {
+    return 'A mostrar apenas os primeiros $count campos.';
   }
+
+  @override
+  String deviceShowingFirstDescriptors(int count) {
+    return 'A mostrar os primeiros $count descritores.';
+  }
+
+  @override
+  String get settingsUsbBehaviorTitle => 'Comportamento USB';
+
+  @override
+  String get settingsUsbBehaviorSubtitle =>
+      'Controla os avisos do sistema quando um dispositivo USB é ligado';
+
+  @override
+  String get settingsUsbOfferOnAttachTitle => 'Sugerir abertura ao ligar USB';
+
+  @override
+  String get settingsUsbOfferOnAttachSubtitle =>
+      'Aparece no seletor do Android quando um dispositivo USB é ligado.';
+
+  @override
+  String get settingsUsbDisableAttachNote =>
+      'Desative isto para impedir que o Android sugira o USBDevInfo ao ligar um dispositivo. A aplicação continuará a detetar dispositivos enquanto estiver aberta.';
+
+  @override
+  String get settingsAttachFilterScopeLabel => 'Âmbito do filtro de ligação';
+
+  @override
+  String get settingsAttachFilterScopeAllUsbDevices =>
+      'Todos os dispositivos USB';
+
+  @override
+  String get settingsAttachLaunchBehaviorLabel => 'Comportamento ao ligar';
+
+  @override
+  String get settingsAttachLaunchBehaviorEnabled =>
+      'Abrir apenas quando o Android iniciar explicitamente o USBDevInfo a partir do seletor USB';
+
+  @override
+  String get settingsAttachLaunchBehaviorDisabled =>
+      'Alias do seletor desativado';
+
+  @override
+  String get settingsWhileAppOpenLabel => 'Enquanto a aplicação está aberta';
+
+  @override
+  String get settingsWhileAppOpenValue =>
+      'Os eventos de ligação/desligação USB atualizam os dados do dispositivo sem forçar navegação';
+
+  @override
+  String get settingsBackupDataTitle => 'Cópia de segurança e dados';
+
+  @override
+  String get settingsBackupDataSubtitle =>
+      'Exportar o histórico de dispositivos em JSON';
+
+  @override
+  String get settingsHistoryLabel => 'Histórico';
+
+  @override
+  String get settingsMostRecentLabel => 'Mais recente';
+
+  @override
+  String get settingsNoHistoryYet => 'Ainda sem histórico';
+
+  @override
+  String settingsHistoryRecordedCount(int count) {
+    return '$count item(ns) registado(s)';
+  }
+
+  @override
+  String get settingsBackupExportIncludes =>
+      'A exportação inclui IDs de fabricante/produto, nomes resolvidos, cadeias de texto, classe/protocolo, carimbos de data/hora e detalhes avançados (descritores, configurações, interfaces, relatórios HID) quando a permissão foi concedida.';
+
+  @override
+  String get settingsExportJsonAction => 'Exportar JSON';
+
+  @override
+  String get settingsImportJsonAction => 'Importar JSON';
+
+  @override
+  String get settingsUsbIdsDatabaseTitle => 'Base de dados de IDs USB';
+
+  @override
+  String get settingsUsbIdsDatabaseSubtitle => 'Metadados e atualização';
+
+  @override
+  String deviceConfigurationTitle(Object id, Object suffix) {
+    return 'Configuração $id$suffix';
+  }
+
+  @override
+  String get deviceAttributesLabel => 'Atributos';
+
+  @override
+  String get deviceInterfacesSummaryTitle => 'Interfaces (resumo)';
+
+  @override
+  String deviceInterfaceShortLabel(Object id) {
+    return 'IF $id';
+  }
+
+  @override
+  String deviceInterfaceSummaryValue(Object classValue, Object endpointCount) {
+    return 'Classe $classValue • EP $endpointCount';
+  }
+
+  @override
+  String deviceInterfaceStringLabel(
+    Object interfaceNumber,
+    Object alternateSetting,
+  ) {
+    return 'IF $interfaceNumber (Alt $alternateSetting)';
+  }
+
+  @override
+  String get deviceKeyboardChip => 'Teclado';
+
+  @override
+  String get deviceMouseChip => 'Rato';
+
+  @override
+  String deviceReportIdsChip(Object count) {
+    return 'IDs de relatório: $count';
+  }
+
+  @override
+  String deviceCollectionsChip(Object count) {
+    return 'Coleções: $count';
+  }
+
+  @override
+  String deviceUsagePagesChip(Object pages) {
+    return 'Páginas de uso: $pages';
+  }
+
+  @override
+  String get homeCapabilityAudio => 'Áudio';
+
+  @override
+  String get homeCapabilityVideo => 'Vídeo';
+
+  @override
+  String get homeCapabilityHid => 'HID';
+
+  @override
+  String get homeCapabilityMidi => 'MIDI';
+
+  @override
+  String get homeCapabilityStorage => 'Armazenamento';
+
+  @override
+  String get homeCapabilityHub => 'Hub';
+
+  @override
+  String get homeCapabilityCdc => 'CDC';
+
+  @override
+  String get homeCapabilityComposite => 'Composto';
+
+  @override
+  String get homeCapabilityInput => 'Entrada';
+
+  @override
+  String get settingsUsbIdsLocalVersionLabel => 'Versão local';
+
+  @override
+  String get settingsUsbIdsLocalDateLabel => 'Data local';
+
+  @override
+  String get settingsUsbIdsRemoteShaNotFetched =>
+      'O SHA remoto ainda não foi obtido.';
+
+  @override
+  String get settingsUsbIdsInstalledShaAfterUpdate =>
+      'O SHA instalado será guardado após uma atualização bem-sucedida.';
+
+  @override
+  String get settingsUsbIdsInstalledShaMatchesRemote =>
+      'O SHA instalado corresponde ao remoto.';
+
+  @override
+  String get settingsUsbIdsInstalledShaDiffersRemote =>
+      'O SHA instalado difere do remoto (atualização disponível).';
+
+  @override
+  String get settingsUsbIdsDetailsTitle => 'Detalhes';
+
+  @override
+  String get settingsUsbIdsInstalledShaLabel => 'SHA-256 instalado';
+
+  @override
+  String get settingsUsbIdsRemoteShaLabel => 'SHA-256 remoto';
+
+  @override
+  String get settingsUsbIdsShaMatchLabel => 'Correspondência SHA';
+
+  @override
+  String get settingsUsbIdsLastCheckedLabel => 'Última verificação';
+
+  @override
+  String get settingsUsbIdsUpdateHintLabel => 'Indicação de atualização';
+
+  @override
+  String get settingsUsbIdsUpdateHintAvailable => 'Disponível';
+
+  @override
+  String get settingsUsbIdsUpdateHintNone => 'Nenhuma';
+
+  @override
+  String get settingsUsbIdsAutoCheckTitle =>
+      'Verificar atualizações automaticamente';
+
+  @override
+  String get settingsUsbIdsAutoCheckSubtitle =>
+      'Verifica o ficheiro .sha256 remoto cerca de uma vez por semana.';
+
+  @override
+  String get settingsUpdateNow => 'Atualizar agora';
+
+  @override
+  String get settingsCheckNow => 'Verificar agora';
+
+  @override
+  String get settingsAboutSectionTitle => 'Sobre';
+
+  @override
+  String get settingsAboutSectionSubtitle =>
+      'Informações da aplicação e legais';
+
+  @override
+  String settingsAboutAppTileTitle(Object appName, Object developer) {
+    return '$appName - $developer';
+  }
+
+  @override
+  String settingsAboutVersion(Object version) {
+    return 'Versão $version';
+  }
+
+  @override
+  String get settingsLicensesTitle => 'Licenças';
+
+  @override
+  String get settingsLicensesSubtitle => 'Licenças de código aberto';
+
+  @override
+  String get settingsReportIssueTitle => 'Comunicar um problema';
+
+  @override
+  String get settingsReportIssueSubtitle =>
+      'Erros e pedidos de funcionalidades';
+
+  @override
+  String get settingsIssuesLinkCopied => 'Ligação para issues copiada';
+
+  @override
+  String get settingsNoHistoryToExport => 'Não há histórico para exportar.';
+
+  @override
+  String get settingsExportCopied =>
+      'Exportação copiada para a área de transferência.';
+
+  @override
+  String settingsExportFailed(Object error) {
+    return 'Falha ao exportar: $error';
+  }
+
+  @override
+  String get settingsImportUnsupportedFormat =>
+      'Formato JSON não suportado. É esperado um array ou uma carga de exportação com schema=device_history_export_v1.';
+
+  @override
+  String get settingsImportNoValidHistoryEntries =>
+      'Não foram encontradas entradas de histórico válidas.';
+
+  @override
+  String settingsImportedItems(int count) {
+    return '$count item(ns) importado(s).';
+  }
+
+  @override
+  String settingsImportFailed(Object error) {
+    return 'Falha ao importar: $error';
+  }
+
+  @override
+  String get settingsClearHistoryBodyDetailed =>
+      'Isto removerá todos os dispositivos registados do armazenamento local.';
+
+  @override
+  String get settingsHistoryCleared => 'Histórico limpo.';
+
+  @override
+  String get settingsExportHistoryTitle => 'Exportar histórico';
+
+  @override
+  String settingsExportHistorySubtitle(int count) {
+    return '$count item(ns) • JSON';
+  }
+
+  @override
+  String get settingsExportFormatPretty => 'Formatado';
+
+  @override
+  String get settingsExportFormatCompact => 'Compacto';
+
+  @override
+  String get settingsExportSafeShareNote =>
+      'Esta exportação é segura para partilhar para depuração, mas pode conter nomes/caminhos de dispositivos e números de série.';
+
+  @override
+  String get settingsImportHistoryTitle => 'Importar histórico';
+
+  @override
+  String get settingsImportHistorySubtitle =>
+      'Cole uma carga exportada ou uma lista bruta de entradas';
+
+  @override
+  String get settingsImportSupportedFormats =>
+      'Formatos suportados: carga device_history_export_v1 (recomendado) ou um array JSON bruto de mapas de histórico.';
+
+  @override
+  String get settingsImportHint => 'Cole o JSON aqui…';
+
+  @override
+  String get settingsImportAction => 'Importar';
+
+  @override
+  String get settingsImporting => 'A importar…';
+
+  @override
+  String get settingsImportReplacesHistoryNote =>
+      'A importação substitui o histórico atual. Se tiver dúvidas, exporte primeiro.';
+
+  @override
+  String get settingsClipboardEmpty => 'A área de transferência está vazia.';
+
+  @override
+  String get settingsPasteJsonFirst => 'Cole primeiro o JSON.';
+
+  @override
+  String get pasteAction => 'Colar';
+
+  @override
+  String get donationFocusCompatTitle => 'Compatibilidade e permissões';
+
+  @override
+  String get donationFocusCompatSubtitle =>
+      'Particularidades OEM, fluxos de permissões, casos-limite';
+
+  @override
+  String get donationFocusUsbIdsTitle =>
+      'Atualizações da base de dados de IDs USB';
+
+  @override
+  String get donationFocusUsbIdsSubtitle =>
+      'Parsing, atualidade e fiabilidade da atualização';
+
+  @override
+  String get donationFocusUiTitle => 'Aperfeiçoamento de UI/UX';
+
+  @override
+  String get donationFocusUiSubtitle => 'Clareza, rapidez, acessibilidade';
+
+  @override
+  String get donationFocusFeaturesTitle => 'Novas funcionalidades';
+
+  @override
+  String get donationFocusFeaturesSubtitle =>
+      'Filtros, exportações, informações';
+
+  @override
+  String donationShareHeader(Object appName) {
+    return 'Apoie $appName - Aplicação open source';
+  }
+
+  @override
+  String donationShareFocusLine(Object title) {
+    return 'Foco: $title';
+  }
+
+  @override
+  String get donationShareChainBtc =>
+      'Bitcoin (BTC) - envie apenas pela rede Bitcoin.';
+
+  @override
+  String get donationShareChainEth =>
+      'Ethereum (ERC-20) - envie apenas pela mainnet do Ethereum.';
+
+  @override
+  String donationShareBtcAddress(Object address) {
+    return 'Endereço BTC: $address';
+  }
+
+  @override
+  String donationShareEthAddress(Object address) {
+    return 'Endereço ETH: $address';
+  }
+
+  @override
+  String donationShareRepo(Object url) {
+    return 'Repositório: $url';
+  }
+
+  @override
+  String get donationNoBrowserForLiberapay =>
+      'Nenhum navegador disponível para abrir o Liberapay';
+
+  @override
+  String get donationFailedToOpenLiberapay =>
+      'Não foi possível abrir o Liberapay no navegador';
+
+  @override
+  String donationErrorOpeningLiberapay(Object error) {
+    return 'Erro ao abrir o Liberapay: $error';
+  }
+
+  @override
+  String get donationThankYouTitle => 'Obrigado';
+
+  @override
+  String get donationThankYouBody =>
+      'O seu apoio ajuda a manter esta aplicação gratuita, rápida e com manutenção ativa. Obrigado por apoiar software open source.';
+
+  @override
+  String get donationFocusTitle => 'Foco da doação';
+
+  @override
+  String get donationFocusSubtitle =>
+      'Opcional. Ajuda a priorizar no que trabalhar a seguir.';
+
+  @override
+  String get donationGeneralSupportTitle => 'Apoio geral';
+
+  @override
+  String get donationGeneralSupportSubtitle => 'A melhor opção geral';
+
+  @override
+  String get donationSupportDevelopmentTitle => 'Apoiar o desenvolvimento';
+
+  @override
+  String get donationSupportDevelopmentSubtitle =>
+      'Doação opcional para financiar manutenção e funcionalidades';
+
+  @override
+  String get donationOptionsTitle => 'Opções de doação';
+
+  @override
+  String get donationOptionsSubtitle =>
+      'A sua contribuição mantém esta ferramenta gratuita, cuidada e orientada pela comunidade';
+
+  @override
+  String get donationRecommendedBadge => 'Recomendado';
+
+  @override
+  String get donationLiberapayFlexibleSupport => 'Opções flexíveis de apoio';
+
+  @override
+  String get donationTraditionalPayments =>
+      'Métodos de pagamento tradicionais (cartão, PayPal, banco)';
+
+  @override
+  String get donationRecurringOrOneTime =>
+      'Apoio recorrente flexível ou contribuição única';
+
+  @override
+  String get donationTrustedByOpenSource =>
+      'De confiança para programadores open source';
+
+  @override
+  String get donationOpeningBrowser => 'A abrir o navegador...';
+
+  @override
+  String get donationViaLiberapay => 'Doar via Liberapay';
+
+  @override
+  String get donationLiberapayNote =>
+      'O Liberapay é uma plataforma de doações sem fins lucrativos em que projetos open source confiam.';
+
+  @override
+  String get donationCryptoSupportTitle => 'Apoio direto com criptomoedas';
+
+  @override
+  String get donationCryptoSupportSubtitle =>
+      'Opção focada na privacidade • Leia o QR ou copie o endereço';
+
+  @override
+  String get donationBtcShort => 'BTC';
+
+  @override
+  String get donationEthShort => 'ETH';
+
+  @override
+  String get donationGeneralShort => 'Geral';
+
+  @override
+  String get donationBitcoinNetworkOnly => 'Apenas rede Bitcoin';
+
+  @override
+  String get donationEthereumNetworkOnly => 'Apenas mainnet Ethereum';
+
+  @override
+  String get donationBitcoinTitle => 'Doação em Bitcoin';
+
+  @override
+  String get donationEthereumTitle => 'Doação em Ethereum';
+
+  @override
+  String get donationQrUnavailable => 'Código QR indisponível';
+
+  @override
+  String get donationAddressTitle => 'Endereço';
+
+  @override
+  String get donationBtcAddressCopied => 'Endereço BTC copiado';
+
+  @override
+  String get donationEthAddressCopied => 'Endereço ETH copiado';
+
+  @override
+  String get donationShareTextCopied => 'Texto de partilha copiado';
+
+  @override
+  String get donationCopyAddress => 'Copiar endereço';
+
+  @override
+  String get donationShareAction => 'Partilhar';
+
+  @override
+  String get donationSentAction => 'Já enviei uma doação';
+
+  @override
+  String get donationSecurityNote =>
+      'Nota de segurança: nunca confie em endereços de doação vistos em capturas de ecrã, avaliações ou páginas de terceiros. Use apenas este ecrã integrado na aplicação.';
+
+  @override
+  String deviceInterfaceTitle(Object id, Object classInfo) {
+    return 'Interface $id • $classInfo';
+  }
+
+  @override
+  String get deviceAltSettingLabel => 'Definição alt';
+
+  @override
+  String get deviceClassLabel => 'Classe';
+
+  @override
+  String deviceEndpointsTitle(int count) {
+    return 'Endpoints ($count)';
+  }
+
+  @override
+  String get deviceNoEndpoints => 'Sem endpoints';
+
+  @override
+  String deviceEndpointAddressSummary(
+    Object address,
+    Object number,
+    Object attributes,
+  ) {
+    return 'End. $address • EP n.º $number • Atr. $attributes';
+  }
+
+  @override
+  String deviceEndpointMaxPacket(Object value) {
+    return 'MaxPkt $value';
+  }
+
+  @override
+  String deviceEndpointInterval(Object value) {
+    return 'Intervalo $value';
+  }
+
+  @override
+  String get deviceControlTransferDefaultTitle => 'Transferência de controlo';
+
+  @override
+  String get deviceRequestedLengthLabel => 'Comprimento pedido';
+
+  @override
+  String get deviceActualLengthLabel => 'Comprimento real';
+
+  @override
+  String get deviceResultLabel => 'Resultado';
+
+  @override
+  String get deviceTransferSuccess => 'Sucesso';
+
+  @override
+  String get deviceTransferFailed => 'Falhou';
+
+  @override
+  String get deviceResponseBytesHexTitle => 'Bytes de resposta (hex)';
+
+  @override
+  String get deviceParsedFieldsTitle => 'Campos analisados';
+
+  @override
+  String get deviceNoParsedFieldsAvailable =>
+      'Não há campos analisados disponíveis.';
+
+  @override
+  String get deviceRawBytesTitle => 'Bytes brutos';
+
+  @override
+  String deviceInterfaceReportTitle(
+    Object interfaceNumber,
+    Object reportLength,
+  ) {
+    return 'Interface $interfaceNumber • Relatório de $reportLength bytes';
+  }
+
+  @override
+  String get deviceParsedSummaryTitle => 'Resumo analisado';
+
+  @override
+  String get deviceNoParsedHidSummaryAvailable =>
+      'Não há resumo HID analisado disponível.';
+
+  @override
+  String get deviceReportHexTitle => 'Hex do relatório';
+
+  @override
+  String get historyEntryNotFoundTitle => 'Entrada não encontrada';
+
+  @override
+  String get historyEntryNotFoundBody =>
+      'Este item do histórico já não existe.';
+
+  @override
+  String get historyUnableToOpenDetail =>
+      'Não foi possível abrir o detalhe do histórico.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -10627,16 +11282,18 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'Não foi possível ler os detalhes do dispositivo.';
 
   @override
-  String get deviceAudioClassDescriptorsTitle => 'Audio class descriptors';
+  String get deviceAudioClassDescriptorsTitle =>
+      'Descritores de classe de áudio';
 
   @override
-  String get deviceVideoClassDescriptorsTitle => 'Video class descriptors';
+  String get deviceVideoClassDescriptorsTitle =>
+      'Descritores de classe de vídeo';
 
   @override
-  String get deviceCdcSerialDescriptorsTitle => 'CDC / serial descriptors';
+  String get deviceCdcSerialDescriptorsTitle => 'Descritores CDC / seriais';
 
   @override
-  String get deviceHubDescriptorsTitle => 'Hub descriptors';
+  String get deviceHubDescriptorsTitle => 'Descritores de hub';
 
   @override
   String get deviceBosCapabilitiesTitle => 'BOS & capabilities';
@@ -10862,22 +11519,22 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get deviceConnectedUsbAudioEndpointsLabel =>
-      'Connected USB audio endpoints';
+      'Endpoints de áudio USB conectados';
 
   @override
-  String get deviceMatchedEndpointsLabel => 'Matched endpoints';
+  String get deviceMatchedEndpointsLabel => 'Endpoints correspondentes';
 
   @override
   String get deviceAudioManagerUnavailableNote =>
-      'AudioManager data is not available on this Android version or device.';
+      'Os dados do AudioManager não estão disponíveis nesta versão do Android ou neste dispositivo.';
 
   @override
   String get deviceNoAudioEndpointMatchedNote =>
-      'No AudioDeviceInfo endpoint could be matched to this USB device yet.';
+      'Ainda não foi possível associar nenhum endpoint AudioDeviceInfo a este dispositivo USB.';
 
   @override
   String get deviceAndroidNoMatchedAudioEndpointNote =>
-      'Android does not report a matched USB audio endpoint for this device.';
+      'O Android não informa nenhum endpoint de áudio USB correspondente para este dispositivo.';
 
   @override
   String get deviceUsbMidiTitle => 'MIDI USB';
@@ -10888,28 +11545,29 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get deviceProbableUsbMidiInterfaceLabel =>
-      'Probable USB MIDI interface';
+      'Interface USB MIDI provável';
 
   @override
-  String get devicePlatformMidiApiLabel => 'Platform MIDI API';
+  String get devicePlatformMidiApiLabel => 'API MIDI da plataforma';
 
   @override
-  String get deviceConnectedMidiDevicesLabel => 'Connected MIDI devices';
+  String get deviceConnectedMidiDevicesLabel => 'Dispositivos MIDI conectados';
 
   @override
-  String get deviceMatchedMidiDevicesLabel => 'Matched MIDI devices';
+  String get deviceMatchedMidiDevicesLabel =>
+      'Dispositivos MIDI correspondentes';
 
   @override
   String get deviceMidiManagerUnavailableNote =>
-      'MidiManager data is not available on this Android version or device.';
+      'Os dados do MidiManager não estão disponíveis nesta versão do Android ou neste dispositivo.';
 
   @override
   String get deviceDescriptorsLookLikeMidiNote =>
-      'The USB descriptors look like MIDI, but Android did not expose a matching MidiManager device.';
+      'Os descritores USB parecem MIDI, mas o Android não expôs um dispositivo MidiManager correspondente.';
 
   @override
   String get deviceAndroidNoMatchedMidiDeviceNote =>
-      'Android does not report a matched MIDI device for this USB device.';
+      'O Android não informa nenhum dispositivo MIDI correspondente para este dispositivo USB.';
 
   @override
   String get devicePowerTitle => 'Energia';
@@ -10945,7 +11603,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get deviceNameLabel => 'Name';
 
   @override
-  String get deviceDescriptorLabel => 'Descriptor';
+  String get deviceDescriptorLabel => 'Descritor';
 
   @override
   String get deviceExternalLabel => 'External';
@@ -10984,6 +11642,21 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get deviceShowPermissionDiagnostics => 'Show permission diagnostics';
 
   @override
+  String get devicePermissionStateTemporary => 'Temporário';
+
+  @override
+  String get devicePermissionStatePermanent => 'Permanente';
+
+  @override
+  String get devicePermissionStateReenumerated => 'Reenumerado';
+
+  @override
+  String get devicePermissionStateNotInApp => 'Não disponível no app';
+
+  @override
+  String get devicePermissionStateRevoked => 'Revogado';
+
+  @override
   String get deviceAndroidVersionLabel => 'Android version';
 
   @override
@@ -11020,6 +11693,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get deviceWhyDataUnavailableTitle => 'Why data is unavailable';
 
   @override
+  String get deviceWhyDataUnavailableSubtitle =>
+      'Limitação exata do Android ou do dispositivo para campos ocultos';
+
+  @override
   String get deviceReconnectDiffTitle => 'Diferença após reconexão';
 
   @override
@@ -11047,7 +11724,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get deviceInterfaceAlternateSettingsTitle =>
-      'Interface alternate settings';
+      'Configurações alternativas da interface';
 
   @override
   String get deviceStringDescriptorsTitle => 'Descritores de cadeia';
@@ -11069,16 +11746,16 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get deviceManufacturerLabel => 'Manufacturer';
 
   @override
-  String get deviceInterfaceStringsTitle => 'Interface strings';
+  String get deviceInterfaceStringsTitle => 'Strings da interface';
 
   @override
-  String get deviceDescriptorTreeTitle => 'Descriptor tree';
+  String get deviceDescriptorTreeTitle => 'Árvore de descritores';
 
   @override
-  String get deviceShowDescriptors => 'Show descriptors';
+  String get deviceShowDescriptors => 'Mostrar descritores';
 
   @override
-  String get deviceHidReportDescriptorsTitle => 'HID report descriptors';
+  String get deviceHidReportDescriptorsTitle => 'Descritores de relatório HID';
 
   @override
   String get devicePermissionRequiredTitle => 'Permissão necessária';
@@ -11101,41 +11778,41 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get deviceAdvancedRawViewTitle => 'Visualização bruta avançada';
 
   @override
-  String get deviceDescriptorNodesLabel => 'Descriptor nodes';
+  String get deviceDescriptorNodesLabel => 'Nós do descritor';
 
   @override
-  String get deviceControlTransfersLabel => 'Control transfers';
+  String get deviceControlTransfersLabel => 'Transferências de controle';
 
   @override
-  String get deviceHidReportDumpsLabel => 'HID report dumps';
+  String get deviceHidReportDumpsLabel => 'Dumps de relatórios HID';
 
   @override
-  String get deviceControlTransfersTitle => 'Control transfers';
+  String get deviceControlTransfersTitle => 'Transferências de controle';
 
   @override
   String get deviceControlTransfersSubtitle =>
       'Raw setup/result records from direct USB control reads';
 
   @override
-  String get deviceDescriptorsSideBySideTitle => 'Descriptors side by side';
+  String get deviceDescriptorsSideBySideTitle => 'Descritores lado a lado';
 
   @override
   String get deviceDescriptorsSideBySideSubtitle =>
-      'Parsed fields next to the raw descriptor bytes';
+      'Campos analisados ao lado dos bytes brutos do descritor';
 
   @override
-  String get deviceHidReportDumpsTitle => 'HID report dumps';
+  String get deviceHidReportDumpsTitle => 'Dumps de relatórios HID';
 
   @override
   String get deviceHidReportDumpsSubtitle =>
-      'Report descriptor hex with parsed summary';
+      'Hex do descritor de relatório com resumo analisado';
 
   @override
   String get deviceAdvancedDataUnavailableTitle => 'Advanced data unavailable';
 
   @override
   String get deviceAdvancedDataUnavailableSubtitle =>
-      'No raw control-transfer or descriptor payload is available for this device';
+      'Não há dados brutos de transferências de controle nem descritores disponíveis para este dispositivo.';
 
   @override
   String get deviceGrantPermissionReconnectNote =>
@@ -11161,10 +11838,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get deviceExportChipJson => 'JSON';
 
   @override
-  String get deviceExportChipReport => 'Report';
+  String get deviceExportChipReport => 'Relatório';
 
   @override
-  String get deviceExportChipRawHex => 'Raw hex';
+  String get deviceExportChipRawHex => 'Hex bruto';
 
   @override
   String get deviceCopyAction => 'Copiar';
@@ -11221,7 +11898,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get deviceIdentityStrategyInterfaceFingerprint =>
-      'Interface fingerprint';
+      'Impressão digital da interface';
 
   @override
   String get deviceIdentityStrategyModelFingerprint => 'Model fingerprint';
@@ -11250,7 +11927,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String deviceDescriptorsCount(int count) {
-    return '$count descriptor(s)';
+    return '$count descritor(es)';
   }
 
   @override
@@ -11305,7 +11982,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String deviceDescriptorsParsed(int count) {
-    return '$count descriptors parsed';
+    return '$count descritores analisados';
   }
 
   @override
@@ -11327,7 +12004,637 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get deviceInputSourcesLabel => 'Input sources';
 
   @override
-  String deviceShowingFirstDescriptors(int count) {
-    return 'Showing first $count descriptors.';
+  String deviceShowingFirstFields(int count) {
+    return 'Mostrando apenas os primeiros $count campos.';
   }
+
+  @override
+  String deviceShowingFirstDescriptors(int count) {
+    return 'Mostrando os primeiros $count descritores.';
+  }
+
+  @override
+  String get settingsUsbBehaviorTitle => 'Comportamento USB';
+
+  @override
+  String get settingsUsbBehaviorSubtitle =>
+      'Controla os avisos do sistema quando um dispositivo USB é conectado';
+
+  @override
+  String get settingsUsbOfferOnAttachTitle =>
+      'Oferecer abertura ao conectar USB';
+
+  @override
+  String get settingsUsbOfferOnAttachSubtitle =>
+      'Aparece no seletor do Android quando um dispositivo USB é conectado.';
+
+  @override
+  String get settingsUsbDisableAttachNote =>
+      'Desative isso para impedir que o Android sugira o USBDevInfo ao conectar um dispositivo. O app continuará detectando dispositivos enquanto estiver aberto.';
+
+  @override
+  String get settingsAttachFilterScopeLabel => 'Escopo do filtro de conexão';
+
+  @override
+  String get settingsAttachFilterScopeAllUsbDevices =>
+      'Todos os dispositivos USB';
+
+  @override
+  String get settingsAttachLaunchBehaviorLabel => 'Comportamento ao conectar';
+
+  @override
+  String get settingsAttachLaunchBehaviorEnabled =>
+      'Abrir apenas quando o Android iniciar explicitamente o USBDevInfo pelo seletor USB';
+
+  @override
+  String get settingsAttachLaunchBehaviorDisabled =>
+      'Alias do seletor desativado';
+
+  @override
+  String get settingsWhileAppOpenLabel => 'Enquanto o app está aberto';
+
+  @override
+  String get settingsWhileAppOpenValue =>
+      'Eventos de conexão/desconexão USB atualizam os dados do dispositivo sem forçar navegação';
+
+  @override
+  String get settingsBackupDataTitle => 'Backup e dados';
+
+  @override
+  String get settingsBackupDataSubtitle =>
+      'Exportar o histórico dos dispositivos em JSON';
+
+  @override
+  String get settingsHistoryLabel => 'Histórico';
+
+  @override
+  String get settingsMostRecentLabel => 'Mais recente';
+
+  @override
+  String get settingsNoHistoryYet => 'Ainda não há histórico';
+
+  @override
+  String settingsHistoryRecordedCount(int count) {
+    return '$count item(ns) registrado(s)';
+  }
+
+  @override
+  String get settingsBackupExportIncludes =>
+      'A exportação inclui IDs de fabricante/produto, nomes resolvidos, strings, classe/protocolo, carimbos de data e hora e detalhes avançados (descritores, configurações, interfaces, relatórios HID) quando a permissão foi concedida.';
+
+  @override
+  String get settingsExportJsonAction => 'Exportar JSON';
+
+  @override
+  String get settingsImportJsonAction => 'Importar JSON';
+
+  @override
+  String get settingsUsbIdsDatabaseTitle => 'Banco de dados de IDs USB';
+
+  @override
+  String get settingsUsbIdsDatabaseSubtitle => 'Metadados e atualização';
+
+  @override
+  String deviceConfigurationTitle(Object id, Object suffix) {
+    return 'Configuração $id$suffix';
+  }
+
+  @override
+  String get deviceAttributesLabel => 'Atributos';
+
+  @override
+  String get deviceInterfacesSummaryTitle => 'Interfaces (resumo)';
+
+  @override
+  String deviceInterfaceShortLabel(Object id) {
+    return 'IF $id';
+  }
+
+  @override
+  String deviceInterfaceSummaryValue(Object classValue, Object endpointCount) {
+    return 'Classe $classValue • EP $endpointCount';
+  }
+
+  @override
+  String deviceInterfaceStringLabel(
+    Object interfaceNumber,
+    Object alternateSetting,
+  ) {
+    return 'IF $interfaceNumber (Alt $alternateSetting)';
+  }
+
+  @override
+  String get deviceKeyboardChip => 'Teclado';
+
+  @override
+  String get deviceMouseChip => 'Mouse';
+
+  @override
+  String deviceReportIdsChip(Object count) {
+    return 'IDs de relatório: $count';
+  }
+
+  @override
+  String deviceCollectionsChip(Object count) {
+    return 'Coleções: $count';
+  }
+
+  @override
+  String deviceUsagePagesChip(Object pages) {
+    return 'Páginas de uso: $pages';
+  }
+
+  @override
+  String get homeCapabilityAudio => 'Áudio';
+
+  @override
+  String get homeCapabilityVideo => 'Vídeo';
+
+  @override
+  String get homeCapabilityHid => 'HID';
+
+  @override
+  String get homeCapabilityMidi => 'MIDI';
+
+  @override
+  String get homeCapabilityStorage => 'Armazenamento';
+
+  @override
+  String get homeCapabilityHub => 'Hub';
+
+  @override
+  String get homeCapabilityCdc => 'CDC';
+
+  @override
+  String get homeCapabilityComposite => 'Composto';
+
+  @override
+  String get homeCapabilityInput => 'Entrada';
+
+  @override
+  String get settingsUsbIdsLocalVersionLabel => 'Versão local';
+
+  @override
+  String get settingsUsbIdsLocalDateLabel => 'Data local';
+
+  @override
+  String get settingsUsbIdsRemoteShaNotFetched =>
+      'O SHA remoto ainda não foi obtido.';
+
+  @override
+  String get settingsUsbIdsInstalledShaAfterUpdate =>
+      'O SHA instalado será salvo após uma atualização bem-sucedida.';
+
+  @override
+  String get settingsUsbIdsInstalledShaMatchesRemote =>
+      'O SHA instalado corresponde ao remoto.';
+
+  @override
+  String get settingsUsbIdsInstalledShaDiffersRemote =>
+      'O SHA instalado difere do remoto (atualização disponível).';
+
+  @override
+  String get settingsUsbIdsDetailsTitle => 'Detalhes';
+
+  @override
+  String get settingsUsbIdsInstalledShaLabel => 'SHA-256 instalado';
+
+  @override
+  String get settingsUsbIdsRemoteShaLabel => 'SHA-256 remoto';
+
+  @override
+  String get settingsUsbIdsShaMatchLabel => 'Correspondência SHA';
+
+  @override
+  String get settingsUsbIdsLastCheckedLabel => 'Última verificação';
+
+  @override
+  String get settingsUsbIdsUpdateHintLabel => 'Indicação de atualização';
+
+  @override
+  String get settingsUsbIdsUpdateHintAvailable => 'Disponível';
+
+  @override
+  String get settingsUsbIdsUpdateHintNone => 'Nenhuma';
+
+  @override
+  String get settingsUsbIdsAutoCheckTitle =>
+      'Verificar atualizações automaticamente';
+
+  @override
+  String get settingsUsbIdsAutoCheckSubtitle =>
+      'Verifica o arquivo .sha256 remoto aproximadamente uma vez por semana.';
+
+  @override
+  String get settingsUpdateNow => 'Atualizar agora';
+
+  @override
+  String get settingsCheckNow => 'Verificar agora';
+
+  @override
+  String get settingsAboutSectionTitle => 'Sobre';
+
+  @override
+  String get settingsAboutSectionSubtitle => 'Informações do app e legais';
+
+  @override
+  String settingsAboutAppTileTitle(Object appName, Object developer) {
+    return '$appName - $developer';
+  }
+
+  @override
+  String settingsAboutVersion(Object version) {
+    return 'Versão $version';
+  }
+
+  @override
+  String get settingsLicensesTitle => 'Licenças';
+
+  @override
+  String get settingsLicensesSubtitle => 'Licenças de código aberto';
+
+  @override
+  String get settingsReportIssueTitle => 'Relatar problema';
+
+  @override
+  String get settingsReportIssueSubtitle => 'Erros e pedidos de recursos';
+
+  @override
+  String get settingsIssuesLinkCopied => 'Link de issues copiado';
+
+  @override
+  String get settingsNoHistoryToExport => 'Não há histórico para exportar.';
+
+  @override
+  String get settingsExportCopied =>
+      'Exportação copiada para a área de transferência.';
+
+  @override
+  String settingsExportFailed(Object error) {
+    return 'Falha ao exportar: $error';
+  }
+
+  @override
+  String get settingsImportUnsupportedFormat =>
+      'Formato JSON não compatível. É esperado um array ou uma carga de exportação com schema=device_history_export_v1.';
+
+  @override
+  String get settingsImportNoValidHistoryEntries =>
+      'Nenhuma entrada válida de histórico encontrada.';
+
+  @override
+  String settingsImportedItems(int count) {
+    return '$count item(ns) importado(s).';
+  }
+
+  @override
+  String settingsImportFailed(Object error) {
+    return 'Falha ao importar: $error';
+  }
+
+  @override
+  String get settingsClearHistoryBodyDetailed =>
+      'Isso removerá todos os dispositivos registrados do armazenamento local.';
+
+  @override
+  String get settingsHistoryCleared => 'Histórico limpo.';
+
+  @override
+  String get settingsExportHistoryTitle => 'Exportar histórico';
+
+  @override
+  String settingsExportHistorySubtitle(int count) {
+    return '$count item(ns) • JSON';
+  }
+
+  @override
+  String get settingsExportFormatPretty => 'Formatado';
+
+  @override
+  String get settingsExportFormatCompact => 'Compacto';
+
+  @override
+  String get settingsExportSafeShareNote =>
+      'Esta exportação é segura para compartilhar em depuração, mas pode conter nomes/caminhos de dispositivos e números de série.';
+
+  @override
+  String get settingsImportHistoryTitle => 'Importar histórico';
+
+  @override
+  String get settingsImportHistorySubtitle =>
+      'Cole uma carga exportada ou uma lista bruta de entradas';
+
+  @override
+  String get settingsImportSupportedFormats =>
+      'Formatos compatíveis: carga device_history_export_v1 (recomendado) ou um array JSON bruto de mapas de histórico.';
+
+  @override
+  String get settingsImportHint => 'Cole o JSON aqui…';
+
+  @override
+  String get settingsImportAction => 'Importar';
+
+  @override
+  String get settingsImporting => 'Importando…';
+
+  @override
+  String get settingsImportReplacesHistoryNote =>
+      'A importação substitui o histórico atual. Em caso de dúvida, exporte primeiro.';
+
+  @override
+  String get settingsClipboardEmpty => 'A área de transferência está vazia.';
+
+  @override
+  String get settingsPasteJsonFirst => 'Cole o JSON primeiro.';
+
+  @override
+  String get pasteAction => 'Colar';
+
+  @override
+  String get donationFocusCompatTitle => 'Compatibilidade e permissões';
+
+  @override
+  String get donationFocusCompatSubtitle =>
+      'Particularidades de OEM, fluxos de permissão, casos extremos';
+
+  @override
+  String get donationFocusUsbIdsTitle => 'Atualizações do banco de IDs USB';
+
+  @override
+  String get donationFocusUsbIdsSubtitle =>
+      'Parsing, atualização e confiabilidade';
+
+  @override
+  String get donationFocusUiTitle => 'Ajustes de UI/UX';
+
+  @override
+  String get donationFocusUiSubtitle => 'Clareza, velocidade, acessibilidade';
+
+  @override
+  String get donationFocusFeaturesTitle => 'Novos recursos';
+
+  @override
+  String get donationFocusFeaturesSubtitle => 'Filtros, exportações, insights';
+
+  @override
+  String donationShareHeader(Object appName) {
+    return 'Apoie $appName - App de código aberto';
+  }
+
+  @override
+  String donationShareFocusLine(Object title) {
+    return 'Foco: $title';
+  }
+
+  @override
+  String get donationShareChainBtc =>
+      'Bitcoin (BTC) - envie apenas pela rede Bitcoin.';
+
+  @override
+  String get donationShareChainEth =>
+      'Ethereum (ERC-20) - envie apenas pela mainnet do Ethereum.';
+
+  @override
+  String donationShareBtcAddress(Object address) {
+    return 'Endereço BTC: $address';
+  }
+
+  @override
+  String donationShareEthAddress(Object address) {
+    return 'Endereço ETH: $address';
+  }
+
+  @override
+  String donationShareRepo(Object url) {
+    return 'Repositório: $url';
+  }
+
+  @override
+  String get donationNoBrowserForLiberapay =>
+      'Nenhum navegador disponível para abrir o Liberapay';
+
+  @override
+  String get donationFailedToOpenLiberapay =>
+      'Não foi possível abrir o Liberapay no navegador';
+
+  @override
+  String donationErrorOpeningLiberapay(Object error) {
+    return 'Erro ao abrir o Liberapay: $error';
+  }
+
+  @override
+  String get donationThankYouTitle => 'Obrigado';
+
+  @override
+  String get donationThankYouBody =>
+      'Seu apoio ajuda a manter este app gratuito, rápido e ativamente mantido. Obrigado por apoiar software de código aberto.';
+
+  @override
+  String get donationFocusTitle => 'Foco da doação';
+
+  @override
+  String get donationFocusSubtitle =>
+      'Opcional. Ajuda a priorizar o que fazer depois.';
+
+  @override
+  String get donationGeneralSupportTitle => 'Apoio geral';
+
+  @override
+  String get donationGeneralSupportSubtitle => 'A melhor opção geral';
+
+  @override
+  String get donationSupportDevelopmentTitle => 'Apoiar o desenvolvimento';
+
+  @override
+  String get donationSupportDevelopmentSubtitle =>
+      'Doação opcional para financiar manutenção e recursos';
+
+  @override
+  String get donationOptionsTitle => 'Opções de doação';
+
+  @override
+  String get donationOptionsSubtitle =>
+      'Sua contribuição mantém esta ferramenta gratuita, cuidada e guiada pela comunidade';
+
+  @override
+  String get donationRecommendedBadge => 'Recomendado';
+
+  @override
+  String get donationLiberapayFlexibleSupport => 'Opções flexíveis de apoio';
+
+  @override
+  String get donationTraditionalPayments =>
+      'Métodos de pagamento tradicionais (cartão, PayPal, banco)';
+
+  @override
+  String get donationRecurringOrOneTime =>
+      'Apoio recorrente flexível ou contribuição única';
+
+  @override
+  String get donationTrustedByOpenSource =>
+      'Confiado por desenvolvedores de código aberto';
+
+  @override
+  String get donationOpeningBrowser => 'Abrindo navegador...';
+
+  @override
+  String get donationViaLiberapay => 'Doar via Liberapay';
+
+  @override
+  String get donationLiberapayNote =>
+      'O Liberapay é uma plataforma de doações sem fins lucrativos em que projetos de código aberto confiam.';
+
+  @override
+  String get donationCryptoSupportTitle => 'Apoio direto com criptomoedas';
+
+  @override
+  String get donationCryptoSupportSubtitle =>
+      'Opção focada em privacidade • Escaneie o QR ou copie o endereço';
+
+  @override
+  String get donationBtcShort => 'BTC';
+
+  @override
+  String get donationEthShort => 'ETH';
+
+  @override
+  String get donationGeneralShort => 'Geral';
+
+  @override
+  String get donationBitcoinNetworkOnly => 'Somente rede Bitcoin';
+
+  @override
+  String get donationEthereumNetworkOnly => 'Somente mainnet Ethereum';
+
+  @override
+  String get donationBitcoinTitle => 'Doação em Bitcoin';
+
+  @override
+  String get donationEthereumTitle => 'Doação em Ethereum';
+
+  @override
+  String get donationQrUnavailable => 'Código QR indisponível';
+
+  @override
+  String get donationAddressTitle => 'Endereço';
+
+  @override
+  String get donationBtcAddressCopied => 'Endereço BTC copiado';
+
+  @override
+  String get donationEthAddressCopied => 'Endereço ETH copiado';
+
+  @override
+  String get donationShareTextCopied => 'Texto de compartilhamento copiado';
+
+  @override
+  String get donationCopyAddress => 'Copiar endereço';
+
+  @override
+  String get donationShareAction => 'Compartilhar';
+
+  @override
+  String get donationSentAction => 'Já enviei uma doação';
+
+  @override
+  String get donationSecurityNote =>
+      'Nota de segurança: nunca confie em endereços de doação vistos em capturas de tela, avaliações ou páginas de terceiros. Use apenas esta tela interna do app.';
+
+  @override
+  String deviceInterfaceTitle(Object id, Object classInfo) {
+    return 'Interface $id • $classInfo';
+  }
+
+  @override
+  String get deviceAltSettingLabel => 'Configuração alt';
+
+  @override
+  String get deviceClassLabel => 'Classe';
+
+  @override
+  String deviceEndpointsTitle(int count) {
+    return 'Endpoints ($count)';
+  }
+
+  @override
+  String get deviceNoEndpoints => 'Sem endpoints';
+
+  @override
+  String deviceEndpointAddressSummary(
+    Object address,
+    Object number,
+    Object attributes,
+  ) {
+    return 'End. $address • EP nº $number • Atrib. $attributes';
+  }
+
+  @override
+  String deviceEndpointMaxPacket(Object value) {
+    return 'MaxPkt $value';
+  }
+
+  @override
+  String deviceEndpointInterval(Object value) {
+    return 'Intervalo $value';
+  }
+
+  @override
+  String get deviceControlTransferDefaultTitle => 'Transferência de controle';
+
+  @override
+  String get deviceRequestedLengthLabel => 'Comprimento solicitado';
+
+  @override
+  String get deviceActualLengthLabel => 'Comprimento real';
+
+  @override
+  String get deviceResultLabel => 'Resultado';
+
+  @override
+  String get deviceTransferSuccess => 'Sucesso';
+
+  @override
+  String get deviceTransferFailed => 'Falhou';
+
+  @override
+  String get deviceResponseBytesHexTitle => 'Bytes de resposta (hex)';
+
+  @override
+  String get deviceParsedFieldsTitle => 'Campos analisados';
+
+  @override
+  String get deviceNoParsedFieldsAvailable =>
+      'Não há campos analisados disponíveis.';
+
+  @override
+  String get deviceRawBytesTitle => 'Bytes brutos';
+
+  @override
+  String deviceInterfaceReportTitle(
+    Object interfaceNumber,
+    Object reportLength,
+  ) {
+    return 'Interface $interfaceNumber • Relatório de $reportLength bytes';
+  }
+
+  @override
+  String get deviceParsedSummaryTitle => 'Resumo analisado';
+
+  @override
+  String get deviceNoParsedHidSummaryAvailable =>
+      'Não há resumo HID analisado disponível.';
+
+  @override
+  String get deviceReportHexTitle => 'Hex do relatório';
+
+  @override
+  String get historyEntryNotFoundTitle => 'Entrada não encontrada';
+
+  @override
+  String get historyEntryNotFoundBody =>
+      'Este item do histórico não existe mais.';
+
+  @override
+  String get historyUnableToOpenDetail =>
+      'Não foi possível abrir o detalhe do histórico.';
 }

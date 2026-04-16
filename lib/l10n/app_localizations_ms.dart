@@ -4698,7 +4698,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String homeInputSourcesLabel(Object sources) {
-    return 'Input: $sources';
+    return 'Sumber input: $sources';
   }
 
   @override
@@ -4841,7 +4841,7 @@ class AppLocalizationsMs extends AppLocalizations {
       'USBDevInfo menyenaraikan peranti OTG/USB host, memaparkan deskriptor dan butiran kelas/protokol, menyelesaikan VID/PID menggunakan pangkalan data USB IDs luar talian, serta merekod sejarah sambungan. Tiada akaun, tiada penjejakan, tiada iklan.';
 
   @override
-  String get usbAboutUsbHostPill => 'USB host';
+  String get usbAboutUsbHostPill => 'Hos USB';
 
   @override
   String get usbAboutDescriptorsPill => 'Deskriptor';
@@ -5284,6 +5284,21 @@ class AppLocalizationsMs extends AppLocalizations {
       'Tunjukkan diagnostik kebenaran';
 
   @override
+  String get devicePermissionStateTemporary => 'Sementara';
+
+  @override
+  String get devicePermissionStatePermanent => 'Kekal';
+
+  @override
+  String get devicePermissionStateReenumerated => 'Dienumerasi semula';
+
+  @override
+  String get devicePermissionStateNotInApp => 'Tiada dalam aplikasi';
+
+  @override
+  String get devicePermissionStateRevoked => 'Ditarik balik';
+
+  @override
   String get deviceAndroidVersionLabel => 'Versi Android';
 
   @override
@@ -5318,6 +5333,10 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get deviceWhyDataUnavailableTitle => 'Mengapa data tidak tersedia';
+
+  @override
+  String get deviceWhyDataUnavailableSubtitle =>
+      'Had tepat Android atau peranti untuk medan yang disembunyikan';
 
   @override
   String get deviceReconnectDiffTitle => 'Perbezaan sambung semula';
@@ -5437,14 +5456,14 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get deviceAdvancedDataUnavailableSubtitle =>
-      'Tiada payload pemindahan kawalan mentah atau deskriptor tersedia untuk peranti ini';
+      'Tiada data pemindahan kawalan mentah atau deskriptor tersedia untuk peranti ini';
 
   @override
   String get deviceGrantPermissionReconnectNote =>
       'Beri kebenaran USB dan sambungkan semula peranti jika anda mahu Android mendedahkan data deskriptor dan pemindahan secara langsung.';
 
   @override
-  String get deviceExportFormatJson => 'Payload JSON';
+  String get deviceExportFormatJson => 'Data JSON';
 
   @override
   String get deviceExportFormatReport => 'Laporan teks biasa';
@@ -5628,7 +5647,636 @@ class AppLocalizationsMs extends AppLocalizations {
   String get deviceInputSourcesLabel => 'Sumber input';
 
   @override
+  String deviceShowingFirstFields(int count) {
+    return 'Hanya memaparkan $count medan pertama.';
+  }
+
+  @override
   String deviceShowingFirstDescriptors(int count) {
     return 'Menunjukkan $count deskriptor pertama.';
   }
+
+  @override
+  String get settingsUsbBehaviorTitle => 'Tingkah laku USB';
+
+  @override
+  String get settingsUsbBehaviorSubtitle =>
+      'Kawal gesaan sistem apabila peranti USB dipalamkan';
+
+  @override
+  String get settingsUsbOfferOnAttachTitle =>
+      'Tawar buka apabila USB disambungkan';
+
+  @override
+  String get settingsUsbOfferOnAttachSubtitle =>
+      'Muncul dalam pemilih Android apabila peranti USB disambungkan.';
+
+  @override
+  String get settingsUsbDisableAttachNote =>
+      'Matikan ini supaya Android berhenti mencadangkan USBDevInfo apabila peranti disambungkan. Aplikasi masih akan mengesan peranti semasa dibuka.';
+
+  @override
+  String get settingsAttachFilterScopeLabel => 'Skop penapis sambungan';
+
+  @override
+  String get settingsAttachFilterScopeAllUsbDevices => 'Semua peranti USB';
+
+  @override
+  String get settingsAttachLaunchBehaviorLabel => 'Kelakuan semasa sambung';
+
+  @override
+  String get settingsAttachLaunchBehaviorEnabled =>
+      'Buka hanya apabila Android melancarkan USBDevInfo secara jelas daripada pemilih USB';
+
+  @override
+  String get settingsAttachLaunchBehaviorDisabled => 'Alias pemilih dimatikan';
+
+  @override
+  String get settingsWhileAppOpenLabel => 'Semasa aplikasi dibuka';
+
+  @override
+  String get settingsWhileAppOpenValue =>
+      'Peristiwa sambung/putus USB menyegarkan data peranti tanpa memaksa navigasi';
+
+  @override
+  String get settingsBackupDataTitle => 'Sandaran dan data';
+
+  @override
+  String get settingsBackupDataSubtitle =>
+      'Eksport sejarah peranti sebagai JSON';
+
+  @override
+  String get settingsHistoryLabel => 'Sejarah';
+
+  @override
+  String get settingsMostRecentLabel => 'Terkini';
+
+  @override
+  String get settingsNoHistoryYet => 'Belum ada sejarah';
+
+  @override
+  String settingsHistoryRecordedCount(int count) {
+    return '$count item direkodkan';
+  }
+
+  @override
+  String get settingsBackupExportIncludes =>
+      'Eksport termasuk ID vendor/produk, nama yang dikenal pasti, rentetan, kelas/protokol, cap masa dan butiran lanjutan (deskriptor, konfigurasi, antara muka, laporan HID) apabila kebenaran diberikan.';
+
+  @override
+  String get settingsExportJsonAction => 'Eksport JSON';
+
+  @override
+  String get settingsImportJsonAction => 'Impor JSON';
+
+  @override
+  String get settingsUsbIdsDatabaseTitle => 'Pangkalan data ID USB';
+
+  @override
+  String get settingsUsbIdsDatabaseSubtitle => 'Metadata dan pengemas kini';
+
+  @override
+  String deviceConfigurationTitle(Object id, Object suffix) {
+    return 'Konfigurasi $id$suffix';
+  }
+
+  @override
+  String get deviceAttributesLabel => 'Atribut';
+
+  @override
+  String get deviceInterfacesSummaryTitle => 'Antara muka (ringkasan)';
+
+  @override
+  String deviceInterfaceShortLabel(Object id) {
+    return 'Antara muka $id';
+  }
+
+  @override
+  String deviceInterfaceSummaryValue(Object classValue, Object endpointCount) {
+    return 'Kelas $classValue • EP $endpointCount';
+  }
+
+  @override
+  String deviceInterfaceStringLabel(
+    Object interfaceNumber,
+    Object alternateSetting,
+  ) {
+    return 'Antara muka $interfaceNumber (Alt $alternateSetting)';
+  }
+
+  @override
+  String get deviceKeyboardChip => 'Papan kekunci';
+
+  @override
+  String get deviceMouseChip => 'Tetikus';
+
+  @override
+  String deviceReportIdsChip(Object count) {
+    return 'ID laporan: $count';
+  }
+
+  @override
+  String deviceCollectionsChip(Object count) {
+    return 'Koleksi: $count';
+  }
+
+  @override
+  String deviceUsagePagesChip(Object pages) {
+    return 'Halaman penggunaan: $pages';
+  }
+
+  @override
+  String get homeCapabilityAudio => 'Peranti audio';
+
+  @override
+  String get homeCapabilityVideo => 'Peranti video';
+
+  @override
+  String get homeCapabilityHid => 'Peranti HID';
+
+  @override
+  String get homeCapabilityMidi => 'Peranti MIDI';
+
+  @override
+  String get homeCapabilityStorage => 'Storan';
+
+  @override
+  String get homeCapabilityHub => 'Hab';
+
+  @override
+  String get homeCapabilityCdc => 'Peranti CDC';
+
+  @override
+  String get homeCapabilityComposite => 'Komposit';
+
+  @override
+  String get homeCapabilityInput => 'Peranti input';
+
+  @override
+  String get settingsUsbIdsLocalVersionLabel => 'Versi setempat';
+
+  @override
+  String get settingsUsbIdsLocalDateLabel => 'Tarikh setempat';
+
+  @override
+  String get settingsUsbIdsRemoteShaNotFetched =>
+      'SHA jauh belum diambil lagi.';
+
+  @override
+  String get settingsUsbIdsInstalledShaAfterUpdate =>
+      'SHA yang dipasang akan disimpan selepas kemas kini berjaya.';
+
+  @override
+  String get settingsUsbIdsInstalledShaMatchesRemote =>
+      'SHA yang dipasang sepadan dengan yang jauh.';
+
+  @override
+  String get settingsUsbIdsInstalledShaDiffersRemote =>
+      'SHA yang dipasang berbeza daripada yang jauh (kemas kini tersedia).';
+
+  @override
+  String get settingsUsbIdsDetailsTitle => 'Butiran';
+
+  @override
+  String get settingsUsbIdsInstalledShaLabel => 'SHA-256 dipasang';
+
+  @override
+  String get settingsUsbIdsRemoteShaLabel => 'SHA-256 jauh';
+
+  @override
+  String get settingsUsbIdsShaMatchLabel => 'Padanan SHA';
+
+  @override
+  String get settingsUsbIdsLastCheckedLabel => 'Terakhir diperiksa';
+
+  @override
+  String get settingsUsbIdsUpdateHintLabel => 'Petunjuk kemas kini';
+
+  @override
+  String get settingsUsbIdsUpdateHintAvailable => 'Tersedia';
+
+  @override
+  String get settingsUsbIdsUpdateHintNone => 'Tiada';
+
+  @override
+  String get settingsUsbIdsAutoCheckTitle =>
+      'Semak kemas kini secara automatik';
+
+  @override
+  String get settingsUsbIdsAutoCheckSubtitle =>
+      'Menyemak fail .sha256 jauh kira-kira sekali seminggu.';
+
+  @override
+  String get settingsUpdateNow => 'Kemas kini sekarang';
+
+  @override
+  String get settingsCheckNow => 'Semak sekarang';
+
+  @override
+  String get settingsAboutSectionTitle => 'Perihal';
+
+  @override
+  String get settingsAboutSectionSubtitle =>
+      'Maklumat aplikasi dan perundangan';
+
+  @override
+  String settingsAboutAppTileTitle(Object appName, Object developer) {
+    return 'Tentang $appName · $developer';
+  }
+
+  @override
+  String settingsAboutVersion(Object version) {
+    return 'Versi $version';
+  }
+
+  @override
+  String get settingsLicensesTitle => 'Lesen';
+
+  @override
+  String get settingsLicensesSubtitle => 'Lesen sumber terbuka';
+
+  @override
+  String get settingsReportIssueTitle => 'Laporkan isu';
+
+  @override
+  String get settingsReportIssueSubtitle => 'Pepijat dan permintaan ciri';
+
+  @override
+  String get settingsIssuesLinkCopied => 'Pautan isu disalin';
+
+  @override
+  String get settingsNoHistoryToExport => 'Tiada sejarah untuk dieksport.';
+
+  @override
+  String get settingsExportCopied => 'Eksport disalin ke papan klip.';
+
+  @override
+  String settingsExportFailed(Object error) {
+    return 'Eksport gagal: $error';
+  }
+
+  @override
+  String get settingsImportUnsupportedFormat =>
+      'Format JSON tidak disokong. Jangkaannya ialah tatasusunan atau data eksport dengan schema=device_history_export_v1.';
+
+  @override
+  String get settingsImportNoValidHistoryEntries =>
+      'Tiada entri sejarah yang sah ditemui.';
+
+  @override
+  String settingsImportedItems(int count) {
+    return '$count item diimport.';
+  }
+
+  @override
+  String settingsImportFailed(Object error) {
+    return 'Import gagal: $error';
+  }
+
+  @override
+  String get settingsClearHistoryBodyDetailed =>
+      'Ini akan membuang semua peranti yang direkodkan daripada storan setempat.';
+
+  @override
+  String get settingsHistoryCleared => 'Sejarah dibersihkan.';
+
+  @override
+  String get settingsExportHistoryTitle => 'Eksport sejarah';
+
+  @override
+  String settingsExportHistorySubtitle(int count) {
+    return '$count item • JSON';
+  }
+
+  @override
+  String get settingsExportFormatPretty => 'Cantik';
+
+  @override
+  String get settingsExportFormatCompact => 'Padat';
+
+  @override
+  String get settingsExportSafeShareNote =>
+      'Eksport ini selamat untuk dikongsi bagi penyahpepijatan, tetapi mungkin mengandungi nama/laluan peranti dan nombor siri.';
+
+  @override
+  String get settingsImportHistoryTitle => 'Import sejarah';
+
+  @override
+  String get settingsImportHistorySubtitle =>
+      'Tampal data eksport atau senarai entri mentah';
+
+  @override
+  String get settingsImportSupportedFormats =>
+      'Format yang disokong: data device_history_export_v1 (disyorkan) atau tatasusunan JSON mentah bagi entri sejarah.';
+
+  @override
+  String get settingsImportHint => 'Tampal JSON di sini…';
+
+  @override
+  String get settingsImportAction => 'Impor';
+
+  @override
+  String get settingsImporting => 'Mengimport…';
+
+  @override
+  String get settingsImportReplacesHistoryNote =>
+      'Import akan menggantikan sejarah semasa anda. Jika ragu-ragu, eksport dahulu.';
+
+  @override
+  String get settingsClipboardEmpty => 'Papan klip kosong.';
+
+  @override
+  String get settingsPasteJsonFirst => 'Tampal JSON dahulu.';
+
+  @override
+  String get pasteAction => 'Tampal';
+
+  @override
+  String get donationFocusCompatTitle => 'Keserasian dan kebenaran';
+
+  @override
+  String get donationFocusCompatSubtitle =>
+      'Keanehan OEM, aliran kebenaran, kes tepi';
+
+  @override
+  String get donationFocusUsbIdsTitle => 'Kemas kini pangkalan data ID USB';
+
+  @override
+  String get donationFocusUsbIdsSubtitle =>
+      'Penghuraian, kebaruan dan kebolehpercayaan kemas kini';
+
+  @override
+  String get donationFocusUiTitle => 'Pengemasan UI/UX';
+
+  @override
+  String get donationFocusUiSubtitle => 'Kejelasan, kelajuan, kebolehcapaian';
+
+  @override
+  String get donationFocusFeaturesTitle => 'Ciri baharu';
+
+  @override
+  String get donationFocusFeaturesSubtitle => 'Penapis, eksport, cerapan';
+
+  @override
+  String donationShareHeader(Object appName) {
+    return 'Sokong $appName - Aplikasi sumber terbuka';
+  }
+
+  @override
+  String donationShareFocusLine(Object title) {
+    return 'Fokus: $title';
+  }
+
+  @override
+  String get donationShareChainBtc =>
+      'Bitcoin (BTC) - hantar hanya melalui rangkaian Bitcoin.';
+
+  @override
+  String get donationShareChainEth =>
+      'Ethereum (ERC-20) - hantar hanya melalui mainnet Ethereum.';
+
+  @override
+  String donationShareBtcAddress(Object address) {
+    return 'Alamat BTC: $address';
+  }
+
+  @override
+  String donationShareEthAddress(Object address) {
+    return 'Alamat ETH: $address';
+  }
+
+  @override
+  String donationShareRepo(Object url) {
+    return 'Repo: $url';
+  }
+
+  @override
+  String get donationNoBrowserForLiberapay =>
+      'Tiada pelayar tersedia untuk membuka Liberapay';
+
+  @override
+  String get donationFailedToOpenLiberapay =>
+      'Gagal membuka Liberapay dalam pelayar';
+
+  @override
+  String donationErrorOpeningLiberapay(Object error) {
+    return 'Ralat semasa membuka Liberapay: $error';
+  }
+
+  @override
+  String get donationThankYouTitle => 'Terima kasih';
+
+  @override
+  String get donationThankYouBody =>
+      'Sokongan anda membantu memastikan aplikasi ini kekal percuma, pantas dan diselenggara secara aktif. Terima kasih kerana menyokong perisian sumber terbuka.';
+
+  @override
+  String get donationFocusTitle => 'Fokus sumbangan';
+
+  @override
+  String get donationFocusSubtitle =>
+      'Pilihan. Membantu mengutamakan apa yang perlu dikerjakan seterusnya.';
+
+  @override
+  String get donationGeneralSupportTitle => 'Sokongan umum';
+
+  @override
+  String get donationGeneralSupportSubtitle =>
+      'Pilihan terbaik secara keseluruhan';
+
+  @override
+  String get donationSupportDevelopmentTitle => 'Sokong pembangunan';
+
+  @override
+  String get donationSupportDevelopmentSubtitle =>
+      'Sumbangan pilihan untuk membiayai penyelenggaraan dan ciri';
+
+  @override
+  String get donationOptionsTitle => 'Pilihan sumbangan';
+
+  @override
+  String get donationOptionsSubtitle =>
+      'Sumbangan anda memastikan alat ini kekal percuma, terjaga dan digerakkan komuniti';
+
+  @override
+  String get donationRecommendedBadge => 'Disyorkan';
+
+  @override
+  String get donationLiberapayFlexibleSupport =>
+      'Pilihan sokongan yang fleksibel';
+
+  @override
+  String get donationTraditionalPayments =>
+      'Kaedah bayaran tradisional (kad, PayPal, bank)';
+
+  @override
+  String get donationRecurringOrOneTime =>
+      'Sokongan berkala yang fleksibel atau sumbangan sekali';
+
+  @override
+  String get donationTrustedByOpenSource =>
+      'Dipercayai oleh pembangun sumber terbuka';
+
+  @override
+  String get donationOpeningBrowser => 'Membuka pelayar...';
+
+  @override
+  String get donationViaLiberapay => 'Derma melalui Liberapay';
+
+  @override
+  String get donationLiberapayNote =>
+      'Liberapay ialah platform derma bukan untung yang dipercayai projek sumber terbuka.';
+
+  @override
+  String get donationCryptoSupportTitle => 'Sokongan kripto langsung';
+
+  @override
+  String get donationCryptoSupportSubtitle =>
+      'Pilihan berfokus privasi • Imbas QR atau salin alamat';
+
+  @override
+  String get donationBtcShort => 'BTC';
+
+  @override
+  String get donationEthShort => 'ETH';
+
+  @override
+  String get donationGeneralShort => 'Umum';
+
+  @override
+  String get donationBitcoinNetworkOnly => 'Rangkaian Bitcoin sahaja';
+
+  @override
+  String get donationEthereumNetworkOnly => 'Mainnet Ethereum sahaja';
+
+  @override
+  String get donationBitcoinTitle => 'Derma Bitcoin';
+
+  @override
+  String get donationEthereumTitle => 'Derma Ethereum';
+
+  @override
+  String get donationQrUnavailable => 'Kod QR tidak tersedia';
+
+  @override
+  String get donationAddressTitle => 'Alamat';
+
+  @override
+  String get donationBtcAddressCopied => 'Alamat BTC disalin';
+
+  @override
+  String get donationEthAddressCopied => 'Alamat ETH disalin';
+
+  @override
+  String get donationShareTextCopied => 'Teks perkongsian disalin';
+
+  @override
+  String get donationCopyAddress => 'Salin alamat';
+
+  @override
+  String get donationShareAction => 'Kongsi';
+
+  @override
+  String get donationSentAction => 'Saya sudah menghantar sumbangan';
+
+  @override
+  String get donationSecurityNote =>
+      'Nota keselamatan: jangan sekali-kali mempercayai alamat derma daripada tangkapan skrin, ulasan atau halaman pihak ketiga. Gunakan hanya skrin dalam aplikasi ini.';
+
+  @override
+  String deviceInterfaceTitle(Object id, Object classInfo) {
+    return 'Antara muka $id • $classInfo';
+  }
+
+  @override
+  String get deviceAltSettingLabel => 'Tetapan alt';
+
+  @override
+  String get deviceClassLabel => 'Kelas';
+
+  @override
+  String deviceEndpointsTitle(int count) {
+    return 'Titik hujung ($count)';
+  }
+
+  @override
+  String get deviceNoEndpoints => 'Tiada titik hujung';
+
+  @override
+  String deviceEndpointAddressSummary(
+    Object address,
+    Object number,
+    Object attributes,
+  ) {
+    return 'Alamat $address • EP# $number • Atribut $attributes';
+  }
+
+  @override
+  String deviceEndpointMaxPacket(Object value) {
+    return 'Paket maks. $value';
+  }
+
+  @override
+  String deviceEndpointInterval(Object value) {
+    return 'Selang $value';
+  }
+
+  @override
+  String get deviceControlTransferDefaultTitle => 'Pemindahan kawalan';
+
+  @override
+  String get deviceRequestedLengthLabel => 'Panjang diminta';
+
+  @override
+  String get deviceActualLengthLabel => 'Panjang sebenar';
+
+  @override
+  String get deviceResultLabel => 'Hasil';
+
+  @override
+  String get deviceTransferSuccess => 'Berjaya';
+
+  @override
+  String get deviceTransferFailed => 'Gagal';
+
+  @override
+  String get deviceResponseBytesHexTitle => 'Byte respons (hex)';
+
+  @override
+  String get deviceParsedFieldsTitle => 'Medan dihuraikan';
+
+  @override
+  String get deviceNoParsedFieldsAvailable =>
+      'Tiada medan dihuraikan tersedia.';
+
+  @override
+  String get deviceRawBytesTitle => 'Byte mentah';
+
+  @override
+  String deviceInterfaceReportTitle(
+    Object interfaceNumber,
+    Object reportLength,
+  ) {
+    return 'Antara muka $interfaceNumber • Laporan $reportLength byte';
+  }
+
+  @override
+  String get deviceParsedSummaryTitle => 'Ringkasan dihuraikan';
+
+  @override
+  String get deviceNoParsedHidSummaryAvailable =>
+      'Tiada ringkasan HID yang dihuraikan tersedia.';
+
+  @override
+  String get deviceReportHexTitle => 'Hex laporan';
+
+  @override
+  String get historyEntryNotFoundTitle => 'Entri tidak ditemui';
+
+  @override
+  String get historyEntryNotFoundBody => 'Item sejarah ini tidak lagi wujud.';
+
+  @override
+  String get historyUnableToOpenDetail =>
+      'Tidak dapat membuka butiran sejarah.';
 }

@@ -2440,6 +2440,11 @@
   "devicePermissionDiagnosticsSubtitle": "Manifest, runtime, USB state, Android behavior, and last failure",
   "deviceLoadingDiagnostics": "Loading diagnostics…",
   "deviceShowPermissionDiagnostics": "Show permission diagnostics",
+  "devicePermissionStateTemporary": "Temporary",
+  "devicePermissionStatePermanent": "Permanent",
+  "devicePermissionStateReenumerated": "Re-enumerated",
+  "devicePermissionStateNotInApp": "Not in app",
+  "devicePermissionStateRevoked": "Revoked",
   "deviceAndroidVersionLabel": "Android version",
   "deviceUsbDetailLabel": "USB detail",
   "deviceMicrophoneManifestLabel": "Microphone manifest",
@@ -2452,6 +2457,7 @@
   "deviceLastFailureDetailLabel": "Last failure detail",
   "deviceLastFailureTimeLabel": "Last failure time",
   "deviceWhyDataUnavailableTitle": "Why data is unavailable",
+  "deviceWhyDataUnavailableSubtitle": "Exact Android or device-side limitation for hidden fields",
   "deviceReconnectDiffTitle": "Reconnect diff",
   "deviceReconnectDiffSubtitle": "Current device compared with the previous captured state",
   "deviceStateTitle": "Device state",
@@ -2636,6 +2642,14 @@
     }
   },
   "deviceInputSourcesLabel": "Input sources",
+  "deviceShowingFirstFields": "Showing first {count} fields.",
+  "@deviceShowingFirstFields": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "deviceShowingFirstDescriptors": "Showing first {count} descriptors.",
   "@deviceShowingFirstDescriptors": {
     "placeholders": {
@@ -2643,5 +2657,324 @@
         "type": "int"
       }
     }
-  }
+  },
+  "settingsUsbBehaviorTitle": "USB behavior",
+  "settingsUsbBehaviorSubtitle": "Control system prompts when a USB device is attached",
+  "settingsUsbOfferOnAttachTitle": "Offer to open on USB attach",
+  "settingsUsbOfferOnAttachSubtitle": "Appear in the Android chooser when a USB device is plugged in.",
+  "settingsUsbDisableAttachNote": "Disable this to stop Android from suggesting USBDevInfo on device attach. The app will still detect devices while open.",
+  "settingsAttachFilterScopeLabel": "Attach filter scope",
+  "settingsAttachFilterScopeAllUsbDevices": "All USB devices",
+  "settingsAttachLaunchBehaviorLabel": "Attach launch behavior",
+  "settingsAttachLaunchBehaviorEnabled": "Open only when Android explicitly launches USBDevInfo from the USB attach chooser",
+  "settingsAttachLaunchBehaviorDisabled": "Chooser alias disabled",
+  "settingsWhileAppOpenLabel": "While app is open",
+  "settingsWhileAppOpenValue": "USB attach/detach events refresh device data without forcing navigation",
+  "settingsBackupDataTitle": "Backup & data",
+  "settingsBackupDataSubtitle": "Export your device history as JSON",
+  "settingsHistoryLabel": "History",
+  "settingsMostRecentLabel": "Most recent",
+  "settingsNoHistoryYet": "No history yet",
+  "settingsHistoryRecordedCount": "{count} item(s) recorded",
+  "@settingsHistoryRecordedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsBackupExportIncludes": "Export includes vendor/product IDs, resolved names, strings, class/protocol, timestamps, and advanced details (descriptors, configurations, interfaces, HID reports) when permission was granted.",
+  "settingsExportJsonAction": "Export JSON",
+  "settingsImportJsonAction": "Import JSON",
+  "settingsUsbIdsDatabaseTitle": "USB IDs database",
+  "settingsUsbIdsDatabaseSubtitle": "Metadata and updater",
+  "deviceConfigurationTitle": "Configuration {id}{suffix}",
+  "@deviceConfigurationTitle": {
+    "placeholders": {
+      "id": {},
+      "suffix": {}
+    }
+  },
+  "deviceAttributesLabel": "Attributes",
+  "deviceInterfacesSummaryTitle": "Interfaces (summary)",
+  "deviceInterfaceShortLabel": "IF {id}",
+  "@deviceInterfaceShortLabel": {
+    "placeholders": {
+      "id": {}
+    }
+  },
+  "deviceInterfaceSummaryValue": "Class {classValue} • EP {endpointCount}",
+  "@deviceInterfaceSummaryValue": {
+    "placeholders": {
+      "classValue": {},
+      "endpointCount": {}
+    }
+  },
+  "deviceInterfaceStringLabel": "IF {interfaceNumber} (Alt {alternateSetting})",
+  "@deviceInterfaceStringLabel": {
+    "placeholders": {
+      "interfaceNumber": {},
+      "alternateSetting": {}
+    }
+  },
+  "deviceKeyboardChip": "Keyboard",
+  "deviceMouseChip": "Mouse",
+  "deviceReportIdsChip": "Report IDs: {count}",
+  "@deviceReportIdsChip": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "deviceCollectionsChip": "Collections: {count}",
+  "@deviceCollectionsChip": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "deviceUsagePagesChip": "Usage pages: {pages}",
+  "@deviceUsagePagesChip": {
+    "placeholders": {
+      "pages": {}
+    }
+  },
+  "homeCapabilityAudio": "Audio",
+  "homeCapabilityVideo": "Video",
+  "homeCapabilityHid": "HID",
+  "homeCapabilityMidi": "MIDI",
+  "homeCapabilityStorage": "Storage",
+  "homeCapabilityHub": "Hub",
+  "homeCapabilityCdc": "CDC",
+  "homeCapabilityComposite": "Composite",
+  "homeCapabilityInput": "Input",
+  "settingsUsbIdsLocalVersionLabel": "Local version",
+  "settingsUsbIdsLocalDateLabel": "Local date",
+  "settingsUsbIdsRemoteShaNotFetched": "Remote SHA not fetched yet.",
+  "settingsUsbIdsInstalledShaAfterUpdate": "Installed SHA will be saved after a successful update.",
+  "settingsUsbIdsInstalledShaMatchesRemote": "Installed SHA matches remote.",
+  "settingsUsbIdsInstalledShaDiffersRemote": "Installed SHA differs from remote (update available).",
+  "settingsUsbIdsDetailsTitle": "Details",
+  "settingsUsbIdsInstalledShaLabel": "Installed SHA-256",
+  "settingsUsbIdsRemoteShaLabel": "Remote SHA-256",
+  "settingsUsbIdsShaMatchLabel": "SHA match",
+  "settingsUsbIdsLastCheckedLabel": "Last checked",
+  "settingsUsbIdsUpdateHintLabel": "Update hint",
+  "settingsUsbIdsUpdateHintAvailable": "Available",
+  "settingsUsbIdsUpdateHintNone": "None",
+  "settingsUsbIdsAutoCheckTitle": "Auto-check for updates",
+  "settingsUsbIdsAutoCheckSubtitle": "Checks the remote .sha256 about once per week.",
+  "settingsUpdateNow": "Update now",
+  "settingsCheckNow": "Check now",
+  "settingsAboutSectionTitle": "About",
+  "settingsAboutSectionSubtitle": "App information and legal",
+  "settingsAboutAppTileTitle": "{appName} - {developer}",
+  "@settingsAboutAppTileTitle": {
+    "placeholders": {
+      "appName": {},
+      "developer": {}
+    }
+  },
+  "settingsAboutVersion": "Version {version}",
+  "@settingsAboutVersion": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "settingsLicensesTitle": "Licenses",
+  "settingsLicensesSubtitle": "Open source licenses",
+  "settingsReportIssueTitle": "Report an issue",
+  "settingsReportIssueSubtitle": "Bugs & feature requests",
+  "settingsIssuesLinkCopied": "Issues link copied",
+  "settingsNoHistoryToExport": "No history to export.",
+  "settingsExportCopied": "Export copied to clipboard.",
+  "settingsExportFailed": "Export failed: {error}",
+  "@settingsExportFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "settingsImportUnsupportedFormat": "Unsupported JSON format. Expecting an array or an export payload with schema=device_history_export_v1.",
+  "settingsImportNoValidHistoryEntries": "No valid history entries found.",
+  "settingsImportedItems": "Imported {count} item(s).",
+  "@settingsImportedItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsImportFailed": "Import failed: {error}",
+  "@settingsImportFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "settingsClearHistoryBodyDetailed": "This will remove all recorded devices from local storage.",
+  "settingsHistoryCleared": "History cleared.",
+  "settingsExportHistoryTitle": "Export history",
+  "settingsExportHistorySubtitle": "{count} item(s) • JSON",
+  "@settingsExportHistorySubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsExportFormatPretty": "Pretty",
+  "settingsExportFormatCompact": "Compact",
+  "settingsExportSafeShareNote": "This export is safe to share for debugging, but it may contain device names/paths and serials.",
+  "settingsImportHistoryTitle": "Import history",
+  "settingsImportHistorySubtitle": "Paste an export payload or a raw list of entries",
+  "settingsImportSupportedFormats": "Supported formats: device_history_export_v1 payload (recommended) or a raw JSON array of history entry maps.",
+  "settingsImportHint": "Paste JSON here…",
+  "settingsImportAction": "Import",
+  "settingsImporting": "Importing…",
+  "settingsImportReplacesHistoryNote": "Import replaces your current history. If you are unsure, export first.",
+  "settingsClipboardEmpty": "Clipboard is empty.",
+  "settingsPasteJsonFirst": "Paste JSON first.",
+  "pasteAction": "Paste",
+  "donationFocusCompatTitle": "Compatibility & permissions",
+  "donationFocusCompatSubtitle": "OEM quirks, permission flows, edge cases",
+  "donationFocusUsbIdsTitle": "USB IDs database updates",
+  "donationFocusUsbIdsSubtitle": "Parsing, freshness, update reliability",
+  "donationFocusUiTitle": "UI/UX polish",
+  "donationFocusUiSubtitle": "Clarity, speed, accessibility",
+  "donationFocusFeaturesTitle": "New features",
+  "donationFocusFeaturesSubtitle": "Filters, exports, insights",
+  "donationShareHeader": "Support {appName} - Open Source App",
+  "@donationShareHeader": {
+    "placeholders": {
+      "appName": {}
+    }
+  },
+  "donationShareFocusLine": "Focus: {title}",
+  "@donationShareFocusLine": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "donationShareChainBtc": "Bitcoin (BTC) - send on Bitcoin network only.",
+  "donationShareChainEth": "Ethereum (ERC-20) - send on Ethereum mainnet only.",
+  "donationShareBtcAddress": "BTC address: {address}",
+  "@donationShareBtcAddress": {
+    "placeholders": {
+      "address": {}
+    }
+  },
+  "donationShareEthAddress": "ETH address: {address}",
+  "@donationShareEthAddress": {
+    "placeholders": {
+      "address": {}
+    }
+  },
+  "donationShareRepo": "Repo: {url}",
+  "@donationShareRepo": {
+    "placeholders": {
+      "url": {}
+    }
+  },
+  "donationNoBrowserForLiberapay": "No browser available to open Liberapay",
+  "donationFailedToOpenLiberapay": "Failed to open Liberapay in browser",
+  "donationErrorOpeningLiberapay": "Error opening Liberapay: {error}",
+  "@donationErrorOpeningLiberapay": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "donationThankYouTitle": "Thank you",
+  "donationThankYouBody": "Your support helps keep this app free, fast, and actively maintained. Thank you for supporting open-source software.",
+  "donationFocusTitle": "Donation focus",
+  "donationFocusSubtitle": "Optional. Helps prioritize what to work on next.",
+  "donationGeneralSupportTitle": "General support",
+  "donationGeneralSupportSubtitle": "Best overall option",
+  "donationSupportDevelopmentTitle": "Support development",
+  "donationSupportDevelopmentSubtitle": "Optional donation that funds maintenance and features",
+  "donationOptionsTitle": "Donation options",
+  "donationOptionsSubtitle": "Your contribution keeps this tool free, maintained, and community-driven",
+  "donationRecommendedBadge": "Recommended",
+  "donationLiberapayFlexibleSupport": "Flexible support options",
+  "donationTraditionalPayments": "Traditional payment methods (card, PayPal, bank)",
+  "donationRecurringOrOneTime": "Flexible recurring support or one-time contribution",
+  "donationTrustedByOpenSource": "Trusted by open-source developers",
+  "donationOpeningBrowser": "Opening browser...",
+  "donationViaLiberapay": "Donate via Liberapay",
+  "donationLiberapayNote": "Liberapay is a non-profit donation platform trusted by open-source projects.",
+  "donationCryptoSupportTitle": "Direct cryptocurrency support",
+  "donationCryptoSupportSubtitle": "Privacy-focused option • Scan QR or copy address",
+  "donationBtcShort": "BTC",
+  "donationEthShort": "ETH",
+  "donationGeneralShort": "General",
+  "donationBitcoinNetworkOnly": "Bitcoin network only",
+  "donationEthereumNetworkOnly": "Ethereum mainnet only",
+  "donationBitcoinTitle": "Bitcoin donation",
+  "donationEthereumTitle": "Ethereum donation",
+  "donationQrUnavailable": "QR code not available",
+  "donationAddressTitle": "Address",
+  "donationBtcAddressCopied": "BTC address copied",
+  "donationEthAddressCopied": "ETH address copied",
+  "donationShareTextCopied": "Share text copied",
+  "donationCopyAddress": "Copy address",
+  "donationShareAction": "Share",
+  "donationSentAction": "I've sent a donation",
+  "donationSecurityNote": "Security note: Never trust donation addresses from screenshots, reviews, or third-party pages. Use only this in-app screen.",
+  "deviceInterfaceTitle": "Interface {id} • {classInfo}",
+  "@deviceInterfaceTitle": {
+    "placeholders": {
+      "id": {},
+      "classInfo": {}
+    }
+  },
+  "deviceAltSettingLabel": "Alt setting",
+  "deviceClassLabel": "Class",
+  "deviceEndpointsTitle": "Endpoints ({count})",
+  "@deviceEndpointsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceNoEndpoints": "No endpoints",
+  "deviceEndpointAddressSummary": "Addr {address} • EP# {number} • Attr {attributes}",
+  "@deviceEndpointAddressSummary": {
+    "placeholders": {
+      "address": {},
+      "number": {},
+      "attributes": {}
+    }
+  },
+  "deviceEndpointMaxPacket": "MaxPkt {value}",
+  "@deviceEndpointMaxPacket": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "deviceEndpointInterval": "Interval {value}",
+  "@deviceEndpointInterval": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "deviceControlTransferDefaultTitle": "Control transfer",
+  "deviceRequestedLengthLabel": "Requested length",
+  "deviceActualLengthLabel": "Actual length",
+  "deviceResultLabel": "Result",
+  "deviceTransferSuccess": "Success",
+  "deviceTransferFailed": "Failed",
+  "deviceResponseBytesHexTitle": "Response bytes (hex)",
+  "deviceParsedFieldsTitle": "Parsed fields",
+  "deviceNoParsedFieldsAvailable": "No parsed fields available.",
+  "deviceRawBytesTitle": "Raw bytes",
+  "deviceInterfaceReportTitle": "Interface {interfaceNumber} • Report {reportLength} bytes",
+  "@deviceInterfaceReportTitle": {
+    "placeholders": {
+      "interfaceNumber": {},
+      "reportLength": {}
+    }
+  },
+  "deviceParsedSummaryTitle": "Parsed summary",
+  "deviceNoParsedHidSummaryAvailable": "No parsed HID summary available.",
+  "deviceReportHexTitle": "Report hex",
+  "historyEntryNotFoundTitle": "Entry not found",
+  "historyEntryNotFoundBody": "This history item no longer exists.",
+  "historyUnableToOpenDetail": "Unable to open history detail."
 }

@@ -349,10 +349,10 @@ class AppLocalizationsTr extends AppLocalizations {
       'Reklam yok, takip yok, kilitli özellik yok. Desteğiniz protokol geliştirmesini, USB dongle desteğini ve cihazlar arası daha iyi uyumluluğu finanse eder.';
 
   @override
-  String get donate => 'Donate';
+  String get donate => 'Bağış yap';
 
   @override
-  String get starRepo => 'Star Repo';
+  String get starRepo => 'Depoya yıldız ver';
 
   @override
   String get repositoryLinkCopied => 'Repository link kopyalandı';
@@ -361,22 +361,22 @@ class AppLocalizationsTr extends AppLocalizations {
   String get supportPillLocalOnly => 'Local-yalnızca';
 
   @override
-  String get supportPillNoTracking => 'No tracking';
+  String get supportPillNoTracking => 'İzleme yok';
 
   @override
   String get supportPillHardwareAware => 'Donanım-aware';
 
   @override
-  String get supportPillOpenSource => 'Aç-source';
+  String get supportPillOpenSource => 'Açık kaynak';
 
   @override
-  String get appearanceTitle => 'Appearance';
+  String get appearanceTitle => 'Görünüm';
 
   @override
   String get appearanceSubtitle => 'Görsel deneyiminizi özelleştirin';
 
   @override
-  String get localizationTitle => 'Localization';
+  String get localizationTitle => 'Yerelleştirme';
 
   @override
   String get localizationSubtitle => 'Uygulama dili ve çeviri davranışı';
@@ -469,7 +469,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get themeChoiceLight => 'Açık';
 
   @override
-  String get themeChoiceDark => 'Dark';
+  String get themeChoiceDark => 'Koyu';
 
   @override
   String get irTransmitterTitle => 'IR Verici';
@@ -883,7 +883,7 @@ class AppLocalizationsTr extends AppLocalizations {
       'İpucu: Büyük düzenlemelerden önce bir yedek dışa aktarın. İçe aktarma; tam yedekleri, eski yalnızca-kumanda JSON yedeklerini ve Flipper Zero .ir dosyalarını destekler.';
 
   @override
-  String get aboutTitle => 'About';
+  String get aboutTitle => 'Hakkında';
 
   @override
   String get aboutSubtitle => 'Uygulama bilgileri ve açık kaynak ayrıntıları';
@@ -4838,7 +4838,7 @@ class AppLocalizationsTr extends AppLocalizations {
       'USBDevInfo, OTG/USB host aygıtlarını listeler, tanımlayıcı ve sınıf/protokol ayrıntılarını gösterir, çevrimdışı USB IDs veritabanıyla VID/PID çözer ve bağlantı geçmişini kaydeder. Hesap yok, takip yok, reklam yok.';
 
   @override
-  String get usbAboutUsbHostPill => 'USB host';
+  String get usbAboutUsbHostPill => 'USB ana makine';
 
   @override
   String get usbAboutDescriptorsPill => 'Tanımlayıcılar';
@@ -5186,7 +5186,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get deviceProbableUsbMidiInterfaceLabel => 'Olası USB MIDI arayüzü';
 
   @override
-  String get devicePlatformMidiApiLabel => 'Platform MIDI API’si';
+  String get devicePlatformMidiApiLabel => 'Platform MIDI arabirimi';
 
   @override
   String get deviceConnectedMidiDevicesLabel => 'Bağlı MIDI aygıtları';
@@ -5279,6 +5279,21 @@ class AppLocalizationsTr extends AppLocalizations {
   String get deviceShowPermissionDiagnostics => 'İzin tanılamasını göster';
 
   @override
+  String get devicePermissionStateTemporary => 'Geçici';
+
+  @override
+  String get devicePermissionStatePermanent => 'Kalıcı';
+
+  @override
+  String get devicePermissionStateReenumerated => 'Yeniden numaralandırıldı';
+
+  @override
+  String get devicePermissionStateNotInApp => 'Uygulamada yok';
+
+  @override
+  String get devicePermissionStateRevoked => 'Geri alındı';
+
+  @override
   String get deviceAndroidVersionLabel => 'Android sürümü';
 
   @override
@@ -5313,6 +5328,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get deviceWhyDataUnavailableTitle => 'Verilerin neden kullanılamadığı';
+
+  @override
+  String get deviceWhyDataUnavailableSubtitle =>
+      'Gizli alanlar için tam Android veya cihaz tarafı kısıtı';
 
   @override
   String get deviceReconnectDiffTitle => 'Yeniden bağlanma farkı';
@@ -5444,7 +5463,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get deviceExportFormatReport => 'Düz metin raporu';
 
   @override
-  String get deviceExportFormatRawHex => 'Ham hex tanımlayıcıları';
+  String get deviceExportFormatRawHex => 'Ham onaltılık tanımlayıcıları';
 
   @override
   String get deviceRawDumpExportTitle => 'Ham döküm dışa aktarma';
@@ -5460,7 +5479,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get deviceExportChipReport => 'Rapor';
 
   @override
-  String get deviceExportChipRawHex => 'Ham hex';
+  String get deviceExportChipRawHex => 'Ham onaltılık';
 
   @override
   String get deviceCopyAction => 'Kopyala';
@@ -5621,7 +5640,631 @@ class AppLocalizationsTr extends AppLocalizations {
   String get deviceInputSourcesLabel => 'Giriş kaynakları';
 
   @override
+  String deviceShowingFirstFields(int count) {
+    return 'Yalnızca ilk $count alan gösteriliyor.';
+  }
+
+  @override
   String deviceShowingFirstDescriptors(int count) {
     return 'İlk $count tanımlayıcı gösteriliyor.';
   }
+
+  @override
+  String get settingsUsbBehaviorTitle => 'USB davranışı';
+
+  @override
+  String get settingsUsbBehaviorSubtitle =>
+      'USB cihazı takıldığında sistem istemlerini kontrol et';
+
+  @override
+  String get settingsUsbOfferOnAttachTitle => 'USB takıldığında açmayı öner';
+
+  @override
+  String get settingsUsbOfferOnAttachSubtitle =>
+      'Bir USB cihazı takıldığında Android seçicisinde görünür.';
+
+  @override
+  String get settingsUsbDisableAttachNote =>
+      'Android\'in cihaz takıldığında USBDevInfo\'yu önermesini durdurmak için bunu kapatın. Uygulama açık olduğu sürece cihazları algılamaya devam eder.';
+
+  @override
+  String get settingsAttachFilterScopeLabel => 'Bağlantı filtresi kapsamı';
+
+  @override
+  String get settingsAttachFilterScopeAllUsbDevices => 'Tüm USB cihazları';
+
+  @override
+  String get settingsAttachLaunchBehaviorLabel => 'Bağlantı davranışı';
+
+  @override
+  String get settingsAttachLaunchBehaviorEnabled =>
+      'Yalnızca Android USB seçicisinden USBDevInfo\'yu açıkça başlattığında aç';
+
+  @override
+  String get settingsAttachLaunchBehaviorDisabled =>
+      'Seçici takma adı devre dışı';
+
+  @override
+  String get settingsWhileAppOpenLabel => 'Uygulama açıkken';
+
+  @override
+  String get settingsWhileAppOpenValue =>
+      'USB takma/çıkarma olayları gezinmeyi zorlamadan cihaz verilerini yeniler';
+
+  @override
+  String get settingsBackupDataTitle => 'Yedekleme ve veri';
+
+  @override
+  String get settingsBackupDataSubtitle =>
+      'Cihaz geçmişini JSON olarak dışa aktar';
+
+  @override
+  String get settingsHistoryLabel => 'Geçmiş';
+
+  @override
+  String get settingsMostRecentLabel => 'En son';
+
+  @override
+  String get settingsNoHistoryYet => 'Henüz geçmiş yok';
+
+  @override
+  String settingsHistoryRecordedCount(int count) {
+    return '$count öğe kaydedildi';
+  }
+
+  @override
+  String get settingsBackupExportIncludes =>
+      'Dışa aktarma; izin verildiyse satıcı/ürün kimlikleri, çözümlenen adlar, dizeler, sınıf/protokol, zaman damgaları ve gelişmiş ayrıntıları (tanımlayıcılar, yapılandırmalar, arayüzler, HID raporları) içerir.';
+
+  @override
+  String get settingsExportJsonAction => 'JSON dışa aktar';
+
+  @override
+  String get settingsImportJsonAction => 'JSON içe aktar';
+
+  @override
+  String get settingsUsbIdsDatabaseTitle => 'USB kimlik veritabanı';
+
+  @override
+  String get settingsUsbIdsDatabaseSubtitle => 'Meta veriler ve güncelleyici';
+
+  @override
+  String deviceConfigurationTitle(Object id, Object suffix) {
+    return 'Yapılandırma $id$suffix';
+  }
+
+  @override
+  String get deviceAttributesLabel => 'Öznitelikler';
+
+  @override
+  String get deviceInterfacesSummaryTitle => 'Arabirimler (özet)';
+
+  @override
+  String deviceInterfaceShortLabel(Object id) {
+    return 'Arabirim $id';
+  }
+
+  @override
+  String deviceInterfaceSummaryValue(Object classValue, Object endpointCount) {
+    return 'Sınıf $classValue • EP $endpointCount';
+  }
+
+  @override
+  String deviceInterfaceStringLabel(
+    Object interfaceNumber,
+    Object alternateSetting,
+  ) {
+    return 'Arabirim $interfaceNumber (Alt $alternateSetting)';
+  }
+
+  @override
+  String get deviceKeyboardChip => 'Klavye';
+
+  @override
+  String get deviceMouseChip => 'Fare';
+
+  @override
+  String deviceReportIdsChip(Object count) {
+    return 'Rapor kimlikleri: $count';
+  }
+
+  @override
+  String deviceCollectionsChip(Object count) {
+    return 'Koleksiyonlar: $count';
+  }
+
+  @override
+  String deviceUsagePagesChip(Object pages) {
+    return 'Kullanım sayfaları: $pages';
+  }
+
+  @override
+  String get homeCapabilityAudio => 'Ses';
+
+  @override
+  String get homeCapabilityVideo => 'Video aygıtı';
+
+  @override
+  String get homeCapabilityHid => 'HID aygıtı';
+
+  @override
+  String get homeCapabilityMidi => 'MIDI aygıtı';
+
+  @override
+  String get homeCapabilityStorage => 'Depolama';
+
+  @override
+  String get homeCapabilityHub => 'Hub aygıtı';
+
+  @override
+  String get homeCapabilityCdc => 'CDC aygıtı';
+
+  @override
+  String get homeCapabilityComposite => 'Bileşik';
+
+  @override
+  String get homeCapabilityInput => 'Giriş';
+
+  @override
+  String get settingsUsbIdsLocalVersionLabel => 'Yerel sürüm';
+
+  @override
+  String get settingsUsbIdsLocalDateLabel => 'Yerel tarih';
+
+  @override
+  String get settingsUsbIdsRemoteShaNotFetched => 'Uzak SHA henüz alınmadı.';
+
+  @override
+  String get settingsUsbIdsInstalledShaAfterUpdate =>
+      'Yüklü SHA başarılı güncellemeden sonra kaydedilir.';
+
+  @override
+  String get settingsUsbIdsInstalledShaMatchesRemote =>
+      'Yüklü SHA uzak SHA ile eşleşiyor.';
+
+  @override
+  String get settingsUsbIdsInstalledShaDiffersRemote =>
+      'Yüklü SHA uzak SHA\'dan farklı (güncelleme var).';
+
+  @override
+  String get settingsUsbIdsDetailsTitle => 'Ayrıntılar';
+
+  @override
+  String get settingsUsbIdsInstalledShaLabel => 'Yüklü SHA-256';
+
+  @override
+  String get settingsUsbIdsRemoteShaLabel => 'Uzak SHA-256';
+
+  @override
+  String get settingsUsbIdsShaMatchLabel => 'SHA eşleşmesi';
+
+  @override
+  String get settingsUsbIdsLastCheckedLabel => 'Son kontrol';
+
+  @override
+  String get settingsUsbIdsUpdateHintLabel => 'Güncelleme ipucu';
+
+  @override
+  String get settingsUsbIdsUpdateHintAvailable => 'Var';
+
+  @override
+  String get settingsUsbIdsUpdateHintNone => 'Yok';
+
+  @override
+  String get settingsUsbIdsAutoCheckTitle =>
+      'Güncellemeleri otomatik kontrol et';
+
+  @override
+  String get settingsUsbIdsAutoCheckSubtitle =>
+      'Uzak .sha256 dosyasını yaklaşık haftada bir kez kontrol eder.';
+
+  @override
+  String get settingsUpdateNow => 'Şimdi güncelle';
+
+  @override
+  String get settingsCheckNow => 'Şimdi kontrol et';
+
+  @override
+  String get settingsAboutSectionTitle => 'Hakkında';
+
+  @override
+  String get settingsAboutSectionSubtitle =>
+      'Uygulama bilgileri ve yasal bilgiler';
+
+  @override
+  String settingsAboutAppTileTitle(Object appName, Object developer) {
+    return '$appName hakkında · $developer';
+  }
+
+  @override
+  String settingsAboutVersion(Object version) {
+    return 'Sürüm $version';
+  }
+
+  @override
+  String get settingsLicensesTitle => 'Lisanslar';
+
+  @override
+  String get settingsLicensesSubtitle => 'Açık kaynak lisansları';
+
+  @override
+  String get settingsReportIssueTitle => 'Sorun bildir';
+
+  @override
+  String get settingsReportIssueSubtitle => 'Hata ve özellik istekleri';
+
+  @override
+  String get settingsIssuesLinkCopied => 'Sorun bağlantısı kopyalandı';
+
+  @override
+  String get settingsNoHistoryToExport => 'Dışa aktarılacak geçmiş yok.';
+
+  @override
+  String get settingsExportCopied => 'Dışa aktarma panoya kopyalandı.';
+
+  @override
+  String settingsExportFailed(Object error) {
+    return 'Dışa aktarma başarısız: $error';
+  }
+
+  @override
+  String get settingsImportUnsupportedFormat =>
+      'Desteklenmeyen JSON biçimi. Bir dizi veya schema=device_history_export_v1 olan bir dışa aktarma yükü bekleniyor.';
+
+  @override
+  String get settingsImportNoValidHistoryEntries =>
+      'Geçerli geçmiş girdisi bulunamadı.';
+
+  @override
+  String settingsImportedItems(int count) {
+    return '$count öğe içe aktarıldı.';
+  }
+
+  @override
+  String settingsImportFailed(Object error) {
+    return 'İçe aktarma başarısız: $error';
+  }
+
+  @override
+  String get settingsClearHistoryBodyDetailed =>
+      'Bu işlem yerel depolamadaki tüm kaydedilmiş cihazları kaldırır.';
+
+  @override
+  String get settingsHistoryCleared => 'Geçmiş temizlendi.';
+
+  @override
+  String get settingsExportHistoryTitle => 'Geçmişi dışa aktar';
+
+  @override
+  String settingsExportHistorySubtitle(int count) {
+    return '$count öğe • JSON';
+  }
+
+  @override
+  String get settingsExportFormatPretty => 'Biçimli';
+
+  @override
+  String get settingsExportFormatCompact => 'Sıkı';
+
+  @override
+  String get settingsExportSafeShareNote =>
+      'Bu dışa aktarma hata ayıklama için güvenle paylaşılabilir, ancak cihaz adları/yolları ve seri numaraları içerebilir.';
+
+  @override
+  String get settingsImportHistoryTitle => 'Geçmişi içe aktar';
+
+  @override
+  String get settingsImportHistorySubtitle =>
+      'Bir dışa aktarma yükü veya ham girdi listesi yapıştırın';
+
+  @override
+  String get settingsImportSupportedFormats =>
+      'Desteklenen biçimler: device_history_export_v1 yükü (önerilen) veya geçmiş eşlemelerinin ham JSON dizisi.';
+
+  @override
+  String get settingsImportHint => 'JSON\'u buraya yapıştırın…';
+
+  @override
+  String get settingsImportAction => 'İçe aktar';
+
+  @override
+  String get settingsImporting => 'İçe aktarılıyor…';
+
+  @override
+  String get settingsImportReplacesHistoryNote =>
+      'İçe aktarma mevcut geçmişinizi değiştirir. Emin değilseniz önce dışa aktarın.';
+
+  @override
+  String get settingsClipboardEmpty => 'Pano boş.';
+
+  @override
+  String get settingsPasteJsonFirst => 'Önce JSON yapıştırın.';
+
+  @override
+  String get pasteAction => 'Yapıştır';
+
+  @override
+  String get donationFocusCompatTitle => 'Uyumluluk ve izinler';
+
+  @override
+  String get donationFocusCompatSubtitle =>
+      'OEM farklılıkları, izin akışları, uç durumlar';
+
+  @override
+  String get donationFocusUsbIdsTitle => 'USB kimlik veritabanı güncellemeleri';
+
+  @override
+  String get donationFocusUsbIdsSubtitle =>
+      'Ayrıştırma, güncellik ve güncelleme güvenilirliği';
+
+  @override
+  String get donationFocusUiTitle => 'UI/UX cilası';
+
+  @override
+  String get donationFocusUiSubtitle => 'Netlik, hız, erişilebilirlik';
+
+  @override
+  String get donationFocusFeaturesTitle => 'Yeni özellikler';
+
+  @override
+  String get donationFocusFeaturesSubtitle =>
+      'Filtreler, dışa aktarma, içgörüler';
+
+  @override
+  String donationShareHeader(Object appName) {
+    return '$appName uygulamasını destekleyin - Açık kaynak uygulaması';
+  }
+
+  @override
+  String donationShareFocusLine(Object title) {
+    return 'Odak: $title';
+  }
+
+  @override
+  String get donationShareChainBtc =>
+      'Bitcoin (BTC) - yalnızca Bitcoin ağı üzerinden gönderin.';
+
+  @override
+  String get donationShareChainEth =>
+      'Ethereum (ERC-20) - yalnızca Ethereum ana ağı üzerinden gönderin.';
+
+  @override
+  String donationShareBtcAddress(Object address) {
+    return 'BTC adresi: $address';
+  }
+
+  @override
+  String donationShareEthAddress(Object address) {
+    return 'ETH adresi: $address';
+  }
+
+  @override
+  String donationShareRepo(Object url) {
+    return 'Repo: $url';
+  }
+
+  @override
+  String get donationNoBrowserForLiberapay =>
+      'Liberapay\'i açacak tarayıcı yok';
+
+  @override
+  String get donationFailedToOpenLiberapay => 'Liberapay tarayıcıda açılamadı';
+
+  @override
+  String donationErrorOpeningLiberapay(Object error) {
+    return 'Liberapay açılırken hata oluştu: $error';
+  }
+
+  @override
+  String get donationThankYouTitle => 'Teşekkürler';
+
+  @override
+  String get donationThankYouBody =>
+      'Desteğiniz bu uygulamanın ücretsiz, hızlı ve aktif olarak bakımlı kalmasına yardımcı oluyor. Açık kaynak yazılımı desteklediğiniz için teşekkürler.';
+
+  @override
+  String get donationFocusTitle => 'Bağış odağı';
+
+  @override
+  String get donationFocusSubtitle =>
+      'İsteğe bağlı. Sonraki işlerde öncelik belirlemeye yardımcı olur.';
+
+  @override
+  String get donationGeneralSupportTitle => 'Genel destek';
+
+  @override
+  String get donationGeneralSupportSubtitle => 'En iyi genel seçenek';
+
+  @override
+  String get donationSupportDevelopmentTitle => 'Geliştirmeyi destekle';
+
+  @override
+  String get donationSupportDevelopmentSubtitle =>
+      'Bakım ve özellikler için isteğe bağlı bağış';
+
+  @override
+  String get donationOptionsTitle => 'Bağış seçenekleri';
+
+  @override
+  String get donationOptionsSubtitle =>
+      'Katkınız bu aracın ücretsiz, bakımlı ve topluluk odaklı kalmasını sağlar';
+
+  @override
+  String get donationRecommendedBadge => 'Önerilen';
+
+  @override
+  String get donationLiberapayFlexibleSupport => 'Esnek destek seçenekleri';
+
+  @override
+  String get donationTraditionalPayments =>
+      'Geleneksel ödeme yöntemleri (kart, PayPal, banka)';
+
+  @override
+  String get donationRecurringOrOneTime =>
+      'Esnek düzenli destek veya tek seferlik katkı';
+
+  @override
+  String get donationTrustedByOpenSource =>
+      'Açık kaynak geliştiricileri tarafından güvenilir';
+
+  @override
+  String get donationOpeningBrowser => 'Tarayıcı açılıyor...';
+
+  @override
+  String get donationViaLiberapay => 'Liberapay ile bağış yap';
+
+  @override
+  String get donationLiberapayNote =>
+      'Liberapay, açık kaynak projelerinin güvendiği kâr amacı gütmeyen bir bağış platformudur.';
+
+  @override
+  String get donationCryptoSupportTitle => 'Doğrudan kripto desteği';
+
+  @override
+  String get donationCryptoSupportSubtitle =>
+      'Gizlilik odaklı seçenek • QR tara veya adresi kopyala';
+
+  @override
+  String get donationBtcShort => 'BTC';
+
+  @override
+  String get donationEthShort => 'ETH';
+
+  @override
+  String get donationGeneralShort => 'Genel';
+
+  @override
+  String get donationBitcoinNetworkOnly => 'Yalnızca Bitcoin ağı';
+
+  @override
+  String get donationEthereumNetworkOnly => 'Yalnızca Ethereum ana ağı';
+
+  @override
+  String get donationBitcoinTitle => 'Bitcoin bağışı';
+
+  @override
+  String get donationEthereumTitle => 'Ethereum bağışı';
+
+  @override
+  String get donationQrUnavailable => 'QR kodu kullanılamıyor';
+
+  @override
+  String get donationAddressTitle => 'Adres';
+
+  @override
+  String get donationBtcAddressCopied => 'BTC adresi kopyalandı';
+
+  @override
+  String get donationEthAddressCopied => 'ETH adresi kopyalandı';
+
+  @override
+  String get donationShareTextCopied => 'Paylaşım metni kopyalandı';
+
+  @override
+  String get donationCopyAddress => 'Adresi kopyala';
+
+  @override
+  String get donationShareAction => 'Paylaş';
+
+  @override
+  String get donationSentAction => 'Bağış gönderdim';
+
+  @override
+  String get donationSecurityNote =>
+      'Güvenlik notu: ekran görüntülerinden, incelemelerden veya üçüncü taraf sayfalardan alınan bağış adreslerine asla güvenmeyin. Yalnızca uygulama içindeki bu ekranı kullanın.';
+
+  @override
+  String deviceInterfaceTitle(Object id, Object classInfo) {
+    return 'Arayüz $id • $classInfo';
+  }
+
+  @override
+  String get deviceAltSettingLabel => 'Alt ayarı';
+
+  @override
+  String get deviceClassLabel => 'Sınıf';
+
+  @override
+  String deviceEndpointsTitle(int count) {
+    return 'Uç noktalar ($count)';
+  }
+
+  @override
+  String get deviceNoEndpoints => 'Uç nokta yok';
+
+  @override
+  String deviceEndpointAddressSummary(
+    Object address,
+    Object number,
+    Object attributes,
+  ) {
+    return 'Adr $address • EP# $number • Nitelik $attributes';
+  }
+
+  @override
+  String deviceEndpointMaxPacket(Object value) {
+    return 'Maks. paket $value';
+  }
+
+  @override
+  String deviceEndpointInterval(Object value) {
+    return 'Aralık $value';
+  }
+
+  @override
+  String get deviceControlTransferDefaultTitle => 'Denetim aktarımı';
+
+  @override
+  String get deviceRequestedLengthLabel => 'İstenen uzunluk';
+
+  @override
+  String get deviceActualLengthLabel => 'Gerçek uzunluk';
+
+  @override
+  String get deviceResultLabel => 'Sonuç';
+
+  @override
+  String get deviceTransferSuccess => 'Başarılı';
+
+  @override
+  String get deviceTransferFailed => 'Başarısız';
+
+  @override
+  String get deviceResponseBytesHexTitle => 'Yanıt baytları (hex)';
+
+  @override
+  String get deviceParsedFieldsTitle => 'Ayrıştırılmış alanlar';
+
+  @override
+  String get deviceNoParsedFieldsAvailable => 'Ayrıştırılmış alan yok.';
+
+  @override
+  String get deviceRawBytesTitle => 'Ham baytlar';
+
+  @override
+  String deviceInterfaceReportTitle(
+    Object interfaceNumber,
+    Object reportLength,
+  ) {
+    return 'Arayüz $interfaceNumber • $reportLength baytlık rapor';
+  }
+
+  @override
+  String get deviceParsedSummaryTitle => 'Ayrıştırılmış özet';
+
+  @override
+  String get deviceNoParsedHidSummaryAvailable =>
+      'Ayrıştırılmış HID özeti yok.';
+
+  @override
+  String get deviceReportHexTitle => 'Rapor (hex)';
+
+  @override
+  String get historyEntryNotFoundTitle => 'Kayıt bulunamadı';
+
+  @override
+  String get historyEntryNotFoundBody => 'Bu geçmiş öğesi artık موجود değil.';
+
+  @override
+  String get historyUnableToOpenDetail => 'Geçmiş ayrıntısı açılamadı.';
 }

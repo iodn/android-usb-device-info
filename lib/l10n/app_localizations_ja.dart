@@ -4806,16 +4806,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deviceUnableToReadDetails => 'デバイスの詳細を読み取れません。';
 
   @override
-  String get deviceAudioClassDescriptorsTitle => 'Audio class descriptors';
+  String get deviceAudioClassDescriptorsTitle => 'オーディオクラスのディスクリプター';
 
   @override
-  String get deviceVideoClassDescriptorsTitle => 'Video class descriptors';
+  String get deviceVideoClassDescriptorsTitle => 'ビデオクラスのディスクリプター';
 
   @override
-  String get deviceCdcSerialDescriptorsTitle => 'CDC / serial descriptors';
+  String get deviceCdcSerialDescriptorsTitle => 'CDC / シリアル ディスクリプター';
 
   @override
-  String get deviceHubDescriptorsTitle => 'Hub descriptors';
+  String get deviceHubDescriptorsTitle => 'ハブディスクリプター';
 
   @override
   String get deviceBosCapabilitiesTitle => 'BOS & capabilities';
@@ -5035,23 +5035,22 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deviceAvailable => 'Available';
 
   @override
-  String get deviceConnectedUsbAudioEndpointsLabel =>
-      'Connected USB audio endpoints';
+  String get deviceConnectedUsbAudioEndpointsLabel => '接続中の USB オーディオエンドポイント';
 
   @override
-  String get deviceMatchedEndpointsLabel => 'Matched endpoints';
+  String get deviceMatchedEndpointsLabel => '一致したエンドポイント';
 
   @override
   String get deviceAudioManagerUnavailableNote =>
-      'AudioManager data is not available on this Android version or device.';
+      'この Android バージョンまたはこのデバイスでは AudioManager のデータを利用できません。';
 
   @override
   String get deviceNoAudioEndpointMatchedNote =>
-      'No AudioDeviceInfo endpoint could be matched to this USB device yet.';
+      'この USB デバイスに一致する AudioDeviceInfo エンドポイントはまだ見つかっていません。';
 
   @override
   String get deviceAndroidNoMatchedAudioEndpointNote =>
-      'Android does not report a matched USB audio endpoint for this device.';
+      'Android はこのデバイスに一致する USB オーディオエンドポイントを報告していません。';
 
   @override
   String get deviceUsbMidiTitle => 'USB MIDI';
@@ -5060,29 +5059,28 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deviceUsbMidiSubtitle => 'MidiManager のデバイスおよびポートメタデータ';
 
   @override
-  String get deviceProbableUsbMidiInterfaceLabel =>
-      'Probable USB MIDI interface';
+  String get deviceProbableUsbMidiInterfaceLabel => 'USB MIDI の可能性が高いインターフェース';
 
   @override
-  String get devicePlatformMidiApiLabel => 'Platform MIDI API';
+  String get devicePlatformMidiApiLabel => 'プラットフォーム MIDI API';
 
   @override
-  String get deviceConnectedMidiDevicesLabel => 'Connected MIDI devices';
+  String get deviceConnectedMidiDevicesLabel => '接続中の MIDI デバイス';
 
   @override
-  String get deviceMatchedMidiDevicesLabel => 'Matched MIDI devices';
+  String get deviceMatchedMidiDevicesLabel => '一致した MIDI デバイス';
 
   @override
   String get deviceMidiManagerUnavailableNote =>
-      'MidiManager data is not available on this Android version or device.';
+      'この Android バージョンまたはこのデバイスでは MidiManager のデータを利用できません。';
 
   @override
   String get deviceDescriptorsLookLikeMidiNote =>
-      'The USB descriptors look like MIDI, but Android did not expose a matching MidiManager device.';
+      'USB ディスクリプターは MIDI のように見えますが、Android は一致する MidiManager デバイスを公開していません。';
 
   @override
   String get deviceAndroidNoMatchedMidiDeviceNote =>
-      'Android does not report a matched MIDI device for this USB device.';
+      'Android はこの USB デバイスに一致する MIDI デバイスを報告していません。';
 
   @override
   String get devicePowerTitle => '電源';
@@ -5116,7 +5114,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deviceNameLabel => 'Name';
 
   @override
-  String get deviceDescriptorLabel => 'Descriptor';
+  String get deviceDescriptorLabel => 'ディスクリプター';
 
   @override
   String get deviceExternalLabel => 'External';
@@ -5152,6 +5150,21 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get deviceShowPermissionDiagnostics => 'Show permission diagnostics';
+
+  @override
+  String get devicePermissionStateTemporary => '一時的';
+
+  @override
+  String get devicePermissionStatePermanent => '恒久的';
+
+  @override
+  String get devicePermissionStateReenumerated => '再列挙済み';
+
+  @override
+  String get devicePermissionStateNotInApp => 'アプリ内では利用不可';
+
+  @override
+  String get devicePermissionStateRevoked => '取り消し済み';
 
   @override
   String get deviceAndroidVersionLabel => 'Android version';
@@ -5190,6 +5203,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deviceWhyDataUnavailableTitle => 'Why data is unavailable';
 
   @override
+  String get deviceWhyDataUnavailableSubtitle =>
+      '非表示フィールドに対する正確な Android 側またはデバイス側の制限';
+
+  @override
   String get deviceReconnectDiffTitle => '再接続時の差分';
 
   @override
@@ -5214,8 +5231,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deviceRemoteWakeupLabel => 'Remote wakeup';
 
   @override
-  String get deviceInterfaceAlternateSettingsTitle =>
-      'Interface alternate settings';
+  String get deviceInterfaceAlternateSettingsTitle => 'インターフェースの代替設定';
 
   @override
   String get deviceStringDescriptorsTitle => '文字列ディスクリプタ';
@@ -5237,16 +5253,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deviceManufacturerLabel => 'Manufacturer';
 
   @override
-  String get deviceInterfaceStringsTitle => 'Interface strings';
+  String get deviceInterfaceStringsTitle => 'インターフェース文字列';
 
   @override
-  String get deviceDescriptorTreeTitle => 'Descriptor tree';
+  String get deviceDescriptorTreeTitle => 'ディスクリプターツリー';
 
   @override
-  String get deviceShowDescriptors => 'Show descriptors';
+  String get deviceShowDescriptors => 'ディスクリプターを表示';
 
   @override
-  String get deviceHidReportDescriptorsTitle => 'HID report descriptors';
+  String get deviceHidReportDescriptorsTitle => 'HID レポートディスクリプター';
 
   @override
   String get devicePermissionRequiredTitle => '権限が必要です';
@@ -5269,41 +5285,40 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deviceAdvancedRawViewTitle => '高度な生データ表示';
 
   @override
-  String get deviceDescriptorNodesLabel => 'Descriptor nodes';
+  String get deviceDescriptorNodesLabel => 'ディスクリプターノード';
 
   @override
-  String get deviceControlTransfersLabel => 'Control transfers';
+  String get deviceControlTransfersLabel => 'コントロール転送';
 
   @override
-  String get deviceHidReportDumpsLabel => 'HID report dumps';
+  String get deviceHidReportDumpsLabel => 'HID レポートダンプ';
 
   @override
-  String get deviceControlTransfersTitle => 'Control transfers';
+  String get deviceControlTransfersTitle => 'コントロール転送';
 
   @override
   String get deviceControlTransfersSubtitle =>
       'Raw setup/result records from direct USB control reads';
 
   @override
-  String get deviceDescriptorsSideBySideTitle => 'Descriptors side by side';
+  String get deviceDescriptorsSideBySideTitle => 'ディスクリプターを並べて表示';
 
   @override
   String get deviceDescriptorsSideBySideSubtitle =>
-      'Parsed fields next to the raw descriptor bytes';
+      '解析済みフィールドを生のディスクリプターバイトの横に表示';
 
   @override
-  String get deviceHidReportDumpsTitle => 'HID report dumps';
+  String get deviceHidReportDumpsTitle => 'HID レポートダンプ';
 
   @override
-  String get deviceHidReportDumpsSubtitle =>
-      'Report descriptor hex with parsed summary';
+  String get deviceHidReportDumpsSubtitle => 'レポートディスクリプターの 16 進表示と解析済みサマリー';
 
   @override
   String get deviceAdvancedDataUnavailableTitle => 'Advanced data unavailable';
 
   @override
   String get deviceAdvancedDataUnavailableSubtitle =>
-      'No raw control-transfer or descriptor payload is available for this device';
+      'このデバイスでは、生のコントロール転送データやディスクリプターのデータを利用できません。';
 
   @override
   String get deviceGrantPermissionReconnectNote =>
@@ -5328,10 +5343,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deviceExportChipJson => 'JSON';
 
   @override
-  String get deviceExportChipReport => 'Report';
+  String get deviceExportChipReport => 'レポート';
 
   @override
-  String get deviceExportChipRawHex => 'Raw hex';
+  String get deviceExportChipRawHex => '生の16進データ';
 
   @override
   String get deviceCopyAction => 'コピー';
@@ -5387,8 +5402,7 @@ class AppLocalizationsJa extends AppLocalizations {
       'Physical port + interface fingerprint';
 
   @override
-  String get deviceIdentityStrategyInterfaceFingerprint =>
-      'Interface fingerprint';
+  String get deviceIdentityStrategyInterfaceFingerprint => 'インターフェース指紋';
 
   @override
   String get deviceIdentityStrategyModelFingerprint => 'Model fingerprint';
@@ -5414,7 +5428,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String deviceDescriptorsCount(int count) {
-    return '$count descriptor(s)';
+    return '$count 個のディスクリプター';
   }
 
   @override
@@ -5469,7 +5483,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String deviceDescriptorsParsed(int count) {
-    return '$count descriptors parsed';
+    return '$count 個のディスクリプターを解析';
   }
 
   @override
@@ -5491,7 +5505,613 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deviceInputSourcesLabel => 'Input sources';
 
   @override
-  String deviceShowingFirstDescriptors(int count) {
-    return 'Showing first $count descriptors.';
+  String deviceShowingFirstFields(int count) {
+    return '最初の $count 件のフィールドのみ表示しています。';
   }
+
+  @override
+  String deviceShowingFirstDescriptors(int count) {
+    return '最初の $count 個のディスクリプターを表示中。';
+  }
+
+  @override
+  String get settingsUsbBehaviorTitle => 'USB の動作';
+
+  @override
+  String get settingsUsbBehaviorSubtitle => 'USB デバイス接続時のシステム動作を制御';
+
+  @override
+  String get settingsUsbOfferOnAttachTitle => 'USB 接続時に起動候補として表示';
+
+  @override
+  String get settingsUsbOfferOnAttachSubtitle =>
+      'USB デバイス接続時の Android の選択画面に表示します。';
+
+  @override
+  String get settingsUsbDisableAttachNote =>
+      'これを無効にすると、デバイス接続時に Android が USBDevInfo を提案しなくなります。アプリを開いている間は引き続きデバイスを検出します。';
+
+  @override
+  String get settingsAttachFilterScopeLabel => '接続フィルター範囲';
+
+  @override
+  String get settingsAttachFilterScopeAllUsbDevices => 'すべての USB デバイス';
+
+  @override
+  String get settingsAttachLaunchBehaviorLabel => '接続時の起動動作';
+
+  @override
+  String get settingsAttachLaunchBehaviorEnabled =>
+      'Android が USB 接続選択画面から USBDevInfo を明示的に起動したときのみ開く';
+
+  @override
+  String get settingsAttachLaunchBehaviorDisabled => '選択画面エイリアスは無効';
+
+  @override
+  String get settingsWhileAppOpenLabel => 'アプリ起動中';
+
+  @override
+  String get settingsWhileAppOpenValue =>
+      'USB の接続/切断イベントで、画面遷移を強制せずにデバイス情報を更新します';
+
+  @override
+  String get settingsBackupDataTitle => 'バックアップとデータ';
+
+  @override
+  String get settingsBackupDataSubtitle => 'デバイス履歴を JSON としてエクスポート';
+
+  @override
+  String get settingsHistoryLabel => '履歴';
+
+  @override
+  String get settingsMostRecentLabel => '最新';
+
+  @override
+  String get settingsNoHistoryYet => 'まだ履歴はありません';
+
+  @override
+  String settingsHistoryRecordedCount(int count) {
+    return '$count 件を記録';
+  }
+
+  @override
+  String get settingsBackupExportIncludes =>
+      'エクスポートには、ベンダー/製品 ID、解決済み名称、文字列、クラス/プロトコル、タイムスタンプ、および権限がある場合の詳細情報（ディスクリプター、構成、インターフェース、HID レポート）が含まれます。';
+
+  @override
+  String get settingsExportJsonAction => 'JSON をエクスポート';
+
+  @override
+  String get settingsImportJsonAction => 'JSON をインポート';
+
+  @override
+  String get settingsUsbIdsDatabaseTitle => 'USB IDs データベース';
+
+  @override
+  String get settingsUsbIdsDatabaseSubtitle => 'メタデータと更新';
+
+  @override
+  String deviceConfigurationTitle(Object id, Object suffix) {
+    return '構成 $id$suffix';
+  }
+
+  @override
+  String get deviceAttributesLabel => '属性';
+
+  @override
+  String get deviceInterfacesSummaryTitle => 'インターフェース（要約）';
+
+  @override
+  String deviceInterfaceShortLabel(Object id) {
+    return 'IF $id';
+  }
+
+  @override
+  String deviceInterfaceSummaryValue(Object classValue, Object endpointCount) {
+    return 'クラス $classValue • EP $endpointCount';
+  }
+
+  @override
+  String deviceInterfaceStringLabel(
+    Object interfaceNumber,
+    Object alternateSetting,
+  ) {
+    return 'IF $interfaceNumber（Alt $alternateSetting）';
+  }
+
+  @override
+  String get deviceKeyboardChip => 'キーボード';
+
+  @override
+  String get deviceMouseChip => 'マウス';
+
+  @override
+  String deviceReportIdsChip(Object count) {
+    return 'レポート ID: $count';
+  }
+
+  @override
+  String deviceCollectionsChip(Object count) {
+    return 'コレクション: $count';
+  }
+
+  @override
+  String deviceUsagePagesChip(Object pages) {
+    return 'Usage page: $pages';
+  }
+
+  @override
+  String get homeCapabilityAudio => 'オーディオ';
+
+  @override
+  String get homeCapabilityVideo => 'ビデオ';
+
+  @override
+  String get homeCapabilityHid => 'HID';
+
+  @override
+  String get homeCapabilityMidi => 'MIDI';
+
+  @override
+  String get homeCapabilityStorage => 'ストレージ';
+
+  @override
+  String get homeCapabilityHub => 'ハブ';
+
+  @override
+  String get homeCapabilityCdc => 'CDC';
+
+  @override
+  String get homeCapabilityComposite => '複合';
+
+  @override
+  String get homeCapabilityInput => '入力';
+
+  @override
+  String get settingsUsbIdsLocalVersionLabel => 'ローカル版';
+
+  @override
+  String get settingsUsbIdsLocalDateLabel => 'ローカル日付';
+
+  @override
+  String get settingsUsbIdsRemoteShaNotFetched => 'リモート SHA はまだ取得していません。';
+
+  @override
+  String get settingsUsbIdsInstalledShaAfterUpdate =>
+      'インストール済み SHA は更新成功後に保存されます。';
+
+  @override
+  String get settingsUsbIdsInstalledShaMatchesRemote =>
+      'インストール済み SHA はリモートと一致しています。';
+
+  @override
+  String get settingsUsbIdsInstalledShaDiffersRemote =>
+      'インストール済み SHA はリモートと異なります（更新あり）。';
+
+  @override
+  String get settingsUsbIdsDetailsTitle => '詳細';
+
+  @override
+  String get settingsUsbIdsInstalledShaLabel => 'インストール済み SHA-256';
+
+  @override
+  String get settingsUsbIdsRemoteShaLabel => 'リモート SHA-256';
+
+  @override
+  String get settingsUsbIdsShaMatchLabel => 'SHA 一致';
+
+  @override
+  String get settingsUsbIdsLastCheckedLabel => '最終確認';
+
+  @override
+  String get settingsUsbIdsUpdateHintLabel => '更新ヒント';
+
+  @override
+  String get settingsUsbIdsUpdateHintAvailable => 'あり';
+
+  @override
+  String get settingsUsbIdsUpdateHintNone => 'なし';
+
+  @override
+  String get settingsUsbIdsAutoCheckTitle => '更新を自動確認';
+
+  @override
+  String get settingsUsbIdsAutoCheckSubtitle => 'リモートの .sha256 を週に約 1 回確認します。';
+
+  @override
+  String get settingsUpdateNow => '今すぐ更新';
+
+  @override
+  String get settingsCheckNow => '今すぐ確認';
+
+  @override
+  String get settingsAboutSectionTitle => '情報';
+
+  @override
+  String get settingsAboutSectionSubtitle => 'アプリ情報と法的情報';
+
+  @override
+  String settingsAboutAppTileTitle(Object appName, Object developer) {
+    return '$appName - $developer';
+  }
+
+  @override
+  String settingsAboutVersion(Object version) {
+    return 'バージョン $version';
+  }
+
+  @override
+  String get settingsLicensesTitle => 'ライセンス';
+
+  @override
+  String get settingsLicensesSubtitle => 'オープンソース ライセンス';
+
+  @override
+  String get settingsReportIssueTitle => '問題を報告';
+
+  @override
+  String get settingsReportIssueSubtitle => 'バグと機能要望';
+
+  @override
+  String get settingsIssuesLinkCopied => 'Issue リンクをコピーしました';
+
+  @override
+  String get settingsNoHistoryToExport => 'エクスポートする履歴がありません。';
+
+  @override
+  String get settingsExportCopied => 'エクスポートをクリップボードにコピーしました。';
+
+  @override
+  String settingsExportFailed(Object error) {
+    return 'エクスポートに失敗しました: $error';
+  }
+
+  @override
+  String get settingsImportUnsupportedFormat =>
+      '未対応の JSON 形式です。配列、または schema=device_history_export_v1 を含むエクスポートペイロードが必要です。';
+
+  @override
+  String get settingsImportNoValidHistoryEntries => '有効な履歴エントリが見つかりません。';
+
+  @override
+  String settingsImportedItems(int count) {
+    return '$count 件をインポートしました。';
+  }
+
+  @override
+  String settingsImportFailed(Object error) {
+    return 'インポートに失敗しました: $error';
+  }
+
+  @override
+  String get settingsClearHistoryBodyDetailed =>
+      '記録済みデバイスをローカル ストレージからすべて削除します。';
+
+  @override
+  String get settingsHistoryCleared => '履歴を消去しました。';
+
+  @override
+  String get settingsExportHistoryTitle => '履歴をエクスポート';
+
+  @override
+  String settingsExportHistorySubtitle(int count) {
+    return '$count 件 • JSON';
+  }
+
+  @override
+  String get settingsExportFormatPretty => '整形';
+
+  @override
+  String get settingsExportFormatCompact => 'コンパクト';
+
+  @override
+  String get settingsExportSafeShareNote =>
+      'このエクスポートはデバッグ共有に使えますが、デバイス名/パスやシリアル番号が含まれる場合があります。';
+
+  @override
+  String get settingsImportHistoryTitle => '履歴をインポート';
+
+  @override
+  String get settingsImportHistorySubtitle => 'エクスポート内容またはエントリの生リストを貼り付け';
+
+  @override
+  String get settingsImportSupportedFormats =>
+      '対応形式: device_history_export_v1 ペイロード（推奨）、または履歴エントリの生 JSON 配列。';
+
+  @override
+  String get settingsImportHint => 'ここに JSON を貼り付け…';
+
+  @override
+  String get settingsImportAction => 'インポート';
+
+  @override
+  String get settingsImporting => 'インポート中…';
+
+  @override
+  String get settingsImportReplacesHistoryNote =>
+      'インポートすると現在の履歴は置き換えられます。不安な場合は先にエクスポートしてください。';
+
+  @override
+  String get settingsClipboardEmpty => 'クリップボードは空です。';
+
+  @override
+  String get settingsPasteJsonFirst => '先に JSON を貼り付けてください。';
+
+  @override
+  String get pasteAction => '貼り付け';
+
+  @override
+  String get donationFocusCompatTitle => '互換性と権限';
+
+  @override
+  String get donationFocusCompatSubtitle => 'OEM 固有挙動、権限フロー、境界ケース';
+
+  @override
+  String get donationFocusUsbIdsTitle => 'USB IDs データベース更新';
+
+  @override
+  String get donationFocusUsbIdsSubtitle => '解析、鮮度、更新の信頼性';
+
+  @override
+  String get donationFocusUiTitle => 'UI/UX 改善';
+
+  @override
+  String get donationFocusUiSubtitle => '分かりやすさ、速度、アクセシビリティ';
+
+  @override
+  String get donationFocusFeaturesTitle => '新機能';
+
+  @override
+  String get donationFocusFeaturesSubtitle => 'フィルター、エクスポート、分析';
+
+  @override
+  String donationShareHeader(Object appName) {
+    return '$appName を支援 - オープンソースアプリ';
+  }
+
+  @override
+  String donationShareFocusLine(Object title) {
+    return '重点項目: $title';
+  }
+
+  @override
+  String get donationShareChainBtc =>
+      'Bitcoin (BTC) - Bitcoin ネットワークのみに送金してください。';
+
+  @override
+  String get donationShareChainEth =>
+      'Ethereum (ERC-20) - Ethereum メインネットのみに送金してください。';
+
+  @override
+  String donationShareBtcAddress(Object address) {
+    return 'BTC アドレス: $address';
+  }
+
+  @override
+  String donationShareEthAddress(Object address) {
+    return 'ETH アドレス: $address';
+  }
+
+  @override
+  String donationShareRepo(Object url) {
+    return 'リポジトリ: $url';
+  }
+
+  @override
+  String get donationNoBrowserForLiberapay => 'Liberapay を開けるブラウザがありません';
+
+  @override
+  String get donationFailedToOpenLiberapay => 'ブラウザで Liberapay を開けませんでした';
+
+  @override
+  String donationErrorOpeningLiberapay(Object error) {
+    return 'Liberapay を開く際にエラー: $error';
+  }
+
+  @override
+  String get donationThankYouTitle => 'ありがとうございます';
+
+  @override
+  String get donationThankYouBody =>
+      'ご支援により、このアプリを無料・高速・継続的に保守できます。オープンソースソフトウェアへのご支援ありがとうございます。';
+
+  @override
+  String get donationFocusTitle => '寄付の重点';
+
+  @override
+  String get donationFocusSubtitle => '任意です。次に取り組む内容の優先付けに役立ちます。';
+
+  @override
+  String get donationGeneralSupportTitle => '一般支援';
+
+  @override
+  String get donationGeneralSupportSubtitle => 'もっともおすすめの選択肢';
+
+  @override
+  String get donationSupportDevelopmentTitle => '開発を支援';
+
+  @override
+  String get donationSupportDevelopmentSubtitle => '任意の寄付で保守と機能追加を支援します';
+
+  @override
+  String get donationOptionsTitle => '寄付方法';
+
+  @override
+  String get donationOptionsSubtitle =>
+      'ご支援により、このツールは無料のまま保守され、コミュニティ主導で発展できます';
+
+  @override
+  String get donationRecommendedBadge => 'おすすめ';
+
+  @override
+  String get donationLiberapayFlexibleSupport => '柔軟な支援オプション';
+
+  @override
+  String get donationTraditionalPayments => '従来の支払い方法（カード、PayPal、銀行）';
+
+  @override
+  String get donationRecurringOrOneTime => '継続支援にも一回限りの寄付にも対応';
+
+  @override
+  String get donationTrustedByOpenSource => 'オープンソース開発者に信頼されています';
+
+  @override
+  String get donationOpeningBrowser => 'ブラウザを開いています...';
+
+  @override
+  String get donationViaLiberapay => 'Liberapay で寄付';
+
+  @override
+  String get donationLiberapayNote =>
+      'Liberapay は、オープンソース プロジェクトに信頼されている非営利の寄付プラットフォームです。';
+
+  @override
+  String get donationCryptoSupportTitle => '暗号資産で直接支援';
+
+  @override
+  String get donationCryptoSupportSubtitle =>
+      'プライバシー重視の方法 • QR をスキャンするかアドレスをコピー';
+
+  @override
+  String get donationBtcShort => 'BTC';
+
+  @override
+  String get donationEthShort => 'ETH';
+
+  @override
+  String get donationGeneralShort => '一般';
+
+  @override
+  String get donationBitcoinNetworkOnly => 'Bitcoin ネットワークのみ';
+
+  @override
+  String get donationEthereumNetworkOnly => 'Ethereum メインネットのみ';
+
+  @override
+  String get donationBitcoinTitle => 'Bitcoin 寄付';
+
+  @override
+  String get donationEthereumTitle => 'Ethereum 寄付';
+
+  @override
+  String get donationQrUnavailable => 'QR コードは利用できません';
+
+  @override
+  String get donationAddressTitle => 'アドレス';
+
+  @override
+  String get donationBtcAddressCopied => 'BTC アドレスをコピーしました';
+
+  @override
+  String get donationEthAddressCopied => 'ETH アドレスをコピーしました';
+
+  @override
+  String get donationShareTextCopied => '共有テキストをコピーしました';
+
+  @override
+  String get donationCopyAddress => 'アドレスをコピー';
+
+  @override
+  String get donationShareAction => '共有';
+
+  @override
+  String get donationSentAction => '寄付を送信しました';
+
+  @override
+  String get donationSecurityNote =>
+      'セキュリティ注意: スクリーンショット、レビュー、第三者サイトの寄付アドレスは信用しないでください。このアプリ内画面のみを使用してください。';
+
+  @override
+  String deviceInterfaceTitle(Object id, Object classInfo) {
+    return 'インターフェース $id • $classInfo';
+  }
+
+  @override
+  String get deviceAltSettingLabel => '代替設定';
+
+  @override
+  String get deviceClassLabel => 'クラス';
+
+  @override
+  String deviceEndpointsTitle(int count) {
+    return 'エンドポイント ($count)';
+  }
+
+  @override
+  String get deviceNoEndpoints => 'エンドポイントなし';
+
+  @override
+  String deviceEndpointAddressSummary(
+    Object address,
+    Object number,
+    Object attributes,
+  ) {
+    return 'アドレス $address • EP# $number • 属性 $attributes';
+  }
+
+  @override
+  String deviceEndpointMaxPacket(Object value) {
+    return '最大Pkt $value';
+  }
+
+  @override
+  String deviceEndpointInterval(Object value) {
+    return '間隔 $value';
+  }
+
+  @override
+  String get deviceControlTransferDefaultTitle => 'コントロール転送';
+
+  @override
+  String get deviceRequestedLengthLabel => '要求長';
+
+  @override
+  String get deviceActualLengthLabel => '実長';
+
+  @override
+  String get deviceResultLabel => '結果';
+
+  @override
+  String get deviceTransferSuccess => '成功';
+
+  @override
+  String get deviceTransferFailed => '失敗';
+
+  @override
+  String get deviceResponseBytesHexTitle => '応答バイト（16進）';
+
+  @override
+  String get deviceParsedFieldsTitle => '解析済みフィールド';
+
+  @override
+  String get deviceNoParsedFieldsAvailable => '解析済みフィールドはありません。';
+
+  @override
+  String get deviceRawBytesTitle => '生バイト';
+
+  @override
+  String deviceInterfaceReportTitle(
+    Object interfaceNumber,
+    Object reportLength,
+  ) {
+    return 'インターフェース $interfaceNumber • レポート $reportLength バイト';
+  }
+
+  @override
+  String get deviceParsedSummaryTitle => '解析済みサマリー';
+
+  @override
+  String get deviceNoParsedHidSummaryAvailable => '解析済み HID サマリーはありません。';
+
+  @override
+  String get deviceReportHexTitle => 'レポート（16進）';
+
+  @override
+  String get historyEntryNotFoundTitle => 'エントリが見つかりません';
+
+  @override
+  String get historyEntryNotFoundBody => 'この履歴項目はもう存在しません。';
+
+  @override
+  String get historyUnableToOpenDetail => '履歴詳細を開けません。';
 }

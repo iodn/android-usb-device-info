@@ -5131,7 +5131,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get deviceDownstreamChildrenTitle => 'Mga downstream na child';
 
   @override
-  String get deviceDescriptorTitle => 'Descriptor ng device';
+  String get deviceDescriptorTitle => 'Deskriptor ng device';
 
   @override
   String get deviceDescriptorSubtitle => 'Mga field ng raw USB descriptor';
@@ -5262,7 +5262,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get deviceNameLabel => 'Pangalan';
 
   @override
-  String get deviceDescriptorLabel => 'Descriptor';
+  String get deviceDescriptorLabel => 'Deskriptor';
 
   @override
   String get deviceExternalLabel => 'Panlabas';
@@ -5302,6 +5302,21 @@ class AppLocalizationsFil extends AppLocalizations {
       'Ipakita ang pagsusuri ng pahintulot';
 
   @override
+  String get devicePermissionStateTemporary => 'Pansamantala';
+
+  @override
+  String get devicePermissionStatePermanent => 'Permanente';
+
+  @override
+  String get devicePermissionStateReenumerated => 'Muling natukoy';
+
+  @override
+  String get devicePermissionStateNotInApp => 'Wala sa app';
+
+  @override
+  String get devicePermissionStateRevoked => 'Binawi';
+
+  @override
   String get deviceAndroidVersionLabel => 'Bersyon ng Android';
 
   @override
@@ -5339,6 +5354,10 @@ class AppLocalizationsFil extends AppLocalizations {
   @override
   String get deviceWhyDataUnavailableTitle =>
       'Bakit hindi available ang impormasyong ito';
+
+  @override
+  String get deviceWhyDataUnavailableSubtitle =>
+      'Eksaktong limitasyon ng Android o ng device para sa mga nakatagong field';
 
   @override
   String get deviceReconnectDiffTitle => 'Pagkakaiba matapos muling ikonekta';
@@ -5425,13 +5444,13 @@ class AppLocalizationsFil extends AppLocalizations {
   String get deviceDescriptorNodesLabel => 'Mga node ng descriptor';
 
   @override
-  String get deviceControlTransfersLabel => 'Mga control transfer';
+  String get deviceControlTransfersLabel => 'Mga paglilipat ng control';
 
   @override
   String get deviceHidReportDumpsLabel => 'Mga dump ng HID report';
 
   @override
-  String get deviceControlTransfersTitle => 'Mga control transfer';
+  String get deviceControlTransfersTitle => 'Mga paglilipat ng control';
 
   @override
   String get deviceControlTransfersSubtitle =>
@@ -5457,20 +5476,20 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get deviceAdvancedDataUnavailableSubtitle =>
-      'Walang available na raw control-transfer o descriptor payload para sa device na ito';
+      'Walang available na hilaw na datos ng control transfer o descriptor para sa device na ito.';
 
   @override
   String get deviceGrantPermissionReconnectNote =>
       'Magbigay ng pahintulot sa USB at ikonekta muli ang device kung gusto mong ilantad ng Android ang direktang descriptor at transfer data.';
 
   @override
-  String get deviceExportFormatJson => 'Payload na JSON';
+  String get deviceExportFormatJson => 'Datos na JSON';
 
   @override
   String get deviceExportFormatReport => 'Plain text na ulat';
 
   @override
-  String get deviceExportFormatRawHex => 'Raw hex na mga descriptor';
+  String get deviceExportFormatRawHex => 'Hilaw na hex na mga descriptor';
 
   @override
   String get deviceRawDumpExportTitle => 'Pag-export ng raw dump';
@@ -5486,7 +5505,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get deviceExportChipReport => 'Ulat';
 
   @override
-  String get deviceExportChipRawHex => 'Raw hex';
+  String get deviceExportChipRawHex => 'Hilaw na hex';
 
   @override
   String get deviceCopyAction => 'Kopyahin';
@@ -5650,7 +5669,639 @@ class AppLocalizationsFil extends AppLocalizations {
   String get deviceInputSourcesLabel => 'Mga input source';
 
   @override
+  String deviceShowingFirstFields(int count) {
+    return 'Ipinapakita lang ang unang $count field.';
+  }
+
+  @override
   String deviceShowingFirstDescriptors(int count) {
     return 'Ipinapakita ang unang $count descriptor.';
   }
+
+  @override
+  String get settingsUsbBehaviorTitle => 'Pag-uugali ng USB';
+
+  @override
+  String get settingsUsbBehaviorSubtitle =>
+      'Kontrolin ang mga system prompt kapag may nakakabit na USB device';
+
+  @override
+  String get settingsUsbOfferOnAttachTitle =>
+      'Mag-alok na buksan sa USB attach';
+
+  @override
+  String get settingsUsbOfferOnAttachSubtitle =>
+      'Lalabas sa tagapili ng Android kapag may isinaksak na USB device.';
+
+  @override
+  String get settingsUsbDisableAttachNote =>
+      'I-disable ito para hindi na imungkahi ng Android ang USBDevInfo kapag may nakakabit na device. Makakakita pa rin ang app ng mga device habang bukas ito.';
+
+  @override
+  String get settingsAttachFilterScopeLabel => 'Saklaw ng attach filter';
+
+  @override
+  String get settingsAttachFilterScopeAllUsbDevices => 'Lahat ng USB device';
+
+  @override
+  String get settingsAttachLaunchBehaviorLabel =>
+      'Pag-uugali sa pag-launch kapag naka-attach';
+
+  @override
+  String get settingsAttachLaunchBehaviorEnabled =>
+      'Buksan lang kapag tahasang inilunsad ng Android ang USBDevInfo mula sa tagapili ng USB attach';
+
+  @override
+  String get settingsAttachLaunchBehaviorDisabled =>
+      'Naka-disable ang alias ng tagapili';
+
+  @override
+  String get settingsWhileAppOpenLabel => 'Habang bukas ang app';
+
+  @override
+  String get settingsWhileAppOpenValue =>
+      'Nire-refresh ng mga USB attach/detach event ang data ng device nang hindi pinipilit ang navigation';
+
+  @override
+  String get settingsBackupDataTitle => 'Backup at data';
+
+  @override
+  String get settingsBackupDataSubtitle =>
+      'I-export ang history ng device bilang JSON';
+
+  @override
+  String get settingsHistoryLabel => 'History';
+
+  @override
+  String get settingsMostRecentLabel => 'Pinakabago';
+
+  @override
+  String get settingsNoHistoryYet => 'Wala pang history';
+
+  @override
+  String settingsHistoryRecordedCount(int count) {
+    return '$count item ang naitala';
+  }
+
+  @override
+  String get settingsBackupExportIncludes =>
+      'Kasama sa export ang vendor/product IDs, resolved names, strings, class/protocol, timestamps, at advanced details (descriptors, configurations, interfaces, HID reports) kapag may pahintulot.';
+
+  @override
+  String get settingsExportJsonAction => 'I-export ang JSON';
+
+  @override
+  String get settingsImportJsonAction => 'I-import ang JSON';
+
+  @override
+  String get settingsUsbIdsDatabaseTitle => 'Database ng USB IDs';
+
+  @override
+  String get settingsUsbIdsDatabaseSubtitle => 'Metadata at updater';
+
+  @override
+  String deviceConfigurationTitle(Object id, Object suffix) {
+    return 'Configuration $id$suffix';
+  }
+
+  @override
+  String get deviceAttributesLabel => 'Mga attribute';
+
+  @override
+  String get deviceInterfacesSummaryTitle => 'Mga interface (buod)';
+
+  @override
+  String deviceInterfaceShortLabel(Object id) {
+    return 'IF $id';
+  }
+
+  @override
+  String deviceInterfaceSummaryValue(Object classValue, Object endpointCount) {
+    return 'Class $classValue • EP $endpointCount';
+  }
+
+  @override
+  String deviceInterfaceStringLabel(
+    Object interfaceNumber,
+    Object alternateSetting,
+  ) {
+    return 'IF $interfaceNumber (Alt $alternateSetting)';
+  }
+
+  @override
+  String get deviceKeyboardChip => 'Keyboard';
+
+  @override
+  String get deviceMouseChip => 'Mouse';
+
+  @override
+  String deviceReportIdsChip(Object count) {
+    return 'Report ID: $count';
+  }
+
+  @override
+  String deviceCollectionsChip(Object count) {
+    return 'Collection: $count';
+  }
+
+  @override
+  String deviceUsagePagesChip(Object pages) {
+    return 'Usage page: $pages';
+  }
+
+  @override
+  String get homeCapabilityAudio => 'Audio';
+
+  @override
+  String get homeCapabilityVideo => 'Video';
+
+  @override
+  String get homeCapabilityHid => 'HID';
+
+  @override
+  String get homeCapabilityMidi => 'MIDI';
+
+  @override
+  String get homeCapabilityStorage => 'Imbakan';
+
+  @override
+  String get homeCapabilityHub => 'Hub';
+
+  @override
+  String get homeCapabilityCdc => 'CDC';
+
+  @override
+  String get homeCapabilityComposite => 'Composite';
+
+  @override
+  String get homeCapabilityInput => 'Input';
+
+  @override
+  String get settingsUsbIdsLocalVersionLabel => 'Lokal na bersyon';
+
+  @override
+  String get settingsUsbIdsLocalDateLabel => 'Lokal na petsa';
+
+  @override
+  String get settingsUsbIdsRemoteShaNotFetched =>
+      'Hindi pa nakukuha ang remote SHA.';
+
+  @override
+  String get settingsUsbIdsInstalledShaAfterUpdate =>
+      'Mase-save ang naka-install na SHA pagkatapos ng matagumpay na update.';
+
+  @override
+  String get settingsUsbIdsInstalledShaMatchesRemote =>
+      'Tugma ang naka-install na SHA sa remote.';
+
+  @override
+  String get settingsUsbIdsInstalledShaDiffersRemote =>
+      'Iba ang naka-install na SHA sa remote (may available na update).';
+
+  @override
+  String get settingsUsbIdsDetailsTitle => 'Mga detalye';
+
+  @override
+  String get settingsUsbIdsInstalledShaLabel => 'Naka-install na SHA-256';
+
+  @override
+  String get settingsUsbIdsRemoteShaLabel => 'Remote SHA-256';
+
+  @override
+  String get settingsUsbIdsShaMatchLabel => 'Pagtutugma ng SHA';
+
+  @override
+  String get settingsUsbIdsLastCheckedLabel => 'Huling pag-check';
+
+  @override
+  String get settingsUsbIdsUpdateHintLabel => 'Pahiwatig sa update';
+
+  @override
+  String get settingsUsbIdsUpdateHintAvailable => 'Available';
+
+  @override
+  String get settingsUsbIdsUpdateHintNone => 'Wala';
+
+  @override
+  String get settingsUsbIdsAutoCheckTitle =>
+      'Awtomatikong mag-check ng updates';
+
+  @override
+  String get settingsUsbIdsAutoCheckSubtitle =>
+      'Tinitingnan ang remote .sha256 nang humigit-kumulang isang beses bawat linggo.';
+
+  @override
+  String get settingsUpdateNow => 'Mag-update ngayon';
+
+  @override
+  String get settingsCheckNow => 'Mag-check ngayon';
+
+  @override
+  String get settingsAboutSectionTitle => 'Tungkol dito';
+
+  @override
+  String get settingsAboutSectionSubtitle => 'Impormasyon ng app at legal';
+
+  @override
+  String settingsAboutAppTileTitle(Object appName, Object developer) {
+    return '$appName - $developer';
+  }
+
+  @override
+  String settingsAboutVersion(Object version) {
+    return 'Bersyon $version';
+  }
+
+  @override
+  String get settingsLicensesTitle => 'Mga lisensya';
+
+  @override
+  String get settingsLicensesSubtitle => 'Mga open-source na lisensya';
+
+  @override
+  String get settingsReportIssueTitle => 'Mag-report ng isyu';
+
+  @override
+  String get settingsReportIssueSubtitle => 'Mga bug at hiling na feature';
+
+  @override
+  String get settingsIssuesLinkCopied => 'Nakopya ang link ng mga issue';
+
+  @override
+  String get settingsNoHistoryToExport => 'Walang history na mae-export.';
+
+  @override
+  String get settingsExportCopied => 'Nakopya ang export sa clipboard.';
+
+  @override
+  String settingsExportFailed(Object error) {
+    return 'Nabigo ang export: $error';
+  }
+
+  @override
+  String get settingsImportUnsupportedFormat =>
+      'Hindi suportadong JSON format. Dapat ay listahan ito o datos ng export na may schema=device_history_export_v1.';
+
+  @override
+  String get settingsImportNoValidHistoryEntries =>
+      'Walang nakitang valid na history entries.';
+
+  @override
+  String settingsImportedItems(int count) {
+    return 'Na-import ang $count item.';
+  }
+
+  @override
+  String settingsImportFailed(Object error) {
+    return 'Nabigo ang import: $error';
+  }
+
+  @override
+  String get settingsClearHistoryBodyDetailed =>
+      'Aalisin nito ang lahat ng naitalang device mula sa lokal na storage.';
+
+  @override
+  String get settingsHistoryCleared => 'Na-clear ang history.';
+
+  @override
+  String get settingsExportHistoryTitle => 'I-export ang history';
+
+  @override
+  String settingsExportHistorySubtitle(int count) {
+    return '$count item • JSON';
+  }
+
+  @override
+  String get settingsExportFormatPretty => 'Madaling basahin';
+
+  @override
+  String get settingsExportFormatCompact => 'Masiksik';
+
+  @override
+  String get settingsExportSafeShareNote =>
+      'Ligtas itong i-share para sa debugging, pero maaaring may laman itong mga pangalan/path ng device at serial.';
+
+  @override
+  String get settingsImportHistoryTitle => 'I-import ang history';
+
+  @override
+  String get settingsImportHistorySubtitle =>
+      'Idikit ang datos ng export o hilaw na listahan ng mga entry';
+
+  @override
+  String get settingsImportSupportedFormats =>
+      'Mga suportadong format: datos na device_history_export_v1 (inirerekomenda) o hilaw na JSON listahan ng mga entry sa history.';
+
+  @override
+  String get settingsImportHint => 'Idikit ang JSON dito…';
+
+  @override
+  String get settingsImportAction => 'Import';
+
+  @override
+  String get settingsImporting => 'Nag-i-import…';
+
+  @override
+  String get settingsImportReplacesHistoryNote =>
+      'Papapalitan ng import ang kasalukuyan mong history. Kung hindi ka sigurado, mag-export muna.';
+
+  @override
+  String get settingsClipboardEmpty => 'Walang laman ang clipboard.';
+
+  @override
+  String get settingsPasteJsonFirst => 'Idikit muna ang JSON.';
+
+  @override
+  String get pasteAction => 'Idikit';
+
+  @override
+  String get donationFocusCompatTitle => 'Pagkakatugma at mga pahintulot';
+
+  @override
+  String get donationFocusCompatSubtitle =>
+      'Mga kakaibang asal ng OEM, daloy ng pahintulot, edge cases';
+
+  @override
+  String get donationFocusUsbIdsTitle => 'Mga update sa database ng USB IDs';
+
+  @override
+  String get donationFocusUsbIdsSubtitle =>
+      'Pag-parse, pagiging bago, pagiging maaasahan ng update';
+
+  @override
+  String get donationFocusUiTitle => 'Pagkikinis ng UI/UX';
+
+  @override
+  String get donationFocusUiSubtitle => 'Linaw, bilis, accessibility';
+
+  @override
+  String get donationFocusFeaturesTitle => 'Mga bagong feature';
+
+  @override
+  String get donationFocusFeaturesSubtitle => 'Mga filter, export, insight';
+
+  @override
+  String donationShareHeader(Object appName) {
+    return 'Suportahan ang $appName - Open-source na app';
+  }
+
+  @override
+  String donationShareFocusLine(Object title) {
+    return 'Pokus: $title';
+  }
+
+  @override
+  String get donationShareChainBtc =>
+      'Bitcoin (BTC) - sa Bitcoin network lang magpadala.';
+
+  @override
+  String get donationShareChainEth =>
+      'Ethereum (ERC-20) - sa pangunahing network ng Ethereum lang magpadala.';
+
+  @override
+  String donationShareBtcAddress(Object address) {
+    return 'BTC address: $address';
+  }
+
+  @override
+  String donationShareEthAddress(Object address) {
+    return 'ETH address: $address';
+  }
+
+  @override
+  String donationShareRepo(Object url) {
+    return 'Repo: $url';
+  }
+
+  @override
+  String get donationNoBrowserForLiberapay =>
+      'Walang available na browser para buksan ang Liberapay';
+
+  @override
+  String get donationFailedToOpenLiberapay =>
+      'Hindi mabuksan ang Liberapay sa browser';
+
+  @override
+  String donationErrorOpeningLiberapay(Object error) {
+    return 'Error sa pagbukas ng Liberapay: $error';
+  }
+
+  @override
+  String get donationThankYouTitle => 'Salamat';
+
+  @override
+  String get donationThankYouBody =>
+      'Nakakatulong ang suporta mo para manatiling libre, mabilis, at aktibong napapanatili ang app na ito. Salamat sa pagsuporta sa open-source software.';
+
+  @override
+  String get donationFocusTitle => 'Pokus ng donasyon';
+
+  @override
+  String get donationFocusSubtitle =>
+      'Opsyonal. Tumutulong ito sa pag-priyoridad kung ano ang susunod na gagawin.';
+
+  @override
+  String get donationGeneralSupportTitle => 'Pangkalahatang suporta';
+
+  @override
+  String get donationGeneralSupportSubtitle => 'Pinakamainam sa kabuuan';
+
+  @override
+  String get donationSupportDevelopmentTitle => 'Suportahan ang development';
+
+  @override
+  String get donationSupportDevelopmentSubtitle =>
+      'Opsyonal na donasyong tumutustos sa maintenance at mga feature';
+
+  @override
+  String get donationOptionsTitle => 'Mga opsyon sa donasyon';
+
+  @override
+  String get donationOptionsSubtitle =>
+      'Pinananatili ng ambag mo ang tool na ito na libre, napapanatili, at pinapatakbo ng komunidad';
+
+  @override
+  String get donationRecommendedBadge => 'Inirerekomenda';
+
+  @override
+  String get donationLiberapayFlexibleSupport =>
+      'Flexible na mga opsyon sa suporta';
+
+  @override
+  String get donationTraditionalPayments =>
+      'Tradisyonal na paraan ng bayad (card, PayPal, bangko)';
+
+  @override
+  String get donationRecurringOrOneTime =>
+      'Flexible na regular na suporta o isang beses na ambag';
+
+  @override
+  String get donationTrustedByOpenSource =>
+      'Pinagkakatiwalaan ng mga open-source developer';
+
+  @override
+  String get donationOpeningBrowser => 'Binubuksan ang browser...';
+
+  @override
+  String get donationViaLiberapay => 'Mag-donate via Liberapay';
+
+  @override
+  String get donationLiberapayNote =>
+      'Ang Liberapay ay isang non-profit na donation platform na pinagkakatiwalaan ng mga open-source project.';
+
+  @override
+  String get donationCryptoSupportTitle =>
+      'Direktang suporta sa cryptocurrency';
+
+  @override
+  String get donationCryptoSupportSubtitle =>
+      'Opsyong nakatuon sa privacy • I-scan ang QR o kopyahin ang address';
+
+  @override
+  String get donationBtcShort => 'BTC';
+
+  @override
+  String get donationEthShort => 'ETH';
+
+  @override
+  String get donationGeneralShort => 'Pangkalahatan';
+
+  @override
+  String get donationBitcoinNetworkOnly => 'Bitcoin network lang';
+
+  @override
+  String get donationEthereumNetworkOnly =>
+      'Pangunahing network ng Ethereum lang';
+
+  @override
+  String get donationBitcoinTitle => 'Bitcoin donation';
+
+  @override
+  String get donationEthereumTitle => 'Ethereum donation';
+
+  @override
+  String get donationQrUnavailable => 'Hindi available ang QR code';
+
+  @override
+  String get donationAddressTitle => 'Address';
+
+  @override
+  String get donationBtcAddressCopied => 'Nakopya ang BTC address';
+
+  @override
+  String get donationEthAddressCopied => 'Nakopya ang ETH address';
+
+  @override
+  String get donationShareTextCopied => 'Nakopya ang share text';
+
+  @override
+  String get donationCopyAddress => 'Kopyahin ang address';
+
+  @override
+  String get donationShareAction => 'Ibahagi';
+
+  @override
+  String get donationSentAction => 'Nakapagpadala na ako ng donasyon';
+
+  @override
+  String get donationSecurityNote =>
+      'Paalala sa seguridad: Huwag pagkatiwalaan ang mga donation address mula sa screenshot, review, o third-party na pahina. Gamitin lang ang screen na ito sa loob ng app.';
+
+  @override
+  String deviceInterfaceTitle(Object id, Object classInfo) {
+    return 'Interfase $id • $classInfo';
+  }
+
+  @override
+  String get deviceAltSettingLabel => 'Alternatibong setting';
+
+  @override
+  String get deviceClassLabel => 'Klase';
+
+  @override
+  String deviceEndpointsTitle(int count) {
+    return 'Mga endpoint ($count)';
+  }
+
+  @override
+  String get deviceNoEndpoints => 'Walang endpoint';
+
+  @override
+  String deviceEndpointAddressSummary(
+    Object address,
+    Object number,
+    Object attributes,
+  ) {
+    return 'Addr $address • EP# $number • Attr $attributes';
+  }
+
+  @override
+  String deviceEndpointMaxPacket(Object value) {
+    return 'MaxPkt $value';
+  }
+
+  @override
+  String deviceEndpointInterval(Object value) {
+    return 'Interval $value';
+  }
+
+  @override
+  String get deviceControlTransferDefaultTitle => 'Paglilipat ng control';
+
+  @override
+  String get deviceRequestedLengthLabel => 'Hininging haba';
+
+  @override
+  String get deviceActualLengthLabel => 'Aktuwal na haba';
+
+  @override
+  String get deviceResultLabel => 'Resulta';
+
+  @override
+  String get deviceTransferSuccess => 'Tagumpay';
+
+  @override
+  String get deviceTransferFailed => 'Nabigo';
+
+  @override
+  String get deviceResponseBytesHexTitle => 'Mga byte ng tugon (hex)';
+
+  @override
+  String get deviceParsedFieldsTitle => 'Mga na-parse na field';
+
+  @override
+  String get deviceNoParsedFieldsAvailable =>
+      'Walang available na na-parse na field.';
+
+  @override
+  String get deviceRawBytesTitle => 'Hilaw na byte';
+
+  @override
+  String deviceInterfaceReportTitle(
+    Object interfaceNumber,
+    Object reportLength,
+  ) {
+    return 'Interfase $interfaceNumber • Ulat na $reportLength byte';
+  }
+
+  @override
+  String get deviceParsedSummaryTitle => 'Buod ng pag-parse';
+
+  @override
+  String get deviceNoParsedHidSummaryAvailable =>
+      'Walang available na na-parse na HID summary.';
+
+  @override
+  String get deviceReportHexTitle => 'Hex ng ulat';
+
+  @override
+  String get historyEntryNotFoundTitle => 'Hindi nahanap ang entry';
+
+  @override
+  String get historyEntryNotFoundBody =>
+      'Hindi na umiiral ang history item na ito.';
+
+  @override
+  String get historyUnableToOpenDetail =>
+      'Hindi mabuksan ang detalye ng history.';
 }

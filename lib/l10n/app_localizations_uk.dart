@@ -372,7 +372,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get supportPillHardwareAware => 'З урахуванням железа';
 
   @override
-  String get supportPillOpenSource => 'Open source';
+  String get supportPillOpenSource => 'Відкритий код';
 
   @override
   String get appearanceTitle => 'Внешний вид';
@@ -4845,7 +4845,7 @@ class AppLocalizationsUk extends AppLocalizations {
       'USBDevInfo перелічує OTG/USB host-пристрої, показує дескриптори та подробиці класу/протоколу, визначає VID/PID за допомогою офлайнової бази USB IDs і записує історію підключень. Без акаунтів, без стеження, без реклами.';
 
   @override
-  String get usbAboutUsbHostPill => 'USB host';
+  String get usbAboutUsbHostPill => 'USB-хост';
 
   @override
   String get usbAboutDescriptorsPill => 'Дескриптори';
@@ -5288,6 +5288,21 @@ class AppLocalizationsUk extends AppLocalizations {
   String get deviceShowPermissionDiagnostics => 'Показати діагностику дозволів';
 
   @override
+  String get devicePermissionStateTemporary => 'Тимчасово';
+
+  @override
+  String get devicePermissionStatePermanent => 'Постійно';
+
+  @override
+  String get devicePermissionStateReenumerated => 'Повторно виявлено';
+
+  @override
+  String get devicePermissionStateNotInApp => 'Немає в застосунку';
+
+  @override
+  String get devicePermissionStateRevoked => 'Відкликано';
+
+  @override
   String get deviceAndroidVersionLabel => 'Версія Android';
 
   @override
@@ -5322,6 +5337,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get deviceWhyDataUnavailableTitle => 'Чому дані недоступні';
+
+  @override
+  String get deviceWhyDataUnavailableSubtitle =>
+      'Точне обмеження Android або пристрою для прихованих полів';
 
   @override
   String get deviceReconnectDiffTitle => 'Різниця після перепідключення';
@@ -5452,7 +5471,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get deviceExportFormatReport => 'Текстовий звіт';
 
   @override
-  String get deviceExportFormatRawHex => 'Сирі hex-дескриптори';
+  String get deviceExportFormatRawHex => 'Сирі шістнадцяткові дескриптори';
 
   @override
   String get deviceRawDumpExportTitle => 'Експорт сирого дампа';
@@ -5468,7 +5487,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get deviceExportChipReport => 'Звіт';
 
   @override
-  String get deviceExportChipRawHex => 'Сирий hex';
+  String get deviceExportChipRawHex => 'Сирі hex-дані';
 
   @override
   String get deviceCopyAction => 'Копіювати';
@@ -5632,7 +5651,633 @@ class AppLocalizationsUk extends AppLocalizations {
   String get deviceInputSourcesLabel => 'Джерела введення';
 
   @override
+  String deviceShowingFirstFields(int count) {
+    return 'Показано лише перші $count полів.';
+  }
+
+  @override
   String deviceShowingFirstDescriptors(int count) {
     return 'Показано перші $count дескрипторів.';
   }
+
+  @override
+  String get settingsUsbBehaviorTitle => 'Поведінка USB';
+
+  @override
+  String get settingsUsbBehaviorSubtitle =>
+      'Керуйте системними запитами під час підключення USB-пристрою';
+
+  @override
+  String get settingsUsbOfferOnAttachTitle =>
+      'Пропонувати відкриття при підключенні USB';
+
+  @override
+  String get settingsUsbOfferOnAttachSubtitle =>
+      'Показуватися у вікні вибору Android, коли підключено USB-пристрій.';
+
+  @override
+  String get settingsUsbDisableAttachNote =>
+      'Вимкніть це, щоб Android не пропонував USBDevInfo при підключенні пристрою. Якщо застосунок відкритий, він і далі виявлятиме пристрої.';
+
+  @override
+  String get settingsAttachFilterScopeLabel => 'Область фільтра підключення';
+
+  @override
+  String get settingsAttachFilterScopeAllUsbDevices => 'Усі USB-пристрої';
+
+  @override
+  String get settingsAttachLaunchBehaviorLabel =>
+      'Поведінка запуску при підключенні';
+
+  @override
+  String get settingsAttachLaunchBehaviorEnabled =>
+      'Відкривати лише тоді, коли Android явно запускає USBDevInfo з вікна вибору USB-підключення';
+
+  @override
+  String get settingsAttachLaunchBehaviorDisabled =>
+      'Псевдонім вікна вибору вимкнено';
+
+  @override
+  String get settingsWhileAppOpenLabel => 'Поки застосунок відкрито';
+
+  @override
+  String get settingsWhileAppOpenValue =>
+      'Події підключення/відключення USB оновлюють дані пристрою без примусової навігації';
+
+  @override
+  String get settingsBackupDataTitle => 'Резервні копії та дані';
+
+  @override
+  String get settingsBackupDataSubtitle =>
+      'Експортуйте історію пристроїв у JSON';
+
+  @override
+  String get settingsHistoryLabel => 'Історія';
+
+  @override
+  String get settingsMostRecentLabel => 'Останнє';
+
+  @override
+  String get settingsNoHistoryYet => 'Історії ще немає';
+
+  @override
+  String settingsHistoryRecordedCount(int count) {
+    return 'Записано $count елемент(ів)';
+  }
+
+  @override
+  String get settingsBackupExportIncludes =>
+      'Експорт містить vendor/product ID, визначені назви, рядки, class/protocol, часові мітки та розширені відомості (descriptors, configurations, interfaces, HID reports), якщо дозвіл було надано.';
+
+  @override
+  String get settingsExportJsonAction => 'Експортувати JSON';
+
+  @override
+  String get settingsImportJsonAction => 'Імпортувати JSON';
+
+  @override
+  String get settingsUsbIdsDatabaseTitle => 'База USB IDs';
+
+  @override
+  String get settingsUsbIdsDatabaseSubtitle => 'Метадані та оновлювач';
+
+  @override
+  String deviceConfigurationTitle(Object id, Object suffix) {
+    return 'Конфігурація $id$suffix';
+  }
+
+  @override
+  String get deviceAttributesLabel => 'Атрибути';
+
+  @override
+  String get deviceInterfacesSummaryTitle => 'Інтерфейси (підсумок)';
+
+  @override
+  String deviceInterfaceShortLabel(Object id) {
+    return 'Інтерфейс $id';
+  }
+
+  @override
+  String deviceInterfaceSummaryValue(Object classValue, Object endpointCount) {
+    return 'Клас $classValue • EP $endpointCount';
+  }
+
+  @override
+  String deviceInterfaceStringLabel(
+    Object interfaceNumber,
+    Object alternateSetting,
+  ) {
+    return 'Інтерфейс $interfaceNumber (Alt $alternateSetting)';
+  }
+
+  @override
+  String get deviceKeyboardChip => 'Клавіатура';
+
+  @override
+  String get deviceMouseChip => 'Миша';
+
+  @override
+  String deviceReportIdsChip(Object count) {
+    return 'ID звітів: $count';
+  }
+
+  @override
+  String deviceCollectionsChip(Object count) {
+    return 'Колекції: $count';
+  }
+
+  @override
+  String deviceUsagePagesChip(Object pages) {
+    return 'Сторінки usage: $pages';
+  }
+
+  @override
+  String get homeCapabilityAudio => 'Аудіо';
+
+  @override
+  String get homeCapabilityVideo => 'Відео';
+
+  @override
+  String get homeCapabilityHid => 'HID-пристрій';
+
+  @override
+  String get homeCapabilityMidi => 'MIDI-пристрій';
+
+  @override
+  String get homeCapabilityStorage => 'Сховище';
+
+  @override
+  String get homeCapabilityHub => 'Хаб';
+
+  @override
+  String get homeCapabilityCdc => 'CDC-пристрій';
+
+  @override
+  String get homeCapabilityComposite => 'Складений';
+
+  @override
+  String get homeCapabilityInput => 'Ввід';
+
+  @override
+  String get settingsUsbIdsLocalVersionLabel => 'Локальна версія';
+
+  @override
+  String get settingsUsbIdsLocalDateLabel => 'Локальна дата';
+
+  @override
+  String get settingsUsbIdsRemoteShaNotFetched =>
+      'Віддалений SHA ще не отримано.';
+
+  @override
+  String get settingsUsbIdsInstalledShaAfterUpdate =>
+      'Встановлений SHA буде збережено після успішного оновлення.';
+
+  @override
+  String get settingsUsbIdsInstalledShaMatchesRemote =>
+      'Встановлений SHA збігається з віддаленим.';
+
+  @override
+  String get settingsUsbIdsInstalledShaDiffersRemote =>
+      'Встановлений SHA відрізняється від віддаленого (є оновлення).';
+
+  @override
+  String get settingsUsbIdsDetailsTitle => 'Деталі';
+
+  @override
+  String get settingsUsbIdsInstalledShaLabel => 'Встановлений SHA-256';
+
+  @override
+  String get settingsUsbIdsRemoteShaLabel => 'Віддалений SHA-256';
+
+  @override
+  String get settingsUsbIdsShaMatchLabel => 'Збіг SHA';
+
+  @override
+  String get settingsUsbIdsLastCheckedLabel => 'Остання перевірка';
+
+  @override
+  String get settingsUsbIdsUpdateHintLabel => 'Підказка щодо оновлення';
+
+  @override
+  String get settingsUsbIdsUpdateHintAvailable => 'Доступно';
+
+  @override
+  String get settingsUsbIdsUpdateHintNone => 'Немає';
+
+  @override
+  String get settingsUsbIdsAutoCheckTitle => 'Автоперевірка оновлень';
+
+  @override
+  String get settingsUsbIdsAutoCheckSubtitle =>
+      'Перевіряє віддалений .sha256 приблизно раз на тиждень.';
+
+  @override
+  String get settingsUpdateNow => 'Оновити зараз';
+
+  @override
+  String get settingsCheckNow => 'Перевірити зараз';
+
+  @override
+  String get settingsAboutSectionTitle => 'Про програму';
+
+  @override
+  String get settingsAboutSectionSubtitle =>
+      'Інформація про застосунок і правові відомості';
+
+  @override
+  String settingsAboutAppTileTitle(Object appName, Object developer) {
+    return 'Про $appName · $developer';
+  }
+
+  @override
+  String settingsAboutVersion(Object version) {
+    return 'Версія $version';
+  }
+
+  @override
+  String get settingsLicensesTitle => 'Ліцензії';
+
+  @override
+  String get settingsLicensesSubtitle => 'Ліцензії open source';
+
+  @override
+  String get settingsReportIssueTitle => 'Повідомити про проблему';
+
+  @override
+  String get settingsReportIssueSubtitle => 'Баги та запити на функції';
+
+  @override
+  String get settingsIssuesLinkCopied => 'Посилання на issues скопійовано';
+
+  @override
+  String get settingsNoHistoryToExport => 'Немає історії для експорту.';
+
+  @override
+  String get settingsExportCopied => 'Експорт скопійовано в буфер обміну.';
+
+  @override
+  String settingsExportFailed(Object error) {
+    return 'Не вдалося експортувати: $error';
+  }
+
+  @override
+  String get settingsImportUnsupportedFormat =>
+      'Непідтримуваний формат JSON. Очікується список або дані експорту зі schema=device_history_export_v1.';
+
+  @override
+  String get settingsImportNoValidHistoryEntries =>
+      'Не знайдено жодного коректного запису історії.';
+
+  @override
+  String settingsImportedItems(int count) {
+    return 'Імпортовано $count елемент(ів).';
+  }
+
+  @override
+  String settingsImportFailed(Object error) {
+    return 'Не вдалося імпортувати: $error';
+  }
+
+  @override
+  String get settingsClearHistoryBodyDetailed =>
+      'Це видалить усі записані пристрої з локального сховища.';
+
+  @override
+  String get settingsHistoryCleared => 'Історію очищено.';
+
+  @override
+  String get settingsExportHistoryTitle => 'Експорт історії';
+
+  @override
+  String settingsExportHistorySubtitle(int count) {
+    return '$count елемент(ів) • JSON';
+  }
+
+  @override
+  String get settingsExportFormatPretty => 'Форматований';
+
+  @override
+  String get settingsExportFormatCompact => 'Компактний';
+
+  @override
+  String get settingsExportSafeShareNote =>
+      'Цей експорт безпечно ділитися для налагодження, але він може містити назви/шляхи пристроїв і серійні номери.';
+
+  @override
+  String get settingsImportHistoryTitle => 'Імпорт історії';
+
+  @override
+  String get settingsImportHistorySubtitle =>
+      'Вставте дані експорту або сирий список записів';
+
+  @override
+  String get settingsImportSupportedFormats =>
+      'Підтримувані формати: дані device_history_export_v1 (рекомендовано) або сирий JSON-список записів історії.';
+
+  @override
+  String get settingsImportHint => 'Вставте JSON сюди…';
+
+  @override
+  String get settingsImportAction => 'Імпортувати';
+
+  @override
+  String get settingsImporting => 'Імпорт…';
+
+  @override
+  String get settingsImportReplacesHistoryNote =>
+      'Імпорт замінить вашу поточну історію. Якщо не впевнені, спочатку зробіть експорт.';
+
+  @override
+  String get settingsClipboardEmpty => 'Буфер обміну порожній.';
+
+  @override
+  String get settingsPasteJsonFirst => 'Спочатку вставте JSON.';
+
+  @override
+  String get pasteAction => 'Вставити';
+
+  @override
+  String get donationFocusCompatTitle => 'Сумісність і дозволи';
+
+  @override
+  String get donationFocusCompatSubtitle =>
+      'Особливості OEM, потоки дозволів, крайові випадки';
+
+  @override
+  String get donationFocusUsbIdsTitle => 'Оновлення бази USB IDs';
+
+  @override
+  String get donationFocusUsbIdsSubtitle =>
+      'Парсинг, актуальність, надійність оновлень';
+
+  @override
+  String get donationFocusUiTitle => 'Полірування UI/UX';
+
+  @override
+  String get donationFocusUiSubtitle => 'Ясність, швидкість, доступність';
+
+  @override
+  String get donationFocusFeaturesTitle => 'Нові функції';
+
+  @override
+  String get donationFocusFeaturesSubtitle => 'Фільтри, експорт, інсайти';
+
+  @override
+  String donationShareHeader(Object appName) {
+    return 'Підтримайте $appName - застосунок з відкритим кодом';
+  }
+
+  @override
+  String donationShareFocusLine(Object title) {
+    return 'Фокус: $title';
+  }
+
+  @override
+  String get donationShareChainBtc =>
+      'Bitcoin (BTC) - надсилайте лише через мережу Bitcoin.';
+
+  @override
+  String get donationShareChainEth =>
+      'Ethereum (ERC-20) - надсилайте лише через основну мережу Ethereum.';
+
+  @override
+  String donationShareBtcAddress(Object address) {
+    return 'BTC-адреса: $address';
+  }
+
+  @override
+  String donationShareEthAddress(Object address) {
+    return 'ETH-адреса: $address';
+  }
+
+  @override
+  String donationShareRepo(Object url) {
+    return 'Репозиторій: $url';
+  }
+
+  @override
+  String get donationNoBrowserForLiberapay =>
+      'Немає браузера для відкриття Liberapay';
+
+  @override
+  String get donationFailedToOpenLiberapay =>
+      'Не вдалося відкрити Liberapay у браузері';
+
+  @override
+  String donationErrorOpeningLiberapay(Object error) {
+    return 'Помилка відкриття Liberapay: $error';
+  }
+
+  @override
+  String get donationThankYouTitle => 'Дякуємо';
+
+  @override
+  String get donationThankYouBody =>
+      'Ваша підтримка допомагає зберігати цей застосунок безкоштовним, швидким і активно підтримуваним. Дякуємо за підтримку open-source програмного забезпечення.';
+
+  @override
+  String get donationFocusTitle => 'Фокус пожертви';
+
+  @override
+  String get donationFocusSubtitle =>
+      'Необов’язково. Допомагає визначити, над чим працювати далі.';
+
+  @override
+  String get donationGeneralSupportTitle => 'Загальна підтримка';
+
+  @override
+  String get donationGeneralSupportSubtitle => 'Найкращий варіант загалом';
+
+  @override
+  String get donationSupportDevelopmentTitle => 'Підтримати розробку';
+
+  @override
+  String get donationSupportDevelopmentSubtitle =>
+      'Необов’язкова пожертва на підтримку і нові функції';
+
+  @override
+  String get donationOptionsTitle => 'Варіанти пожертви';
+
+  @override
+  String get donationOptionsSubtitle =>
+      'Ваш внесок допомагає зберігати цей інструмент безкоштовним, підтримуваним і керованим спільнотою';
+
+  @override
+  String get donationRecommendedBadge => 'Рекомендовано';
+
+  @override
+  String get donationLiberapayFlexibleSupport => 'Гнучкі варіанти підтримки';
+
+  @override
+  String get donationTraditionalPayments =>
+      'Традиційні способи оплати (картка, PayPal, банк)';
+
+  @override
+  String get donationRecurringOrOneTime =>
+      'Гнучка регулярна підтримка або разовий внесок';
+
+  @override
+  String get donationTrustedByOpenSource =>
+      'Йому довіряють open-source розробники';
+
+  @override
+  String get donationOpeningBrowser => 'Відкриваємо браузер...';
+
+  @override
+  String get donationViaLiberapay => 'Пожертвувати через Liberapay';
+
+  @override
+  String get donationLiberapayNote =>
+      'Liberapay — це некомерційна платформа пожертв, якій довіряють open-source проєкти.';
+
+  @override
+  String get donationCryptoSupportTitle => 'Пряма підтримка криптовалютою';
+
+  @override
+  String get donationCryptoSupportSubtitle =>
+      'Варіант із фокусом на приватність • Скануйте QR або скопіюйте адресу';
+
+  @override
+  String get donationBtcShort => 'BTC';
+
+  @override
+  String get donationEthShort => 'ETH';
+
+  @override
+  String get donationGeneralShort => 'Загальна';
+
+  @override
+  String get donationBitcoinNetworkOnly => 'Лише мережа Bitcoin';
+
+  @override
+  String get donationEthereumNetworkOnly => 'Лише основна мережа Ethereum';
+
+  @override
+  String get donationBitcoinTitle => 'Пожертва Bitcoin';
+
+  @override
+  String get donationEthereumTitle => 'Пожертва Ethereum';
+
+  @override
+  String get donationQrUnavailable => 'QR-код недоступний';
+
+  @override
+  String get donationAddressTitle => 'Адреса';
+
+  @override
+  String get donationBtcAddressCopied => 'BTC-адресу скопійовано';
+
+  @override
+  String get donationEthAddressCopied => 'ETH-адресу скопійовано';
+
+  @override
+  String get donationShareTextCopied => 'Текст для поширення скопійовано';
+
+  @override
+  String get donationCopyAddress => 'Скопіювати адресу';
+
+  @override
+  String get donationShareAction => 'Поділитися';
+
+  @override
+  String get donationSentAction => 'Я вже надіслав(ла) пожертву';
+
+  @override
+  String get donationSecurityNote =>
+      'Примітка щодо безпеки: не довіряйте адресам для пожертв зі скриншотів, відгуків чи сторонніх сторінок. Використовуйте лише цей екран у застосунку.';
+
+  @override
+  String deviceInterfaceTitle(Object id, Object classInfo) {
+    return 'Інтерфейс $id • $classInfo';
+  }
+
+  @override
+  String get deviceAltSettingLabel => 'Альтернативне налаштування';
+
+  @override
+  String get deviceClassLabel => 'Клас';
+
+  @override
+  String deviceEndpointsTitle(int count) {
+    return 'Кінцеві точки ($count)';
+  }
+
+  @override
+  String get deviceNoEndpoints => 'Кінцевих точок немає';
+
+  @override
+  String deviceEndpointAddressSummary(
+    Object address,
+    Object number,
+    Object attributes,
+  ) {
+    return 'Адреса $address • EP# $number • Атрибути $attributes';
+  }
+
+  @override
+  String deviceEndpointMaxPacket(Object value) {
+    return 'Макс. пакет $value';
+  }
+
+  @override
+  String deviceEndpointInterval(Object value) {
+    return 'Інтервал $value';
+  }
+
+  @override
+  String get deviceControlTransferDefaultTitle => 'Керуюча передача';
+
+  @override
+  String get deviceRequestedLengthLabel => 'Запитана довжина';
+
+  @override
+  String get deviceActualLengthLabel => 'Фактична довжина';
+
+  @override
+  String get deviceResultLabel => 'Результат';
+
+  @override
+  String get deviceTransferSuccess => 'Успішно';
+
+  @override
+  String get deviceTransferFailed => 'Помилка';
+
+  @override
+  String get deviceResponseBytesHexTitle => 'Байти відповіді (hex)';
+
+  @override
+  String get deviceParsedFieldsTitle => 'Розібрані поля';
+
+  @override
+  String get deviceNoParsedFieldsAvailable => 'Розібрані поля недоступні.';
+
+  @override
+  String get deviceRawBytesTitle => 'Сирі байти';
+
+  @override
+  String deviceInterfaceReportTitle(
+    Object interfaceNumber,
+    Object reportLength,
+  ) {
+    return 'Інтерфейс $interfaceNumber • Звіт $reportLength байт';
+  }
+
+  @override
+  String get deviceParsedSummaryTitle => 'Підсумок розбору';
+
+  @override
+  String get deviceNoParsedHidSummaryAvailable =>
+      'Розібраний підсумок HID недоступний.';
+
+  @override
+  String get deviceReportHexTitle => 'Звіт (hex)';
+
+  @override
+  String get historyEntryNotFoundTitle => 'Запис не знайдено';
+
+  @override
+  String get historyEntryNotFoundBody => 'Цей елемент історії більше не існує.';
+
+  @override
+  String get historyUnableToOpenDetail => 'Не вдалося відкрити деталі історії.';
 }

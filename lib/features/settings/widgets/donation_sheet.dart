@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../l10n/l10n.dart';
 
 enum DonationChain { btc, eth }
 
@@ -39,33 +40,34 @@ class _DonationSheetState extends State<DonationSheet> {
   static const String _ethQrPngBase64 =
       'iVBORw0KGgoAAAANSUhEUgAAAUAAAAFACAYAAADNkKWqAAAAAklEQVR4AewaftIAAAxFSURBVO3B0W0kSxIEwfAE9VfZbwWo+uiHxgx5GWb4T6qqFppUVS01qapaalJVtdSkqmqpSVXVUpOqqqUmVVVLTaqqlppUVS01qapaalJVtdSkqmqpSVXVUpOqqqUmVVVLTaqqlppUVS01qapaalJVtdSkqmqpSVXVUpOqqqUmVVVLTaqqlppUVS01qapa6icfBOSvUfMUkE9R8xYgN2pOgHyCmhsgJ2o+Aci3qbkB8teo+YRJVdVSk6qqpSZVVUtNqqqWmlRVLfWTX0DNtwF5i5obIG8CcqLmKTVvUvMUkBMgN2reAuRT1DwF5C1qvg3IN02qqpaaVFUtNamqWmpSVbXUpKpqqUlV1VI/+eWAvEXNm4CcqLlRcwLkRs0NkG9ScwPkm4DcqHlKzQmQGzU3QE7UfBuQt6j5rSZVVUtNqqqWmlRVLTWpqlpqUlW11E/qdUBu1JyouQHyFJCn1DwF5EbNW4C8CchTQJ4CcqPmBEh9xqSqaqlJVdVSk6qqpSZVVUtNqqqWmlRVLfWT+r+k5gbICZAbNSdqngLyJiAnar4NyA2Qp9TUeyZVVUtNqqqWmlRVLTWpqlpqUlW11E9+OTX/T4A8peYT1HyCmhsgT6l5CsiJmhsgn6Dm29RsMKmqWmpSVbXUpKpqqUlV1VKTqqqlJlVVS/3kFwDy/0TNDZATNTdAbtScALlRcwLkRs0JkBs1J0Bu1JwAeQrIjZoTIDdqToDcqLkB8hSQEzVPAdluUlW11KSqaqlJVdVSk6qqpSZVVUv95IPUbKfmKTU3QH4rIE8BOVHzlJpPUPObqamzSVXVUpOqqqUmVVVLTaqqlppUVS01qapa6icfBOREzQ2Qb1Jzo+YtQD4FyFvUPAXkRs1bgLwJyImaGyDfBuSb1PxWk6qqpSZVVUtNqqqWmlRVLTWpqlrqJx+k5gTIt6n5BCBPqXkTkBM1TwF5Ss0NkLeoeROQEyA3ap4CcqPmLWpugDyl5ikgJ2o+YVJVtdSkqmqpSVXVUpOqqqUmVVVLTaqqlvrJL6DmBsgnAHlKzVvUvAnIjZoTIDdqTtQ8BeRGzQmQGzVvAfImIE+puQFyouYvUvNNk6qqpSZVVUtNqqqWmlRVLTWpqlrqJ78AkKfU3AA5UfMJQG7UvAnIU0BO1DwF5Ck1N0BO1NwAeUrNW9T8RUC+DciJmk+YVFUtNamqWmpSVbXUpKpqqUlV1VKTqqql8J/8YkDeouYGyFNqToDcqDkB8l+oeQuQN6n5rYCcqLkBcqLmBsiNmhMgN2reAuRGzQmQN6n5pklV1VKTqqqlJlVVS02qqpaaVFUtNamqWgr/yZcBeUrNDZCn1JwAuVHzFiDfpuYGyImap4DcqDkB8pSap4DcqDkBcqPmBshb1NwAOVFzA+REzQ2Qt6j5hElV1VKTqqqlJlVVS02qqpaaVFUt9ZNF1NwAeQrIU2pO1HwbkDcBOVHzJjWfAOREzX+h5ikgJ0Bu1JwAuVFzAuRGzV8zqapaalJVtdSkqmqpSVXVUpOqqqUmVVVL/eQXUHMD5Ck1T6n5BCBvUnMC5EbNU2reAuQpNTdATtT8v1FzAuQGyImaGyAbTKqqlppUVS01qapaalJVtdSkqmop/CdfBuRNak6APKXmBsgnqLkBcqLmTUBO1NwAOVHzFJBPUHMD5ETNDZAbNSdAbtS8BciNmqeAnKi5AXKi5hMmVVVLTaqqlppUVS01qapaalJVtdSkqmqpn/wCam6AnKi5AfKUmhMgN2qeAnKi5r9Q8xSQbwLylJobICdqboCcALlRcwLkRs2bgHwCkA0mVVVLTaqqlppUVS01qapaalJVtRT+kw8B8hY1N0BO1NwAOVHzCUD+IjW/FZDfTM03Afk2Nd80qapaalJVtdSkqmqpSVXVUpOqqqUmVVVL/eSD1LwFyI2aEyA3ap4CcqLm29Q8BeQpIDdqngJyouZNap4CcqLmTUD+IjUnQG6AnKj5hElV1VKTqqqlJlVVS02qqpaaVFUt9ZMPAnKi5k1ATtTcAHlKzQmQbwPylJpvU3MC5Ck1N0BO1LwJyFNqngJyo+YtQG6AnKj5rSZVVUtNqqqWmlRVLTWpqlpqUlW11KSqain8J18G5EbNU0BO1HwbkBM1fxGQT1BzA+QpNW8BcqPmBsiJmhsgJ2pugHyCmhMgT6n5hElV1VKTqqqlJlVVS02qqpaaVFUt9ZMPAvIWIE8BeUrNDZATNd8G5E1qTtR8m5qngJyouQHybWreouYGyFvU/FaTqqqlJlVVS02qqpaaVFUtNamqWmpSVbXUTz5IzQmQGyAnap4CcqPmBMhTQG7UvAnIW9Q8BeQpNTdATtS8Sc0JkKfUfAqQEzU3ar4JyFNqPmFSVbXUpKpqqUlV1VKTqqqlJlVVS+E/+TIgb1JzAuQpNW8C8pSaGyAnam6AfIKaEyBvUnMC5Ck1N0BO1NwAuVHzFiA3ak6A3Kg5AfKUmt9qUlW11KSqaqlJVdVSk6qqpSZVVUtNqqqW+skHATlRcwPkE9S8BciNmjepOQHylJobICdqboCcqLkBcqLmKTVPAblRcwLkRs1TQJ5ScwPkKSBPqXkKyImaT5hUVS01qapaalJVtdSkqmqpSVXVUvhPPgTIU2pOgNyoeQrIiZobICdqboD8VmpugJyoeQrIjZq3APmL1NwAeUpNnU2qqpaaVFUtNamqWmpSVbXUpKpqqUlV1VI/+aPU3AA5UXOj5gTIJ6j5L4A8peYEyI2aTwDyCWpOgNyo+YuAPKXmBMiNmhMgN2q+aVJVtdSkqmqpSVXVUpOqqqUmVVVL/eQXUPMUkKeAPKXmBsgWQE7UPKXmKSA3ak6A3AA5UXMD5Ck1b1LzCUBO1NwA+WsmVVVLTaqqlppUVS01qapaalJVtdSkqmqpn/xyQE7U/FZA3gTkRs1TQE7UPAXkRs1b1NwAOVFzA+QEyI2aEyD/BZC3qLkB8glqToDcADlR8wmTqqqlJlVVS02qqpaaVFUtNamqWmpSVbUU/pMPAXKi5gbIiZobICdqboCcqHkKyJvU3AB5Ss0JkDepOQFyo+abgHybmk8A8iY1f82kqmqpSVXVUpOqqqUmVVVLTaqqlvrJHwXkKSA3ak6A3Kg5UXMD5E1qToC8Sc0JkDcB+QQ1T6k5AXKj5k1ATtR8gpr/J5OqqqUmVVVLTaqqlppUVS01qapaalJVtdRPfjk1bwFyA+QtQN4E5Ck1N0BO1NwAeYuap4DcqDkB8glqboDcqHkLkE8A8iY13zSpqlpqUlW11KSqaqlJVdVSk6qqpfCf1H8C5Ck1TwG5UfNNQJ5ScwPkLWpugDyl5gTIjZo3ATlR8yYgT6l5CsiJmk+YVFUtNamqWmpSVbXUpKpqqUlV1VKTqqqlfvJBQP4aNTdqToC8Sc0NkLeoeZOaEyA3at4C5EbNCZAbIG8C8glATtR8ApAbNd80qapaalJVtdSkqmqpSVXVUpOqqqV+8guo+TYgTwE5UXMD5Ck1b1LzFjU3QE7U3AB5Ss2Jmjep+QQ1N0CeUlNnk6qqpSZVVUtNqqqWmlRVLTWpqlpqUlW11E9+OSBvUfMJQG7UnAC5AXKj5gTIDZATNU8BuVFzAuRGzQmQNwF5CsiJmhsgN2reAuQT1NwAeQrIiZpPmFRVLTWpqlpqUlW11KSqaqlJVdVSP6nXqbkB8pSaN6k5AfKUmhsgJ2pugJyouQHylJoTIDdqToD8F0BO1Nyo+a3UnAD5rSZVVUtNqqqWmlRVLTWpqlpqUlW11KSqaqmf1OuAfAqQt6h5CsiNmhMgTwG5UXMC5E1AnlJzA+QTgLxFzVNqfqtJVdVSk6qqpSZVVUtNqqqWmlRVLfWTX07Nb6XmBMiNmr8IyFNATtTcADlR85SaT1DzKUCeUvMUkBMgN2pOgNyo+aZJVdVSk6qqpSZVVUtNqqqWmlRVLTWpqlrqJ78AkL8IyImap4DcqLlRcwLkE9Q8BeRGzScAOVFzA+RNak6A3Kj5BDUnQG6AnKj5rSZVVUtNqqqWmlRVLTWpqlpqUlW1FP6TqqqFJlVVS02qqpaaVFUtNamqWmpSVbXUpKpqqUlV1VKTqqqlJlVVS02qqpaaVFUtNamqWmpSVbXUpKpqqUlV1VKTqqqlJlVVS02qqpaaVFUtNamqWmpSVbXUpKpqqUlV1VKTqqqlJlVVS/0PO0XJw7AlHgIAAAAASUVORK5CYII=';
 
-  final List<_DonationFocus> _focuses = const [
-    _DonationFocus(
-      id: 'compat',
-      title: 'Compatibility & permissions',
-      subtitle: 'OEM quirks, permission flows, edge cases',
-    ),
-    _DonationFocus(
-      id: 'usbids',
-      title: 'USB IDs database updates',
-      subtitle: 'Parsing, freshness, update reliability',
-    ),
-    _DonationFocus(
-      id: 'ui',
-      title: 'UI/UX polish',
-      subtitle: 'Clarity, speed, accessibility',
-    ),
-    _DonationFocus(
-      id: 'features',
-      title: 'New features',
-      subtitle: 'Filters, exports, insights',
-    ),
-  ];
+  List<_DonationFocus> _focuses(BuildContext context) => [
+        _DonationFocus(
+          id: 'compat',
+          title: context.l10n.donationFocusCompatTitle,
+          subtitle: context.l10n.donationFocusCompatSubtitle,
+        ),
+        _DonationFocus(
+          id: 'usbids',
+          title: context.l10n.donationFocusUsbIdsTitle,
+          subtitle: context.l10n.donationFocusUsbIdsSubtitle,
+        ),
+        _DonationFocus(
+          id: 'ui',
+          title: context.l10n.donationFocusUiTitle,
+          subtitle: context.l10n.donationFocusUiSubtitle,
+        ),
+        _DonationFocus(
+          id: 'features',
+          title: context.l10n.donationFocusFeaturesTitle,
+          subtitle: context.l10n.donationFocusFeaturesSubtitle,
+        ),
+      ];
 
-  _DonationFocus? get _selectedFocus {
+  _DonationFocus? _selectedFocus(BuildContext context) {
     final id = _focusId;
     if (id == null) return null;
-    return _focuses.firstWhere((f) => f.id == id, orElse: () => _focuses.first);
+    final focuses = _focuses(context);
+    return focuses.firstWhere((f) => f.id == id, orElse: () => focuses.first);
   }
 
   static Uint8List _safeDecode(String b64) {
@@ -103,18 +105,16 @@ class _DonationSheetState extends State<DonationSheet> {
     return '${s.substring(0, head)}…${s.substring(s.length - tail)}';
   }
 
-  String _buildShareText({required bool isBtc, _DonationFocus? focus}) {
-    final focusLine = focus == null ? '' : 'Focus: ${focus.title}\n';
-    final chainLine = isBtc
-        ? 'Bitcoin (BTC) — send on Bitcoin network only.\n'
-        : 'Ethereum (ERC-20) — send on Ethereum mainnet only.\n';
-    final addrLine = isBtc ? 'BTC address: ${widget.btcAddress}\n' : 'ETH address: ${widget.ethAddress}\n';
-    return ''
-        'Support ${widget.appName} - Open Source App\n'
-        '$focusLine'
-        '$chainLine'
-        '$addrLine'
-        'Repo: ${widget.repoUrl}\n';
+  String _buildShareText(BuildContext context, {required bool isBtc, _DonationFocus? focus}) {
+    final l10n = context.l10n;
+    final lines = <String>[
+      l10n.donationShareHeader(widget.appName),
+      if (focus != null) l10n.donationShareFocusLine(focus.title),
+      isBtc ? l10n.donationShareChainBtc : l10n.donationShareChainEth,
+      isBtc ? l10n.donationShareBtcAddress(widget.btcAddress) : l10n.donationShareEthAddress(widget.ethAddress),
+      l10n.donationShareRepo(widget.repoUrl),
+    ];
+    return '${lines.join('\n')}\n';
   }
 
   Future<void> _openLiberapay() async {
@@ -124,16 +124,16 @@ class _DonationSheetState extends State<DonationSheet> {
       final canLaunch = await canLaunchUrl(uri);
       if (!canLaunch) {
         if (!mounted) return;
-        _showError('No browser available to open Liberapay');
+        _showError(context.l10n.donationNoBrowserForLiberapay);
         return;
       }
       final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (!launched && mounted) {
-        _showError('Failed to open Liberapay in browser');
+        _showError(context.l10n.donationFailedToOpenLiberapay);
       }
     } catch (e) {
       if (!mounted) return;
-      _showError('Error opening Liberapay: $e');
+      _showError(context.l10n.donationErrorOpeningLiberapay('$e'));
     } finally {
       if (mounted) {
         setState(() => _liberapayLoading = false);
@@ -158,15 +158,15 @@ class _DonationSheetState extends State<DonationSheet> {
       context: context,
       builder: (ctx) => AlertDialog(
         icon: Icon(Icons.favorite_rounded, color: theme.colorScheme.primary, size: 40),
-        title: const Text('Thank You! 💙'),
+        title: Text(context.l10n.donationThankYouTitle),
         content: Text(
-          'Your support helps keep this app free, fast, and actively maintained. Thank you for supporting open-source software.',
+          context.l10n.donationThankYouBody,
           style: theme.textTheme.bodyMedium,
         ),
         actions: [
           FilledButton.tonal(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Close'),
+            child: Text(context.l10n.close),
           ),
         ],
       ),
@@ -176,6 +176,8 @@ class _DonationSheetState extends State<DonationSheet> {
   Future<void> _pickFocus() async {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final l10n = context.l10n;
+    final focuses = _focuses(context);
 
     final selected = await showModalBottomSheet<String?>(
       context: context,
@@ -189,12 +191,12 @@ class _DonationSheetState extends State<DonationSheet> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           children: [
             Text(
-              'Donation Focus',
+              l10n.donationFocusTitle,
               style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 6),
             Text(
-              'Optional. Helps prioritize what to work on next.',
+              l10n.donationFocusSubtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: cs.onSurface.withOpacity(0.7),
               ),
@@ -206,20 +208,20 @@ class _DonationSheetState extends State<DonationSheet> {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.all_inclusive_rounded),
-                    title: const Text('General Support'),
-                    subtitle: const Text('Best overall option'),
+                    title: Text(l10n.donationGeneralSupportTitle),
+                    subtitle: Text(l10n.donationGeneralSupportSubtitle),
                     trailing: _focusId == null ? const Icon(Icons.check_rounded) : null,
                     onTap: () => Navigator.of(ctx).pop(''),
                   ),
                   const Divider(height: 0),
-                  for (int i = 0; i < _focuses.length; i++) ...[
+                  for (int i = 0; i < focuses.length; i++) ...[
                     if (i != 0) const Divider(height: 0),
                     ListTile(
                       leading: const Icon(Icons.flag_outlined),
-                      title: Text(_focuses[i].title),
-                      subtitle: Text(_focuses[i].subtitle),
-                      trailing: _focusId == _focuses[i].id ? const Icon(Icons.check_rounded) : null,
-                      onTap: () => Navigator.of(ctx).pop(_focuses[i].id),
+                      title: Text(focuses[i].title),
+                      subtitle: Text(focuses[i].subtitle),
+                      trailing: _focusId == focuses[i].id ? const Icon(Icons.check_rounded) : null,
+                      onTap: () => Navigator.of(ctx).pop(focuses[i].id),
                     ),
                   ],
                 ],
@@ -239,15 +241,16 @@ class _DonationSheetState extends State<DonationSheet> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final l10n = context.l10n;
 
     final isBtc = _chain == DonationChain.btc;
-    final focus = _selectedFocus;
-    final focusLabel = focus?.title ?? 'General Support';
+    final focus = _selectedFocus(context);
+    final focusLabel = focus?.title ?? l10n.donationGeneralSupportTitle;
 
     final address = isBtc ? widget.btcAddress : widget.ethAddress;
     final qrBytes = isBtc ? _btcQrBytes : _ethQrBytes;
 
-    final networkTitle = isBtc ? 'Bitcoin network only' : 'Ethereum mainnet only';
+    final networkTitle = isBtc ? l10n.donationBitcoinNetworkOnly : l10n.donationEthereumNetworkOnly;
     final preview = _preview(address, head: 10, tail: 8);
     final formatted = _formatAddress(address, group: 4);
 
@@ -260,27 +263,27 @@ class _DonationSheetState extends State<DonationSheet> {
       ),
       child: Column(
         children: [
-          _buildHeader(theme, cs),
+                _buildHeader(context, theme, cs),
           const SizedBox(height: 16),
           Expanded(
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                _buildDonationOptionsHeader(theme, cs),
+                _buildDonationOptionsHeader(context, theme, cs),
                 const SizedBox(height: 12),
-                _buildLiberapayCard(theme, cs),
+                _buildLiberapayCard(context, theme, cs),
                 const SizedBox(height: 20),
-                _buildCryptoSectionHeader(theme, cs),
+                _buildCryptoSectionHeader(context, theme, cs),
                 const SizedBox(height: 12),
-                _buildChainSelector(theme),
+                _buildChainSelector(context, theme),
                 const SizedBox(height: 12),
                 _buildNetworkWarning(theme, cs, networkTitle, preview),
                 const SizedBox(height: 12),
-                _buildQrCard(theme, cs, isBtc, focusLabel, qrBytes),
+                _buildQrCard(context, theme, cs, isBtc, focusLabel, qrBytes),
                 const SizedBox(height: 12),
-                _buildAddressCard(theme, cs, formatted, address, isBtc, focus),
+                _buildAddressCard(context, theme, cs, formatted, address, isBtc, focus),
                 const SizedBox(height: 16),
-                _buildFooterNote(theme, cs),
+                _buildFooterNote(context, theme, cs),
               ],
             ),
           ),
@@ -289,7 +292,8 @@ class _DonationSheetState extends State<DonationSheet> {
     );
   }
 
-  Widget _buildHeader(ThemeData theme, ColorScheme cs) {
+  Widget _buildHeader(BuildContext context, ThemeData theme, ColorScheme cs) {
+    final l10n = context.l10n;
     return Row(
       children: [
         CircleAvatar(
@@ -302,12 +306,12 @@ class _DonationSheetState extends State<DonationSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Support Development',
+                l10n.donationSupportDevelopmentTitle,
                 style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
               ),
               const SizedBox(height: 2),
               Text(
-                'Optional donation that funds maintenance and features',
+                l10n.donationSupportDevelopmentSubtitle,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: cs.onSurface.withOpacity(0.7),
                   fontWeight: FontWeight.w600,
@@ -317,7 +321,7 @@ class _DonationSheetState extends State<DonationSheet> {
           ),
         ),
         IconButton(
-          tooltip: 'Close',
+          tooltip: l10n.close,
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.close_rounded),
         ),
@@ -325,17 +329,18 @@ class _DonationSheetState extends State<DonationSheet> {
     );
   }
 
-  Widget _buildDonationOptionsHeader(ThemeData theme, ColorScheme cs) {
+  Widget _buildDonationOptionsHeader(BuildContext context, ThemeData theme, ColorScheme cs) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Donation Options',
+          l10n.donationOptionsTitle,
           style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
         ),
         const SizedBox(height: 4),
         Text(
-          'Your contribution keeps this tool free, maintained, and community-driven',
+          l10n.donationOptionsSubtitle,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: cs.onSurface.withOpacity(0.7),
           ),
@@ -344,7 +349,8 @@ class _DonationSheetState extends State<DonationSheet> {
     );
   }
 
-  Widget _buildLiberapayCard(ThemeData theme, ColorScheme cs) {
+  Widget _buildLiberapayCard(BuildContext context, ThemeData theme, ColorScheme cs) {
+    final l10n = context.l10n;
     return Card(
       elevation: 0,
       color: cs.primaryContainer.withOpacity(0.4),
@@ -395,7 +401,7 @@ class _DonationSheetState extends State<DonationSheet> {
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
-                              'RECOMMENDED',
+                              l10n.donationRecommendedBadge,
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
@@ -408,7 +414,7 @@ class _DonationSheetState extends State<DonationSheet> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Flexible support options',
+                        l10n.donationLiberapayFlexibleSupport,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: cs.onPrimaryContainer.withOpacity(0.8),
                           fontWeight: FontWeight.w600,
@@ -439,7 +445,7 @@ class _DonationSheetState extends State<DonationSheet> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Traditional payment methods (card, PayPal, bank)',
+                          l10n.donationTraditionalPayments,
                           style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
                         ),
                       ),
@@ -452,7 +458,7 @@ class _DonationSheetState extends State<DonationSheet> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Flexible recurring support or one-time contribution',
+                          l10n.donationRecurringOrOneTime,
                           style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
                         ),
                       ),
@@ -465,7 +471,7 @@ class _DonationSheetState extends State<DonationSheet> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Trusted by open-source developers',
+                          l10n.donationTrustedByOpenSource,
                           style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
                         ),
                       ),
@@ -489,7 +495,7 @@ class _DonationSheetState extends State<DonationSheet> {
                         ),
                       )
                     : const Icon(Icons.open_in_new_rounded),
-                label: Text(_liberapayLoading ? 'Opening browser...' : 'Donate via Liberapay'),
+                label: Text(_liberapayLoading ? l10n.donationOpeningBrowser : l10n.donationViaLiberapay),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   backgroundColor: cs.primary,
@@ -514,7 +520,7 @@ class _DonationSheetState extends State<DonationSheet> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Liberapay is a non-profit donation platform trusted by open-source projects.',
+                      l10n.donationLiberapayNote,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: cs.onSurfaceVariant,
                         height: 1.3,
@@ -530,17 +536,18 @@ class _DonationSheetState extends State<DonationSheet> {
     );
   }
 
-  Widget _buildCryptoSectionHeader(ThemeData theme, ColorScheme cs) {
+  Widget _buildCryptoSectionHeader(BuildContext context, ThemeData theme, ColorScheme cs) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Direct Cryptocurrency Support',
+          l10n.donationCryptoSupportTitle,
           style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
         ),
         const SizedBox(height: 4),
         Text(
-          'Privacy-focused option • Scan QR or copy address',
+          l10n.donationCryptoSupportSubtitle,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: cs.onSurface.withOpacity(0.7),
           ),
@@ -549,20 +556,21 @@ class _DonationSheetState extends State<DonationSheet> {
     );
   }
 
-  Widget _buildChainSelector(ThemeData theme) {
+  Widget _buildChainSelector(BuildContext context, ThemeData theme) {
+    final l10n = context.l10n;
     return Row(
       children: [
         Expanded(
           child: SegmentedButton<DonationChain>(
-            segments: const [
+            segments: [
               ButtonSegment(
                 value: DonationChain.btc,
-                label: Text('BTC'),
+                label: Text(l10n.donationBtcShort),
                 icon: Icon(Icons.currency_bitcoin_rounded),
               ),
               ButtonSegment(
                 value: DonationChain.eth,
-                label: Text('ETH'),
+                label: Text(l10n.donationEthShort),
                 icon: Icon(Icons.account_balance_wallet_rounded),
               ),
             ],
@@ -573,7 +581,7 @@ class _DonationSheetState extends State<DonationSheet> {
         const SizedBox(width: 10),
         ActionChip(
           avatar: const Icon(Icons.flag_outlined, size: 18),
-          label: Text(_selectedFocus?.title ?? 'General'),
+          label: Text(_selectedFocus(context)?.title ?? l10n.donationGeneralShort),
           onPressed: _pickFocus,
         ),
       ],
@@ -607,7 +615,8 @@ class _DonationSheetState extends State<DonationSheet> {
     );
   }
 
-  Widget _buildQrCard(ThemeData theme, ColorScheme cs, bool isBtc, String focusLabel, Uint8List qrBytes) {
+  Widget _buildQrCard(BuildContext context, ThemeData theme, ColorScheme cs, bool isBtc, String focusLabel, Uint8List qrBytes) {
+    final l10n = context.l10n;
     return Card(
       elevation: 0,
       color: cs.surfaceContainerHighest.withOpacity(0.6),
@@ -627,7 +636,7 @@ class _DonationSheetState extends State<DonationSheet> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    isBtc ? 'Bitcoin Donation' : 'Ethereum Donation',
+                    isBtc ? l10n.donationBitcoinTitle : l10n.donationEthereumTitle,
                     style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
                   ),
                 ),
@@ -669,7 +678,7 @@ class _DonationSheetState extends State<DonationSheet> {
                               Icon(Icons.qr_code_2_rounded, size: 64, color: cs.onSurface.withOpacity(0.3)),
                               const SizedBox(height: 8),
                               Text(
-                                'QR code not available',
+                                l10n.donationQrUnavailable,
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: cs.onSurface.withOpacity(0.5),
                                 ),
@@ -694,6 +703,7 @@ class _DonationSheetState extends State<DonationSheet> {
   }
 
   Widget _buildAddressCard(
+    BuildContext context,
     ThemeData theme,
     ColorScheme cs,
     String formatted,
@@ -701,6 +711,7 @@ class _DonationSheetState extends State<DonationSheet> {
     bool isBtc,
     _DonationFocus? focus,
   ) {
+    final l10n = context.l10n;
     return Card(
       elevation: 0,
       color: cs.surfaceContainerHighest.withOpacity(0.6),
@@ -711,7 +722,7 @@ class _DonationSheetState extends State<DonationSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Address',
+              l10n.donationAddressTitle,
               style: theme.textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.w900,
                 color: cs.onSurface.withOpacity(0.85),
@@ -740,20 +751,20 @@ class _DonationSheetState extends State<DonationSheet> {
               children: [
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed: () => widget.onCopy(address, isBtc ? 'BTC address copied' : 'ETH address copied'),
+                    onPressed: () => widget.onCopy(address, isBtc ? l10n.donationBtcAddressCopied : l10n.donationEthAddressCopied),
                     icon: const Icon(Icons.copy_rounded),
-                    label: const Text('Copy Address'),
+                    label: Text(l10n.donationCopyAddress),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: FilledButton.tonalIcon(
                     onPressed: () {
-                      final share = _buildShareText(isBtc: isBtc, focus: focus);
-                      widget.onCopy(share, 'Share text copied');
+                      final share = _buildShareText(context, isBtc: isBtc, focus: focus);
+                      widget.onCopy(share, l10n.donationShareTextCopied);
                     },
                     icon: const Icon(Icons.ios_share_rounded),
-                    label: const Text('Share'),
+                    label: Text(l10n.donationShareAction),
                   ),
                 ),
               ],
@@ -764,7 +775,7 @@ class _DonationSheetState extends State<DonationSheet> {
               child: FilledButton.tonalIcon(
                 onPressed: _thankYou,
                 icon: const Icon(Icons.favorite_border_rounded),
-                label: const Text("I've sent a donation"),
+                label: Text(l10n.donationSentAction),
               ),
             ),
           ],
@@ -773,11 +784,12 @@ class _DonationSheetState extends State<DonationSheet> {
     );
   }
 
-  Widget _buildFooterNote(ThemeData theme, ColorScheme cs) {
+  Widget _buildFooterNote(BuildContext context, ThemeData theme, ColorScheme cs) {
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.only(top: 4),
       child: Text(
-        'Security note: Never trust donation addresses from screenshots, reviews, or third-party pages. Use only this in-app screen.',
+        l10n.donationSecurityNote,
         style: theme.textTheme.bodySmall?.copyWith(
           color: cs.onSurface.withOpacity(0.6),
           fontStyle: FontStyle.italic,

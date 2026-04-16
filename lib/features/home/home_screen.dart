@@ -264,7 +264,10 @@ class _DeviceTile extends ConsumerWidget {
                         runSpacing: 8,
                         children: [
                           for (final capability in capabilities)
-                            _CapabilityChip(label: capability, icon: _capabilityIcon(capability)),
+                            _CapabilityChip(
+                              label: _capabilityLabel(context, capability),
+                              icon: _capabilityIcon(capability),
+                            ),
                         ],
                       ),
                     ],
@@ -287,6 +290,32 @@ class _DeviceTile extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+String _capabilityLabel(BuildContext context, String capability) {
+  final l10n = context.l10n;
+  switch (capability) {
+    case 'Audio':
+      return l10n.homeCapabilityAudio;
+    case 'Video':
+      return l10n.homeCapabilityVideo;
+    case 'HID':
+      return l10n.homeCapabilityHid;
+    case 'MIDI':
+      return l10n.homeCapabilityMidi;
+    case 'Storage':
+      return l10n.homeCapabilityStorage;
+    case 'Hub':
+      return l10n.homeCapabilityHub;
+    case 'CDC':
+      return l10n.homeCapabilityCdc;
+    case 'Composite':
+      return l10n.homeCapabilityComposite;
+    case 'Input':
+      return l10n.homeCapabilityInput;
+    default:
+      return capability;
   }
 }
 

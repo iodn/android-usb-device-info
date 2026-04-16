@@ -832,9 +832,10 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
   }
 
   Widget _availabilityIssuesSection(BuildContext context, List<Map<String, dynamic>> issues) {
+    final l10n = context.l10n;
     return SectionCard(
-      title: 'Why Data Is Unavailable',
-      subtitle: 'Exact Android or device-side limitation for hidden fields',
+      title: l10n.deviceWhyDataUnavailableTitle,
+      subtitle: l10n.deviceWhyDataUnavailableSubtitle,
       leading: const Icon(Icons.info_outline_rounded),
       child: Column(
         children: [
@@ -1053,6 +1054,7 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
     required List<_ClassDescriptorView> descriptors,
   }) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     return SectionCard(
       title: title,
       subtitle: subtitle,
@@ -1081,7 +1083,7 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Showing first 12 fields.',
+                          l10n.deviceShowingFirstFields(12),
                           style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                         ),
                       ),
@@ -1790,6 +1792,7 @@ class _PermissionStateRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final scheme = theme.colorScheme;
     final tone = _tone(scheme);
     return Row(
@@ -1826,7 +1829,7 @@ class _PermissionStateRow extends StatelessWidget {
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
-                      _label(),
+                      _label(context),
                       style: theme.textTheme.labelSmall?.copyWith(color: tone.$2),
                     ),
                   ),
@@ -1865,24 +1868,25 @@ class _PermissionStateRow extends StatelessWidget {
     }
   }
 
-  String _label() {
+  String _label(BuildContext context) {
+    final l10n = context.l10n;
     switch (status.state) {
       case DevicePermissionState.granted:
-        return 'Granted';
+        return l10n.deviceRuntimeStatusGranted;
       case DevicePermissionState.temporarilyDenied:
-        return 'Temporary';
+        return l10n.devicePermissionStateTemporary;
       case DevicePermissionState.permanentlyDenied:
-        return 'Permanent';
+        return l10n.devicePermissionStatePermanent;
       case DevicePermissionState.reenumerated:
-        return 'Re-enumerated';
+        return l10n.devicePermissionStateReenumerated;
       case DevicePermissionState.unavailable:
-        return 'Not in app';
+        return l10n.devicePermissionStateNotInApp;
       case DevicePermissionState.notApplicable:
-        return 'Not needed';
+        return l10n.deviceRuntimeStatusNotRequired;
       case DevicePermissionState.revoked:
-        return 'Revoked';
+        return l10n.devicePermissionStateRevoked;
       case DevicePermissionState.missing:
-        return 'Missing';
+        return l10n.deviceManifestStatusMissing;
     }
   }
 
@@ -1916,32 +1920,39 @@ class _ConfigBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final attrsHex = Fmt.decAndHex8(cfg.attributes);
     final attrsLabel = Fmt.usbConfigAttributesLabel(cfg.attributes);
-    final maxPower = cfg.maxPowerMa == null ? 'Unknown' : '${cfg.maxPowerMa} mA';
+    final maxPower = cfg.maxPowerMa == null ? l10n.unknown : '${cfg.maxPowerMa} mA';
     return _ExpandableBlock(
-      title: 'Configuration ${cfg.id}${(cfg.name?.trim().isNotEmpty ?? false) ? ' — ${cfg.name}' : ''}',
+      title: l10n.deviceConfigurationTitle(
+        cfg.id.toString(),
+        (cfg.name?.trim().isNotEmpty ?? false) ? ' — ${cfg.name}' : '',
+      ),
       initiallyExpanded: index == 0,
       child: Column(
         children: [
-          KeyValueRow(label: 'Name', value: Fmt.formatNullable(cfg.name)),
-          KeyValueRow(label: 'Attributes', value: '$attrsHex • $attrsLabel'),
-          KeyValueRow(label: 'Max power', value: maxPower),
-          KeyValueRow(label: 'Interfaces', value: '${cfg.interfaceCount}'),
+          KeyValueRow(label: l10n.deviceNameLabel, value: Fmt.formatNullable(cfg.name)),
+          KeyValueRow(label: l10n.deviceAttributesLabel, value: '$attrsHex • $attrsLabel'),
+          KeyValueRow(label: l10n.deviceMaxPowerShortLabel, value: maxPower),
+          KeyValueRow(label: l10n.deviceInterfacesLabel, value: '${cfg.interfaceCount}'),
           if (cfg.interfaces.isNotEmpty) ...[
             const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Interfaces (summary)',
+                l10n.deviceInterfacesSummaryTitle,
                 style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
               ),
             ),
             const SizedBox(height: 8),
             for (final i in cfg.interfaces.take(8)) ...[
               KeyValueRow(
-                label: 'IF ${i.id}',
-                value: 'Class ${Fmt.decAndHex8(i.interfaceClass)} • EP ${i.endpointCount}',
+                label: l10n.deviceInterfaceShortLabel(i.id.toString()),
+                value: l10n.deviceInterfaceSummaryValue(
+                  Fmt.decAndHex8(i.interfaceClass),
+                  i.endpointCount.toString(),
+                ),
                 allowCopy: false,
               ),
             ],
@@ -1949,7 +1960,7 @@ class _ConfigBlock extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Showing first 8 interfaces.',
+                  l10n.deviceShowingFirstInterfaces(8),
                   style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
               ),
@@ -1969,6 +1980,7 @@ class _InterfaceBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final classId = iface.interfaceClass;
     final subclassId = iface.interfaceSubclass;
     final protocolId = iface.interfaceProtocol;
@@ -1976,24 +1988,24 @@ class _InterfaceBlock extends StatelessWidget {
     final subclassName = resolved?.subclassName;
     final protocolName = resolved?.protocolName;
 
-    String join(String? n, int id) => '${(n == null || n.trim().isEmpty) ? 'Unknown' : n} (${Fmt.decAndHex8(id)})';
+    String join(String? n, int id) => '${(n == null || n.trim().isEmpty) ? l10n.unknown : n} (${Fmt.decAndHex8(id)})';
 
     return _ExpandableBlock(
-      title: 'Interface ${iface.id} • ${join(className, classId)}',
+      title: l10n.deviceInterfaceTitle('${iface.id}', join(className, classId)),
       initiallyExpanded: index == 0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (iface.name != null && iface.name!.trim().isNotEmpty) KeyValueRow(label: 'Name', value: iface.name!),
-          KeyValueRow(label: 'Alt setting', value: '${iface.alternateSetting}'),
-          KeyValueRow(label: 'Class', value: join(className, classId)),
-          KeyValueRow(label: 'Subclass', value: join(subclassName, subclassId)),
-          KeyValueRow(label: 'Protocol', value: join(protocolName, protocolId)),
+          if (iface.name != null && iface.name!.trim().isNotEmpty) KeyValueRow(label: l10n.deviceNameLabel, value: iface.name!),
+          KeyValueRow(label: l10n.deviceAltSettingLabel, value: '${iface.alternateSetting}'),
+          KeyValueRow(label: l10n.deviceClassLabel, value: join(className, classId)),
+          KeyValueRow(label: l10n.deviceSubclassLabel, value: join(subclassName, subclassId)),
+          KeyValueRow(label: l10n.deviceProtocolLabel, value: join(protocolName, protocolId)),
           const SizedBox(height: 10),
-          Text('Endpoints (${iface.endpointCount})', style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+          Text(l10n.deviceEndpointsTitle(iface.endpointCount), style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
           const SizedBox(height: 8),
           if (iface.endpoints.isEmpty)
-            Text('No endpoints', style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant))
+            Text(l10n.deviceNoEndpoints, style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant))
           else
             Column(
               children: [
@@ -2016,6 +2028,7 @@ class _EndpointTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final dir = ep.direction;
     final type = ep.type;
     IconData icon;
@@ -2053,7 +2066,7 @@ class _EndpointTile extends StatelessWidget {
                   Text('$type • $dir', style: theme.textTheme.titleSmall),
                   const SizedBox(height: 2),
                   Text(
-                    'Addr ${Fmt.decAndHex8(ep.address)} • EP# ${ep.number} • Attr ${Fmt.decAndHex8(ep.attributes)}',
+                    l10n.deviceEndpointAddressSummary(Fmt.decAndHex8(ep.address), '${ep.number}', Fmt.decAndHex8(ep.attributes)),
                     style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                   ),
                 ],
@@ -2063,8 +2076,8 @@ class _EndpointTile extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('MaxPkt ${ep.maxPacketSize}', style: theme.textTheme.labelMedium),
-                Text('Interval ${ep.interval}', style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                Text(l10n.deviceEndpointMaxPacket('${ep.maxPacketSize}'), style: theme.textTheme.labelMedium),
+                Text(l10n.deviceEndpointInterval('${ep.interval}'), style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
               ],
             ),
           ],
@@ -2209,6 +2222,7 @@ class _ControlTransferTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final label = (transfer['label'] as String?)?.trim();
     final responseHex = (transfer['responseHex'] as String?)?.trim();
     final actualLength = _asInt(transfer['actualLength']);
@@ -2217,19 +2231,19 @@ class _ControlTransferTile extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label?.isNotEmpty == true ? label! : 'Control transfer', style: theme.textTheme.titleSmall),
+        Text(label?.isNotEmpty == true ? label! : l10n.deviceControlTransferDefaultTitle, style: theme.textTheme.titleSmall),
         const SizedBox(height: 8),
         KeyValueRow(label: 'bmRequestType', value: Fmt.decAndHex8(_asInt(transfer['requestType']) ?? 0)),
         KeyValueRow(label: 'bRequest', value: Fmt.decAndHex8(_asInt(transfer['request']) ?? 0)),
         KeyValueRow(label: 'wValue', value: Fmt.decAndHex16(_asInt(transfer['value']) ?? 0)),
         KeyValueRow(label: 'wIndex', value: Fmt.decAndHex16(_asInt(transfer['index']) ?? 0)),
-        KeyValueRow(label: 'Requested length', value: '${_asInt(transfer['requestedLength']) ?? 0}'),
-        KeyValueRow(label: 'Actual length', value: actualLength?.toString() ?? 'Unknown'),
-        KeyValueRow(label: 'Result', value: success ? 'Success' : 'Failed'),
+        KeyValueRow(label: l10n.deviceRequestedLengthLabel, value: '${_asInt(transfer['requestedLength']) ?? 0}'),
+        KeyValueRow(label: l10n.deviceActualLengthLabel, value: actualLength?.toString() ?? l10n.unknown),
+        KeyValueRow(label: l10n.deviceResultLabel, value: success ? l10n.deviceTransferSuccess : l10n.deviceTransferFailed),
         if (responseHex?.isNotEmpty == true) ...[
           const SizedBox(height: 8),
           _ExpandableBlock(
-            title: 'Response bytes (hex)',
+            title: l10n.deviceResponseBytesHexTitle,
             child: SelectableText(
               Fmt.hexWrap(responseHex!, group: 2, groupsPerLine: 16),
               style: theme.textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
@@ -2249,9 +2263,10 @@ class _AdvancedDescriptorTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final off = _asInt(node['offset']);
     final len = _asInt(node['length']);
-    final typeName = (node['descriptorTypeName'] as String?) ?? 'Unknown';
+    final typeName = (node['descriptorTypeName'] as String?) ?? l10n.unknown;
     final type = _asInt(node['descriptorType']);
     final rawHex = (node['rawHex'] as String?)?.trim() ?? '';
     final fields = _asMap(node['fields']);
@@ -2266,10 +2281,10 @@ class _AdvancedDescriptorTile extends StatelessWidget {
           builder: (context, constraints) {
             final stacked = constraints.maxWidth < 720;
             final parsed = _AdvancedRawPane(
-              title: 'Parsed fields',
+              title: l10n.deviceParsedFieldsTitle,
               child: fields.isEmpty
                   ? Text(
-                      'No parsed fields available.',
+                      l10n.deviceNoParsedFieldsAvailable,
                       style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                     )
                   : Column(
@@ -2280,9 +2295,9 @@ class _AdvancedDescriptorTile extends StatelessWidget {
                     ),
             );
             final rawPane = _AdvancedRawPane(
-              title: 'Raw bytes',
+              title: l10n.deviceRawBytesTitle,
               child: SelectableText(
-                rawHex.isEmpty ? '<unavailable>' : Fmt.hexWrap(rawHex, group: 2, groupsPerLine: 16),
+                rawHex.isEmpty ? '<${l10n.unavailable}>' : Fmt.hexWrap(rawHex, group: 2, groupsPerLine: 16),
                 style: theme.textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
               ),
             );
@@ -2319,6 +2334,7 @@ class _AdvancedHidReportTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final ifNum = _asInt(report['interfaceNumber']);
     final reportLen = _asInt(report['reportLength']);
     final summary = _asMap(report['summary']);
@@ -2328,7 +2344,7 @@ class _AdvancedHidReportTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Interface ${ifNum ?? '?'} • Report ${reportLen ?? '?'} bytes',
+          l10n.deviceInterfaceReportTitle('${ifNum ?? '?'}', '${reportLen ?? '?'}'),
           style: theme.textTheme.titleSmall,
         ),
         const SizedBox(height: 10),
@@ -2336,10 +2352,10 @@ class _AdvancedHidReportTile extends StatelessWidget {
           builder: (context, constraints) {
             final stacked = constraints.maxWidth < 720;
             final parsed = _AdvancedRawPane(
-              title: 'Parsed summary',
+              title: l10n.deviceParsedSummaryTitle,
               child: summary.isEmpty
                   ? Text(
-                      'No parsed HID summary available.',
+                      l10n.deviceNoParsedHidSummaryAvailable,
                       style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                     )
                   : Column(
@@ -2350,9 +2366,9 @@ class _AdvancedHidReportTile extends StatelessWidget {
                     ),
             );
             final rawPane = _AdvancedRawPane(
-              title: 'Report hex',
+              title: l10n.deviceReportHexTitle,
               child: SelectableText(
-                hex.isEmpty ? '<unavailable>' : Fmt.hexWrap(hex, group: 2, groupsPerLine: 16),
+                hex.isEmpty ? '<${l10n.unavailable}>' : Fmt.hexWrap(hex, group: 2, groupsPerLine: 16),
                 style: theme.textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
               ),
             );
@@ -2502,6 +2518,7 @@ class _HidReportBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final ifNum = _asInt(report['interfaceNumber']);
     final repLen = _asInt(report['reportLength']);
     final hex = report['reportHex'] as String?;
@@ -2514,11 +2531,13 @@ class _HidReportBlock extends StatelessWidget {
     final collections = _asInt(summary['collectionCount']);
 
     final chips = <String>[];
-    if (hasKb) chips.add('Keyboard');
-    if (hasMouse) chips.add('Mouse');
-    if (reportIdCount != null) chips.add('Report IDs: $reportIdCount');
-    if (collections != null) chips.add('Collections: $collections');
-    if (usagePages.isNotEmpty) chips.add('Usage pages: ${usagePages.map(Fmt.hex16).join(', ')}');
+    if (hasKb) chips.add(l10n.deviceKeyboardChip);
+    if (hasMouse) chips.add(l10n.deviceMouseChip);
+    if (reportIdCount != null) chips.add(l10n.deviceReportIdsChip(reportIdCount.toString()));
+    if (collections != null) chips.add(l10n.deviceCollectionsChip(collections.toString()));
+    if (usagePages.isNotEmpty) {
+      chips.add(l10n.deviceUsagePagesChip(usagePages.map(Fmt.hex16).join(', ')));
+    }
 
     return _ExpandableBlock(
       title: 'Interface ${ifNum ?? '?'} • Report ${repLen ?? '?'} bytes',

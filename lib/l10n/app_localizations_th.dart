@@ -277,7 +277,7 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String get cancel => 'Cancel';
+  String get cancel => 'ยกเลิก';
 
   @override
   String get settingsRestoreDemoTitle => 'กู้คืนรีโมตตัวอย่าง';
@@ -346,7 +346,7 @@ class AppLocalizationsTh extends AppLocalizations {
       'ไม่มีโฆษณา ไม่ติดตาม ไม่มีฟีเจอร์ล็อก. การสนับสนุนของคุณช่วยงานโปรโตคอล การรองรับดองเกิล USB และความเข้ากันได้ที่ดีขึ้นในหลายอุปกรณ์';
 
   @override
-  String get donate => 'Donate';
+  String get donate => 'บริจาค';
 
   @override
   String get starRepo => 'ติดดาวรีโป';
@@ -2126,7 +2126,7 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String get clearAction => 'Clear';
+  String get clearAction => 'ล้าง';
 
   @override
   String get saveAction => 'Save';
@@ -2427,7 +2427,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get stopped => 'หยุดped';
 
   @override
-  String get copy => 'Copy';
+  String get copy => 'คัดลอก';
 
   @override
   String get send => 'ส่ง';
@@ -5014,7 +5014,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get devicePathLabel => 'เส้นทางอุปกรณ์';
 
   @override
-  String get deviceAndroidDeviceIdLabel => 'Android deviceId';
+  String get deviceAndroidDeviceIdLabel => 'รหัสอุปกรณ์ Android';
 
   @override
   String get devicePortNumberLabel => 'หมายเลขพอร์ต';
@@ -5070,7 +5070,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get devicePortChainLabel => 'ลำดับพอร์ต';
 
   @override
-  String get deviceDevpathLabel => 'Devpath';
+  String get deviceDevpathLabel => 'เส้นทางอุปกรณ์';
 
   @override
   String get deviceAuthorizedLabel => 'ได้รับอนุญาต';
@@ -5112,13 +5112,13 @@ class AppLocalizationsTh extends AppLocalizations {
   String get deviceNumConfigurationsLabel => 'จำนวนการกำหนดค่า';
 
   @override
-  String get deviceIManufacturerLabel => 'iManufacturer';
+  String get deviceIManufacturerLabel => 'ดัชนี iManufacturer';
 
   @override
-  String get deviceIProductLabel => 'iProduct';
+  String get deviceIProductLabel => 'ดัชนี iProduct';
 
   @override
-  String get deviceISerialNumberLabel => 'iSerialNumber';
+  String get deviceISerialNumberLabel => 'ดัชนี iSerialNumber';
 
   @override
   String get deviceUsbAudioTitle => 'เสียง USB';
@@ -5128,7 +5128,7 @@ class AppLocalizationsTh extends AppLocalizations {
       'ข้อมูลของเอนด์พอยต์จาก AudioManager / AudioDeviceInfo';
 
   @override
-  String get deviceUsbAudioClassLabel => 'USB audio class';
+  String get deviceUsbAudioClassLabel => 'คลาสเสียง USB';
 
   @override
   String get devicePlatformAudioApiLabel => 'Audio API ของแพลตฟอร์ม';
@@ -5156,7 +5156,7 @@ class AppLocalizationsTh extends AppLocalizations {
       'Android ไม่รายงานเอนด์พอยต์เสียง USB ที่ตรงกับอุปกรณ์นี้';
 
   @override
-  String get deviceUsbMidiTitle => 'USB MIDI';
+  String get deviceUsbMidiTitle => 'อุปกรณ์ USB MIDI';
 
   @override
   String get deviceUsbMidiSubtitle => 'ข้อมูลอุปกรณ์และพอร์ตจาก MidiManager';
@@ -5258,6 +5258,21 @@ class AppLocalizationsTh extends AppLocalizations {
   String get deviceShowPermissionDiagnostics => 'แสดงการวินิจฉัยสิทธิ์';
 
   @override
+  String get devicePermissionStateTemporary => 'ชั่วคราว';
+
+  @override
+  String get devicePermissionStatePermanent => 'ถาวร';
+
+  @override
+  String get devicePermissionStateReenumerated => 'ตรวจพบใหม่อีกครั้ง';
+
+  @override
+  String get devicePermissionStateNotInApp => 'ไม่มีในแอป';
+
+  @override
+  String get devicePermissionStateRevoked => 'ถูกเพิกถอน';
+
+  @override
   String get deviceAndroidVersionLabel => 'เวอร์ชัน Android';
 
   @override
@@ -5293,6 +5308,10 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get deviceWhyDataUnavailableTitle =>
       'เหตุใดข้อมูลส่วนนี้จึงไม่พร้อมใช้งาน';
+
+  @override
+  String get deviceWhyDataUnavailableSubtitle =>
+      'ข้อจำกัดที่แน่ชัดจาก Android หรือจากอุปกรณ์สำหรับฟิลด์ที่ซ่อนไว้';
 
   @override
   String get deviceReconnectDiffTitle => 'ความต่างหลังเชื่อมต่อใหม่';
@@ -5423,7 +5442,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get deviceExportFormatReport => 'รายงานข้อความธรรมดา';
 
   @override
-  String get deviceExportFormatRawHex => 'ตัวบอกข้อมูล hex ดิบ';
+  String get deviceExportFormatRawHex => 'ตัวบอกข้อมูลเลขฐานสิบหกดิบ';
 
   @override
   String get deviceRawDumpExportTitle => 'ส่งออกดัมพ์ดิบ';
@@ -5433,13 +5452,13 @@ class AppLocalizationsTh extends AppLocalizations {
       'ส่งออกสแนปช็อตของอุปกรณ์ที่เชื่อมต่ออยู่นี้ได้โดยตรงโดยไม่ต้องผ่านประวัติ';
 
   @override
-  String get deviceExportChipJson => 'JSON';
+  String get deviceExportChipJson => 'ข้อมูล JSON';
 
   @override
   String get deviceExportChipReport => 'รายงาน';
 
   @override
-  String get deviceExportChipRawHex => 'hex ดิบ';
+  String get deviceExportChipRawHex => 'เลขฐานสิบหกดิบ';
 
   @override
   String get deviceCopyAction => 'คัดลอก';
@@ -5534,7 +5553,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String deviceAndroidVersionValue(Object sdk, Object release) {
-    return 'SDK $sdk ($release)';
+    return 'SDK ระดับ $sdk ($release)';
   }
 
   @override
@@ -5564,7 +5583,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String deviceAltSettingValue(Object value) {
-    return 'Alt $value';
+    return 'ค่า Alt $value';
   }
 
   @override
@@ -5601,7 +5620,632 @@ class AppLocalizationsTh extends AppLocalizations {
   String get deviceInputSourcesLabel => 'แหล่งอินพุต';
 
   @override
+  String deviceShowingFirstFields(int count) {
+    return 'แสดงเฉพาะ $count ฟิลด์แรกเท่านั้น';
+  }
+
+  @override
   String deviceShowingFirstDescriptors(int count) {
     return 'กำลังแสดงตัวบอกข้อมูลแรก $count รายการ';
   }
+
+  @override
+  String get settingsUsbBehaviorTitle => 'พฤติกรรม USB';
+
+  @override
+  String get settingsUsbBehaviorSubtitle =>
+      'ควบคุมการแจ้งเตือนของระบบเมื่อมีการเชื่อมต่ออุปกรณ์ USB';
+
+  @override
+  String get settingsUsbOfferOnAttachTitle =>
+      'เสนอให้เปิดเมื่อมี USB เชื่อมต่อ';
+
+  @override
+  String get settingsUsbOfferOnAttachSubtitle =>
+      'แสดงในตัวเลือกของ Android เมื่อเสียบอุปกรณ์ USB';
+
+  @override
+  String get settingsUsbDisableAttachNote =>
+      'ปิดตัวเลือกนี้เพื่อไม่ให้ Android แนะนำ USBDevInfo เมื่อมีการเชื่อมต่ออุปกรณ์ แอปยังคงตรวจพบอุปกรณ์ได้ขณะเปิดอยู่';
+
+  @override
+  String get settingsAttachFilterScopeLabel => 'ขอบเขตตัวกรองการเชื่อมต่อ';
+
+  @override
+  String get settingsAttachFilterScopeAllUsbDevices => 'อุปกรณ์ USB ทั้งหมด';
+
+  @override
+  String get settingsAttachLaunchBehaviorLabel =>
+      'พฤติกรรมการเปิดเมื่อเชื่อมต่อ';
+
+  @override
+  String get settingsAttachLaunchBehaviorEnabled =>
+      'เปิดเฉพาะเมื่อ Android เรียกใช้ USBDevInfo อย่างชัดเจนจากตัวเลือก USB attach';
+
+  @override
+  String get settingsAttachLaunchBehaviorDisabled =>
+      'ปิด alias ของตัวเลือกแล้ว';
+
+  @override
+  String get settingsWhileAppOpenLabel => 'ขณะแอปเปิดอยู่';
+
+  @override
+  String get settingsWhileAppOpenValue =>
+      'เหตุการณ์ USB เสียบ/ถอดจะรีเฟรชข้อมูลอุปกรณ์โดยไม่บังคับเปลี่ยนหน้า';
+
+  @override
+  String get settingsBackupDataTitle => 'สำรองข้อมูลและข้อมูล';
+
+  @override
+  String get settingsBackupDataSubtitle =>
+      'ส่งออกประวัติอุปกรณ์ของคุณเป็น JSON';
+
+  @override
+  String get settingsHistoryLabel => 'ประวัติ';
+
+  @override
+  String get settingsMostRecentLabel => 'ล่าสุด';
+
+  @override
+  String get settingsNoHistoryYet => 'ยังไม่มีประวัติ';
+
+  @override
+  String settingsHistoryRecordedCount(int count) {
+    return 'บันทึกแล้ว $count รายการ';
+  }
+
+  @override
+  String get settingsBackupExportIncludes =>
+      'การส่งออกประกอบด้วย vendor/product IDs, ชื่อที่แยกได้, strings, class/protocol, timestamps และรายละเอียดขั้นสูง (descriptors, configurations, interfaces, HID reports) เมื่อได้รับสิทธิ์แล้ว';
+
+  @override
+  String get settingsExportJsonAction => 'ส่งออก JSON';
+
+  @override
+  String get settingsImportJsonAction => 'นำเข้า JSON';
+
+  @override
+  String get settingsUsbIdsDatabaseTitle => 'ฐานข้อมูล USB IDs';
+
+  @override
+  String get settingsUsbIdsDatabaseSubtitle => 'เมตาดาตาและตัวอัปเดต';
+
+  @override
+  String deviceConfigurationTitle(Object id, Object suffix) {
+    return 'การกำหนดค่า $id$suffix';
+  }
+
+  @override
+  String get deviceAttributesLabel => 'แอตทริบิวต์';
+
+  @override
+  String get deviceInterfacesSummaryTitle => 'อินเทอร์เฟซ (สรุป)';
+
+  @override
+  String deviceInterfaceShortLabel(Object id) {
+    return 'อินเทอร์เฟซ $id';
+  }
+
+  @override
+  String deviceInterfaceSummaryValue(Object classValue, Object endpointCount) {
+    return 'คลาส $classValue • EP $endpointCount';
+  }
+
+  @override
+  String deviceInterfaceStringLabel(
+    Object interfaceNumber,
+    Object alternateSetting,
+  ) {
+    return 'อินเทอร์เฟซ $interfaceNumber (Alt $alternateSetting)';
+  }
+
+  @override
+  String get deviceKeyboardChip => 'คีย์บอร์ด';
+
+  @override
+  String get deviceMouseChip => 'เมาส์';
+
+  @override
+  String deviceReportIdsChip(Object count) {
+    return 'รหัสรายงาน: $count';
+  }
+
+  @override
+  String deviceCollectionsChip(Object count) {
+    return 'คอลเลกชัน: $count';
+  }
+
+  @override
+  String deviceUsagePagesChip(Object pages) {
+    return 'หน้าใช้งาน: $pages';
+  }
+
+  @override
+  String get homeCapabilityAudio => 'เสียง';
+
+  @override
+  String get homeCapabilityVideo => 'วิดีโอ';
+
+  @override
+  String get homeCapabilityHid => 'อุปกรณ์ HID';
+
+  @override
+  String get homeCapabilityMidi => 'อุปกรณ์ MIDI';
+
+  @override
+  String get homeCapabilityStorage => 'ที่เก็บข้อมูล';
+
+  @override
+  String get homeCapabilityHub => 'ฮับ';
+
+  @override
+  String get homeCapabilityCdc => 'อุปกรณ์ CDC';
+
+  @override
+  String get homeCapabilityComposite => 'คอมโพสิต';
+
+  @override
+  String get homeCapabilityInput => 'อินพุต';
+
+  @override
+  String get settingsUsbIdsLocalVersionLabel => 'เวอร์ชันในเครื่อง';
+
+  @override
+  String get settingsUsbIdsLocalDateLabel => 'วันที่ในเครื่อง';
+
+  @override
+  String get settingsUsbIdsRemoteShaNotFetched =>
+      'ยังไม่ได้ดึงค่า SHA จากระยะไกล';
+
+  @override
+  String get settingsUsbIdsInstalledShaAfterUpdate =>
+      'ระบบจะบันทึก SHA ที่ติดตั้งหลังจากอัปเดตสำเร็จ';
+
+  @override
+  String get settingsUsbIdsInstalledShaMatchesRemote =>
+      'SHA ที่ติดตั้งตรงกับค่าระยะไกล';
+
+  @override
+  String get settingsUsbIdsInstalledShaDiffersRemote =>
+      'SHA ที่ติดตั้งต่างจากค่าระยะไกล (มีอัปเดต)';
+
+  @override
+  String get settingsUsbIdsDetailsTitle => 'รายละเอียด';
+
+  @override
+  String get settingsUsbIdsInstalledShaLabel => 'SHA-256 ที่ติดตั้ง';
+
+  @override
+  String get settingsUsbIdsRemoteShaLabel => 'SHA-256 ระยะไกล';
+
+  @override
+  String get settingsUsbIdsShaMatchLabel => 'SHA ตรงกัน';
+
+  @override
+  String get settingsUsbIdsLastCheckedLabel => 'ตรวจสอบล่าสุด';
+
+  @override
+  String get settingsUsbIdsUpdateHintLabel => 'คำใบ้อัปเดต';
+
+  @override
+  String get settingsUsbIdsUpdateHintAvailable => 'มี';
+
+  @override
+  String get settingsUsbIdsUpdateHintNone => 'ไม่มี';
+
+  @override
+  String get settingsUsbIdsAutoCheckTitle => 'ตรวจสอบอัปเดตอัตโนมัติ';
+
+  @override
+  String get settingsUsbIdsAutoCheckSubtitle =>
+      'ตรวจสอบไฟล์ .sha256 ระยะไกลประมาณสัปดาห์ละครั้ง';
+
+  @override
+  String get settingsUpdateNow => 'อัปเดตตอนนี้';
+
+  @override
+  String get settingsCheckNow => 'ตรวจสอบตอนนี้';
+
+  @override
+  String get settingsAboutSectionTitle => 'เกี่ยวกับ';
+
+  @override
+  String get settingsAboutSectionSubtitle => 'ข้อมูลแอปและข้อมูลทางกฎหมาย';
+
+  @override
+  String settingsAboutAppTileTitle(Object appName, Object developer) {
+    return 'เกี่ยวกับ $appName · $developer';
+  }
+
+  @override
+  String settingsAboutVersion(Object version) {
+    return 'เวอร์ชัน $version';
+  }
+
+  @override
+  String get settingsLicensesTitle => 'ใบอนุญาต';
+
+  @override
+  String get settingsLicensesSubtitle => 'ใบอนุญาตโอเพนซอร์ส';
+
+  @override
+  String get settingsReportIssueTitle => 'รายงานปัญหา';
+
+  @override
+  String get settingsReportIssueSubtitle => 'บั๊กและคำขอฟีเจอร์';
+
+  @override
+  String get settingsIssuesLinkCopied => 'คัดลอกลิงก์ issues แล้ว';
+
+  @override
+  String get settingsNoHistoryToExport => 'ไม่มีประวัติให้ส่งออก';
+
+  @override
+  String get settingsExportCopied => 'คัดลอกข้อมูลส่งออกไปยังคลิปบอร์ดแล้ว';
+
+  @override
+  String settingsExportFailed(Object error) {
+    return 'ส่งออกไม่สำเร็จ: $error';
+  }
+
+  @override
+  String get settingsImportUnsupportedFormat =>
+      'รูปแบบ JSON ไม่รองรับ ต้องเป็นรายการหรือข้อมูลที่ส่งออกพร้อม schema=device_history_export_v1';
+
+  @override
+  String get settingsImportNoValidHistoryEntries =>
+      'ไม่พบรายการประวัติที่ถูกต้อง';
+
+  @override
+  String settingsImportedItems(int count) {
+    return 'นำเข้าแล้ว $count รายการ';
+  }
+
+  @override
+  String settingsImportFailed(Object error) {
+    return 'นำเข้าไม่สำเร็จ: $error';
+  }
+
+  @override
+  String get settingsClearHistoryBodyDetailed =>
+      'การทำเช่นนี้จะลบอุปกรณ์ที่บันทึกไว้ทั้งหมดออกจากพื้นที่จัดเก็บในเครื่อง';
+
+  @override
+  String get settingsHistoryCleared => 'ล้างประวัติแล้ว';
+
+  @override
+  String get settingsExportHistoryTitle => 'ส่งออกประวัติ';
+
+  @override
+  String settingsExportHistorySubtitle(int count) {
+    return '$count รายการ • JSON';
+  }
+
+  @override
+  String get settingsExportFormatPretty => 'สวยงาม';
+
+  @override
+  String get settingsExportFormatCompact => 'กระชับ';
+
+  @override
+  String get settingsExportSafeShareNote =>
+      'การส่งออกนี้ปลอดภัยสำหรับการแชร์เพื่อดีบัก แต่ก็อาจมีชื่อ/พาธของอุปกรณ์และ serial อยู่ด้วย';
+
+  @override
+  String get settingsImportHistoryTitle => 'นำเข้าประวัติ';
+
+  @override
+  String get settingsImportHistorySubtitle =>
+      'วางข้อมูลที่ส่งออกหรือรายการดิบของรายการต่าง ๆ';
+
+  @override
+  String get settingsImportSupportedFormats =>
+      'รูปแบบที่รองรับ: ข้อมูลแบบ device_history_export_v1 (แนะนำ) หรือรายการ JSON ดิบของประวัติ';
+
+  @override
+  String get settingsImportHint => 'วาง JSON ที่นี่…';
+
+  @override
+  String get settingsImportAction => 'นำเข้า';
+
+  @override
+  String get settingsImporting => 'กำลังนำเข้า…';
+
+  @override
+  String get settingsImportReplacesHistoryNote =>
+      'การนำเข้าจะแทนที่ประวัติปัจจุบันของคุณ หากไม่แน่ใจให้ส่งออกก่อน';
+
+  @override
+  String get settingsClipboardEmpty => 'คลิปบอร์ดว่าง';
+
+  @override
+  String get settingsPasteJsonFirst => 'โปรดวาง JSON ก่อน';
+
+  @override
+  String get pasteAction => 'วาง';
+
+  @override
+  String get donationFocusCompatTitle => 'ความเข้ากันได้และสิทธิ์';
+
+  @override
+  String get donationFocusCompatSubtitle =>
+      'ความแตกต่างของ OEM, ลำดับการขอสิทธิ์, กรณีขอบเขต';
+
+  @override
+  String get donationFocusUsbIdsTitle => 'อัปเดตฐานข้อมูล USB IDs';
+
+  @override
+  String get donationFocusUsbIdsSubtitle =>
+      'การแยกวิเคราะห์, ความสดใหม่, ความน่าเชื่อถือของอัปเดต';
+
+  @override
+  String get donationFocusUiTitle => 'ปรับแต่ง UI/UX';
+
+  @override
+  String get donationFocusUiSubtitle => 'ความชัดเจน ความเร็ว การเข้าถึง';
+
+  @override
+  String get donationFocusFeaturesTitle => 'ฟีเจอร์ใหม่';
+
+  @override
+  String get donationFocusFeaturesSubtitle => 'ตัวกรอง การส่งออก ข้อมูลเชิงลึก';
+
+  @override
+  String donationShareHeader(Object appName) {
+    return 'สนับสนุน $appName - แอปโอเพนซอร์ส';
+  }
+
+  @override
+  String donationShareFocusLine(Object title) {
+    return 'โฟกัส: $title';
+  }
+
+  @override
+  String get donationShareChainBtc =>
+      'Bitcoin (BTC) - ส่งผ่านเครือข่าย Bitcoin เท่านั้น';
+
+  @override
+  String get donationShareChainEth =>
+      'Ethereum (ERC-20) - ส่งผ่านเครือข่ายหลักของ Ethereum เท่านั้น';
+
+  @override
+  String donationShareBtcAddress(Object address) {
+    return 'ที่อยู่ BTC: $address';
+  }
+
+  @override
+  String donationShareEthAddress(Object address) {
+    return 'ที่อยู่ ETH: $address';
+  }
+
+  @override
+  String donationShareRepo(Object url) {
+    return 'Repo: $url';
+  }
+
+  @override
+  String get donationNoBrowserForLiberapay =>
+      'ไม่มีเบราว์เซอร์สำหรับเปิด Liberapay';
+
+  @override
+  String get donationFailedToOpenLiberapay =>
+      'เปิด Liberapay ในเบราว์เซอร์ไม่สำเร็จ';
+
+  @override
+  String donationErrorOpeningLiberapay(Object error) {
+    return 'เกิดข้อผิดพลาดขณะเปิด Liberapay: $error';
+  }
+
+  @override
+  String get donationThankYouTitle => 'ขอบคุณ';
+
+  @override
+  String get donationThankYouBody =>
+      'การสนับสนุนของคุณช่วยให้แอปนี้ยังคงฟรี รวดเร็ว และมีการดูแลอย่างต่อเนื่อง ขอบคุณที่สนับสนุนซอฟต์แวร์โอเพนซอร์ส';
+
+  @override
+  String get donationFocusTitle => 'เป้าหมายของการบริจาค';
+
+  @override
+  String get donationFocusSubtitle =>
+      'ไม่บังคับ ช่วยจัดลำดับความสำคัญว่างานถัดไปควรเป็นอะไร';
+
+  @override
+  String get donationGeneralSupportTitle => 'สนับสนุนทั่วไป';
+
+  @override
+  String get donationGeneralSupportSubtitle => 'ตัวเลือกที่ดีที่สุดโดยรวม';
+
+  @override
+  String get donationSupportDevelopmentTitle => 'สนับสนุนการพัฒนา';
+
+  @override
+  String get donationSupportDevelopmentSubtitle =>
+      'การบริจาคแบบเลือกได้เพื่อสนับสนุนการดูแลและฟีเจอร์ใหม่';
+
+  @override
+  String get donationOptionsTitle => 'ตัวเลือกการบริจาค';
+
+  @override
+  String get donationOptionsSubtitle =>
+      'การสนับสนุนของคุณทำให้เครื่องมือนี้ยังฟรี มีการดูแล และขับเคลื่อนโดยชุมชน';
+
+  @override
+  String get donationRecommendedBadge => 'แนะนำ';
+
+  @override
+  String get donationLiberapayFlexibleSupport =>
+      'ตัวเลือกการสนับสนุนที่ยืดหยุ่น';
+
+  @override
+  String get donationTraditionalPayments =>
+      'วิธีชำระเงินแบบดั้งเดิม (บัตร, PayPal, ธนาคาร)';
+
+  @override
+  String get donationRecurringOrOneTime => 'รองรับทั้งแบบประจำและครั้งเดียว';
+
+  @override
+  String get donationTrustedByOpenSource =>
+      'ได้รับความไว้วางใจจากนักพัฒนาโอเพนซอร์ส';
+
+  @override
+  String get donationOpeningBrowser => 'กำลังเปิดเบราว์เซอร์...';
+
+  @override
+  String get donationViaLiberapay => 'บริจาคผ่าน Liberapay';
+
+  @override
+  String get donationLiberapayNote =>
+      'Liberapay เป็นแพลตฟอร์มรับบริจาคแบบไม่แสวงหากำไรที่โครงการโอเพนซอร์สไว้วางใจ';
+
+  @override
+  String get donationCryptoSupportTitle => 'สนับสนุนด้วยคริปโตโดยตรง';
+
+  @override
+  String get donationCryptoSupportSubtitle =>
+      'ตัวเลือกที่เน้นความเป็นส่วนตัว • สแกน QR หรือคัดลอกที่อยู่';
+
+  @override
+  String get donationBtcShort => 'BTC';
+
+  @override
+  String get donationEthShort => 'ETH';
+
+  @override
+  String get donationGeneralShort => 'ทั่วไป';
+
+  @override
+  String get donationBitcoinNetworkOnly => 'เครือข่าย Bitcoin เท่านั้น';
+
+  @override
+  String get donationEthereumNetworkOnly =>
+      'เครือข่ายหลักของ Ethereum เท่านั้น';
+
+  @override
+  String get donationBitcoinTitle => 'บริจาคด้วย Bitcoin';
+
+  @override
+  String get donationEthereumTitle => 'บริจาคด้วย Ethereum';
+
+  @override
+  String get donationQrUnavailable => 'ไม่มี QR code';
+
+  @override
+  String get donationAddressTitle => 'ที่อยู่';
+
+  @override
+  String get donationBtcAddressCopied => 'คัดลอกที่อยู่ BTC แล้ว';
+
+  @override
+  String get donationEthAddressCopied => 'คัดลอกที่อยู่ ETH แล้ว';
+
+  @override
+  String get donationShareTextCopied => 'คัดลอกข้อความสำหรับแชร์แล้ว';
+
+  @override
+  String get donationCopyAddress => 'คัดลอกที่อยู่';
+
+  @override
+  String get donationShareAction => 'แชร์';
+
+  @override
+  String get donationSentAction => 'ฉันส่งเงินบริจาคแล้ว';
+
+  @override
+  String get donationSecurityNote =>
+      'หมายเหตุด้านความปลอดภัย: อย่าเชื่อถือที่อยู่สำหรับบริจาคจากภาพหน้าจอ รีวิว หรือหน้าเว็บของบุคคลที่สาม ใช้เฉพาะหน้าจอในแอปนี้เท่านั้น';
+
+  @override
+  String deviceInterfaceTitle(Object id, Object classInfo) {
+    return 'อินเทอร์เฟซ $id • $classInfo';
+  }
+
+  @override
+  String get deviceAltSettingLabel => 'การตั้งค่าสำรอง';
+
+  @override
+  String get deviceClassLabel => 'คลาส';
+
+  @override
+  String deviceEndpointsTitle(int count) {
+    return 'ปลายทาง ($count)';
+  }
+
+  @override
+  String get deviceNoEndpoints => 'ไม่มีปลายทาง';
+
+  @override
+  String deviceEndpointAddressSummary(
+    Object address,
+    Object number,
+    Object attributes,
+  ) {
+    return 'ที่อยู่ $address • EP# $number • คุณสมบัติ $attributes';
+  }
+
+  @override
+  String deviceEndpointMaxPacket(Object value) {
+    return 'แพ็กเก็ตสูงสุด $value';
+  }
+
+  @override
+  String deviceEndpointInterval(Object value) {
+    return 'ช่วงเวลา $value';
+  }
+
+  @override
+  String get deviceControlTransferDefaultTitle => 'การโอนแบบควบคุม';
+
+  @override
+  String get deviceRequestedLengthLabel => 'ความยาวที่ร้องขอ';
+
+  @override
+  String get deviceActualLengthLabel => 'ความยาวจริง';
+
+  @override
+  String get deviceResultLabel => 'ผลลัพธ์';
+
+  @override
+  String get deviceTransferSuccess => 'สำเร็จ';
+
+  @override
+  String get deviceTransferFailed => 'ล้มเหลว';
+
+  @override
+  String get deviceResponseBytesHexTitle => 'ไบต์ตอบกลับ (hex)';
+
+  @override
+  String get deviceParsedFieldsTitle => 'ฟิลด์ที่แยกแล้ว';
+
+  @override
+  String get deviceNoParsedFieldsAvailable => 'ไม่มีฟิลด์ที่แยกได้';
+
+  @override
+  String get deviceRawBytesTitle => 'ไบต์ดิบ';
+
+  @override
+  String deviceInterfaceReportTitle(
+    Object interfaceNumber,
+    Object reportLength,
+  ) {
+    return 'อินเทอร์เฟซ $interfaceNumber • รายงาน $reportLength ไบต์';
+  }
+
+  @override
+  String get deviceParsedSummaryTitle => 'สรุปที่แยกแล้ว';
+
+  @override
+  String get deviceNoParsedHidSummaryAvailable => 'ไม่มีสรุป HID ที่แยกได้';
+
+  @override
+  String get deviceReportHexTitle => 'เลขฐานสิบหกของรายงาน';
+
+  @override
+  String get historyEntryNotFoundTitle => 'ไม่พบรายการ';
+
+  @override
+  String get historyEntryNotFoundBody => 'รายการประวัตินี้ไม่มีอยู่แล้ว';
+
+  @override
+  String get historyUnableToOpenDetail => 'ไม่สามารถเปิดรายละเอียดประวัติได้';
 }

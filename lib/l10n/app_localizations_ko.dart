@@ -5165,6 +5165,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String get deviceShowPermissionDiagnostics => '권한 진단 표시';
 
   @override
+  String get devicePermissionStateTemporary => '임시';
+
+  @override
+  String get devicePermissionStatePermanent => '영구';
+
+  @override
+  String get devicePermissionStateReenumerated => '다시 열거됨';
+
+  @override
+  String get devicePermissionStateNotInApp => '앱에서 제공되지 않음';
+
+  @override
+  String get devicePermissionStateRevoked => '취소됨';
+
+  @override
   String get deviceAndroidVersionLabel => 'Android 버전';
 
   @override
@@ -5199,6 +5214,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get deviceWhyDataUnavailableTitle => '데이터를 사용할 수 없는 이유';
+
+  @override
+  String get deviceWhyDataUnavailableSubtitle =>
+      '숨겨진 필드에 대한 정확한 Android 또는 기기 측 제한';
 
   @override
   String get deviceReconnectDiffTitle => '재연결 차이';
@@ -5317,13 +5336,13 @@ class AppLocalizationsKo extends AppLocalizations {
       'Android가 직접 디스크립터 및 전송 데이터를 노출하도록 하려면 USB 권한을 부여하고 기기를 다시 연결하세요.';
 
   @override
-  String get deviceExportFormatJson => 'JSON 페이로드';
+  String get deviceExportFormatJson => 'JSON 데이터';
 
   @override
   String get deviceExportFormatReport => '일반 텍스트 보고서';
 
   @override
-  String get deviceExportFormatRawHex => '원시 hex 디스크립터';
+  String get deviceExportFormatRawHex => '원시 16진수 디스크립터';
 
   @override
   String get deviceRawDumpExportTitle => '원시 덤프 내보내기';
@@ -5339,7 +5358,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get deviceExportChipReport => '보고서';
 
   @override
-  String get deviceExportChipRawHex => '원시 hex';
+  String get deviceExportChipRawHex => '원시 16진수';
 
   @override
   String get deviceCopyAction => '복사';
@@ -5496,7 +5515,611 @@ class AppLocalizationsKo extends AppLocalizations {
   String get deviceInputSourcesLabel => '입력 소스';
 
   @override
+  String deviceShowingFirstFields(int count) {
+    return '처음 $count개 필드만 표시합니다.';
+  }
+
+  @override
   String deviceShowingFirstDescriptors(int count) {
     return '처음 $count개 디스크립터를 표시합니다.';
   }
+
+  @override
+  String get settingsUsbBehaviorTitle => 'USB 동작';
+
+  @override
+  String get settingsUsbBehaviorSubtitle => 'USB 장치가 연결될 때의 시스템 동작을 제어합니다';
+
+  @override
+  String get settingsUsbOfferOnAttachTitle => 'USB 연결 시 열기 제안';
+
+  @override
+  String get settingsUsbOfferOnAttachSubtitle =>
+      'USB 장치를 연결하면 Android 선택기에 표시됩니다.';
+
+  @override
+  String get settingsUsbDisableAttachNote =>
+      '이 옵션을 끄면 장치 연결 시 Android가 USBDevInfo를 추천하지 않습니다. 앱이 열려 있는 동안에는 계속 장치를 감지합니다.';
+
+  @override
+  String get settingsAttachFilterScopeLabel => '연결 필터 범위';
+
+  @override
+  String get settingsAttachFilterScopeAllUsbDevices => '모든 USB 장치';
+
+  @override
+  String get settingsAttachLaunchBehaviorLabel => '연결 시 실행 동작';
+
+  @override
+  String get settingsAttachLaunchBehaviorEnabled =>
+      'Android가 USB 연결 선택기에서 USBDevInfo를 명시적으로 실행할 때만 열기';
+
+  @override
+  String get settingsAttachLaunchBehaviorDisabled => '선택기 별칭 비활성화됨';
+
+  @override
+  String get settingsWhileAppOpenLabel => '앱이 열려 있는 동안';
+
+  @override
+  String get settingsWhileAppOpenValue =>
+      'USB 연결/분리 이벤트가 화면 이동을 강제하지 않고 장치 데이터를 새로고칩니다';
+
+  @override
+  String get settingsBackupDataTitle => '백업 및 데이터';
+
+  @override
+  String get settingsBackupDataSubtitle => '장치 기록을 JSON으로 내보내기';
+
+  @override
+  String get settingsHistoryLabel => '기록';
+
+  @override
+  String get settingsMostRecentLabel => '최신';
+
+  @override
+  String get settingsNoHistoryYet => '아직 기록이 없습니다';
+
+  @override
+  String settingsHistoryRecordedCount(int count) {
+    return '$count개 기록됨';
+  }
+
+  @override
+  String get settingsBackupExportIncludes =>
+      '내보내기에는 공급업체/제품 ID, 확인된 이름, 문자열, 클래스/프로토콜, 타임스탬프와 권한이 허용된 경우 고급 세부정보(디스크립터, 구성, 인터페이스, HID 리포트)가 포함됩니다.';
+
+  @override
+  String get settingsExportJsonAction => 'JSON 내보내기';
+
+  @override
+  String get settingsImportJsonAction => 'JSON 가져오기';
+
+  @override
+  String get settingsUsbIdsDatabaseTitle => 'USB IDs 데이터베이스';
+
+  @override
+  String get settingsUsbIdsDatabaseSubtitle => '메타데이터 및 업데이트';
+
+  @override
+  String deviceConfigurationTitle(Object id, Object suffix) {
+    return '구성 $id$suffix';
+  }
+
+  @override
+  String get deviceAttributesLabel => '속성';
+
+  @override
+  String get deviceInterfacesSummaryTitle => '인터페이스(요약)';
+
+  @override
+  String deviceInterfaceShortLabel(Object id) {
+    return '인터페이스 $id';
+  }
+
+  @override
+  String deviceInterfaceSummaryValue(Object classValue, Object endpointCount) {
+    return '클래스 $classValue • EP $endpointCount';
+  }
+
+  @override
+  String deviceInterfaceStringLabel(
+    Object interfaceNumber,
+    Object alternateSetting,
+  ) {
+    return '인터페이스 $interfaceNumber (Alt $alternateSetting)';
+  }
+
+  @override
+  String get deviceKeyboardChip => '키보드';
+
+  @override
+  String get deviceMouseChip => '마우스';
+
+  @override
+  String deviceReportIdsChip(Object count) {
+    return '리포트 ID: $count';
+  }
+
+  @override
+  String deviceCollectionsChip(Object count) {
+    return '컬렉션: $count';
+  }
+
+  @override
+  String deviceUsagePagesChip(Object pages) {
+    return '사용 페이지: $pages';
+  }
+
+  @override
+  String get homeCapabilityAudio => '오디오';
+
+  @override
+  String get homeCapabilityVideo => '비디오';
+
+  @override
+  String get homeCapabilityHid => 'HID 장치';
+
+  @override
+  String get homeCapabilityMidi => 'MIDI 장치';
+
+  @override
+  String get homeCapabilityStorage => '저장소';
+
+  @override
+  String get homeCapabilityHub => '허브';
+
+  @override
+  String get homeCapabilityCdc => 'CDC 장치';
+
+  @override
+  String get homeCapabilityComposite => '복합';
+
+  @override
+  String get homeCapabilityInput => '입력';
+
+  @override
+  String get settingsUsbIdsLocalVersionLabel => '로컬 버전';
+
+  @override
+  String get settingsUsbIdsLocalDateLabel => '로컬 날짜';
+
+  @override
+  String get settingsUsbIdsRemoteShaNotFetched => '원격 SHA를 아직 가져오지 않았습니다.';
+
+  @override
+  String get settingsUsbIdsInstalledShaAfterUpdate =>
+      '설치된 SHA는 업데이트가 성공한 뒤 저장됩니다.';
+
+  @override
+  String get settingsUsbIdsInstalledShaMatchesRemote => '설치된 SHA가 원격 값과 일치합니다.';
+
+  @override
+  String get settingsUsbIdsInstalledShaDiffersRemote =>
+      '설치된 SHA가 원격 값과 다릅니다(업데이트 가능).';
+
+  @override
+  String get settingsUsbIdsDetailsTitle => '세부정보';
+
+  @override
+  String get settingsUsbIdsInstalledShaLabel => '설치된 SHA-256';
+
+  @override
+  String get settingsUsbIdsRemoteShaLabel => '원격 SHA-256';
+
+  @override
+  String get settingsUsbIdsShaMatchLabel => 'SHA 일치';
+
+  @override
+  String get settingsUsbIdsLastCheckedLabel => '마지막 확인';
+
+  @override
+  String get settingsUsbIdsUpdateHintLabel => '업데이트 힌트';
+
+  @override
+  String get settingsUsbIdsUpdateHintAvailable => '있음';
+
+  @override
+  String get settingsUsbIdsUpdateHintNone => '없음';
+
+  @override
+  String get settingsUsbIdsAutoCheckTitle => '업데이트 자동 확인';
+
+  @override
+  String get settingsUsbIdsAutoCheckSubtitle => '원격 .sha256을 주 1회 정도 확인합니다.';
+
+  @override
+  String get settingsUpdateNow => '지금 업데이트';
+
+  @override
+  String get settingsCheckNow => '지금 확인';
+
+  @override
+  String get settingsAboutSectionTitle => '정보';
+
+  @override
+  String get settingsAboutSectionSubtitle => '앱 정보 및 법적 고지';
+
+  @override
+  String settingsAboutAppTileTitle(Object appName, Object developer) {
+    return '$appName 정보 · $developer';
+  }
+
+  @override
+  String settingsAboutVersion(Object version) {
+    return '버전 $version';
+  }
+
+  @override
+  String get settingsLicensesTitle => '라이선스';
+
+  @override
+  String get settingsLicensesSubtitle => '오픈소스 라이선스';
+
+  @override
+  String get settingsReportIssueTitle => '문제 신고';
+
+  @override
+  String get settingsReportIssueSubtitle => '버그 및 기능 요청';
+
+  @override
+  String get settingsIssuesLinkCopied => '이슈 링크를 복사했습니다';
+
+  @override
+  String get settingsNoHistoryToExport => '내보낼 기록이 없습니다.';
+
+  @override
+  String get settingsExportCopied => '내보내기를 클립보드에 복사했습니다.';
+
+  @override
+  String settingsExportFailed(Object error) {
+    return '내보내기 실패: $error';
+  }
+
+  @override
+  String get settingsImportUnsupportedFormat =>
+      '지원되지 않는 JSON 형식입니다. 배열 또는 schema=device_history_export_v1이 있는 내보내기 페이로드가 필요합니다.';
+
+  @override
+  String get settingsImportNoValidHistoryEntries => '유효한 기록 항목을 찾지 못했습니다.';
+
+  @override
+  String settingsImportedItems(int count) {
+    return '$count개를 가져왔습니다.';
+  }
+
+  @override
+  String settingsImportFailed(Object error) {
+    return '가져오기 실패: $error';
+  }
+
+  @override
+  String get settingsClearHistoryBodyDetailed => '기록된 모든 장치를 로컬 저장소에서 삭제합니다.';
+
+  @override
+  String get settingsHistoryCleared => '기록을 지웠습니다.';
+
+  @override
+  String get settingsExportHistoryTitle => '기록 내보내기';
+
+  @override
+  String settingsExportHistorySubtitle(int count) {
+    return '$count개 • JSON';
+  }
+
+  @override
+  String get settingsExportFormatPretty => '보기 좋게';
+
+  @override
+  String get settingsExportFormatCompact => '간단히';
+
+  @override
+  String get settingsExportSafeShareNote =>
+      '이 내보내기는 디버깅용으로 공유해도 되지만 장치 이름/경로와 일련번호가 포함될 수 있습니다.';
+
+  @override
+  String get settingsImportHistoryTitle => '기록 가져오기';
+
+  @override
+  String get settingsImportHistorySubtitle => '내보내기 페이로드 또는 원시 항목 목록 붙여넣기';
+
+  @override
+  String get settingsImportSupportedFormats =>
+      '지원 형식: device_history_export_v1 페이로드(권장) 또는 기록 항목 맵의 원시 JSON 배열.';
+
+  @override
+  String get settingsImportHint => '여기에 JSON 붙여넣기…';
+
+  @override
+  String get settingsImportAction => '가져오기';
+
+  @override
+  String get settingsImporting => '가져오는 중…';
+
+  @override
+  String get settingsImportReplacesHistoryNote =>
+      '가져오면 현재 기록이 대체됩니다. 확실하지 않으면 먼저 내보내세요.';
+
+  @override
+  String get settingsClipboardEmpty => '클립보드가 비어 있습니다.';
+
+  @override
+  String get settingsPasteJsonFirst => '먼저 JSON을 붙여넣으세요.';
+
+  @override
+  String get pasteAction => '붙여넣기';
+
+  @override
+  String get donationFocusCompatTitle => '호환성 및 권한';
+
+  @override
+  String get donationFocusCompatSubtitle => 'OEM별 차이, 권한 흐름, 예외 상황';
+
+  @override
+  String get donationFocusUsbIdsTitle => 'USB IDs 데이터베이스 업데이트';
+
+  @override
+  String get donationFocusUsbIdsSubtitle => '파싱, 최신성, 업데이트 신뢰성';
+
+  @override
+  String get donationFocusUiTitle => 'UI/UX 개선';
+
+  @override
+  String get donationFocusUiSubtitle => '명확성, 속도, 접근성';
+
+  @override
+  String get donationFocusFeaturesTitle => '새 기능';
+
+  @override
+  String get donationFocusFeaturesSubtitle => '필터, 내보내기, 인사이트';
+
+  @override
+  String donationShareHeader(Object appName) {
+    return '$appName 지원 - 오픈소스 앱';
+  }
+
+  @override
+  String donationShareFocusLine(Object title) {
+    return '중점: $title';
+  }
+
+  @override
+  String get donationShareChainBtc =>
+      'Bitcoin (BTC) - 반드시 Bitcoin 네트워크로만 보내세요.';
+
+  @override
+  String get donationShareChainEth =>
+      'Ethereum (ERC-20) - 반드시 Ethereum 메인넷으로만 보내세요.';
+
+  @override
+  String donationShareBtcAddress(Object address) {
+    return 'BTC 주소: $address';
+  }
+
+  @override
+  String donationShareEthAddress(Object address) {
+    return 'ETH 주소: $address';
+  }
+
+  @override
+  String donationShareRepo(Object url) {
+    return '저장소: $url';
+  }
+
+  @override
+  String get donationNoBrowserForLiberapay => 'Liberapay를 열 수 있는 브라우저가 없습니다';
+
+  @override
+  String get donationFailedToOpenLiberapay => '브라우저에서 Liberapay를 열지 못했습니다';
+
+  @override
+  String donationErrorOpeningLiberapay(Object error) {
+    return 'Liberapay를 여는 중 오류: $error';
+  }
+
+  @override
+  String get donationThankYouTitle => '감사합니다';
+
+  @override
+  String get donationThankYouBody =>
+      '여러분의 지원 덕분에 이 앱을 무료로, 빠르게, 꾸준히 유지할 수 있습니다. 오픈소스 소프트웨어를 지원해 주셔서 감사합니다.';
+
+  @override
+  String get donationFocusTitle => '기부 중점';
+
+  @override
+  String get donationFocusSubtitle =>
+      '선택 사항입니다. 다음에 무엇을 우선적으로 작업할지 정하는 데 도움이 됩니다.';
+
+  @override
+  String get donationGeneralSupportTitle => '일반 지원';
+
+  @override
+  String get donationGeneralSupportSubtitle => '가장 무난한 선택';
+
+  @override
+  String get donationSupportDevelopmentTitle => '개발 지원';
+
+  @override
+  String get donationSupportDevelopmentSubtitle => '유지보수와 기능 개발을 위한 선택형 기부';
+
+  @override
+  String get donationOptionsTitle => '기부 방법';
+
+  @override
+  String get donationOptionsSubtitle =>
+      '여러분의 기여로 이 도구는 무료로 유지되고, 관리되며, 커뮤니티 중심으로 발전합니다';
+
+  @override
+  String get donationRecommendedBadge => '추천';
+
+  @override
+  String get donationLiberapayFlexibleSupport => '유연한 지원 옵션';
+
+  @override
+  String get donationTraditionalPayments => '일반 결제 수단(카드, PayPal, 은행)';
+
+  @override
+  String get donationRecurringOrOneTime => '정기 후원 또는 1회 기부 모두 가능';
+
+  @override
+  String get donationTrustedByOpenSource => '오픈소스 개발자들이 신뢰함';
+
+  @override
+  String get donationOpeningBrowser => '브라우저를 여는 중...';
+
+  @override
+  String get donationViaLiberapay => 'Liberapay로 기부';
+
+  @override
+  String get donationLiberapayNote =>
+      'Liberapay는 오픈소스 프로젝트가 신뢰하는 비영리 기부 플랫폼입니다.';
+
+  @override
+  String get donationCryptoSupportTitle => '암호화폐 직접 지원';
+
+  @override
+  String get donationCryptoSupportSubtitle => '개인정보 중심 옵션 • QR 스캔 또는 주소 복사';
+
+  @override
+  String get donationBtcShort => 'BTC';
+
+  @override
+  String get donationEthShort => 'ETH';
+
+  @override
+  String get donationGeneralShort => '일반';
+
+  @override
+  String get donationBitcoinNetworkOnly => 'Bitcoin 네트워크만';
+
+  @override
+  String get donationEthereumNetworkOnly => 'Ethereum 메인넷만';
+
+  @override
+  String get donationBitcoinTitle => 'Bitcoin 기부';
+
+  @override
+  String get donationEthereumTitle => 'Ethereum 기부';
+
+  @override
+  String get donationQrUnavailable => 'QR 코드를 사용할 수 없습니다';
+
+  @override
+  String get donationAddressTitle => '주소';
+
+  @override
+  String get donationBtcAddressCopied => 'BTC 주소를 복사했습니다';
+
+  @override
+  String get donationEthAddressCopied => 'ETH 주소를 복사했습니다';
+
+  @override
+  String get donationShareTextCopied => '공유 텍스트를 복사했습니다';
+
+  @override
+  String get donationCopyAddress => '주소 복사';
+
+  @override
+  String get donationShareAction => '공유';
+
+  @override
+  String get donationSentAction => '기부를 보냈습니다';
+
+  @override
+  String get donationSecurityNote =>
+      '보안 안내: 스크린샷, 리뷰, 제3자 페이지의 기부 주소는 신뢰하지 마세요. 이 앱 내부 화면만 사용하세요.';
+
+  @override
+  String deviceInterfaceTitle(Object id, Object classInfo) {
+    return '인터페이스 $id • $classInfo';
+  }
+
+  @override
+  String get deviceAltSettingLabel => '대체 설정';
+
+  @override
+  String get deviceClassLabel => '클래스';
+
+  @override
+  String deviceEndpointsTitle(int count) {
+    return '엔드포인트 ($count)';
+  }
+
+  @override
+  String get deviceNoEndpoints => '엔드포인트 없음';
+
+  @override
+  String deviceEndpointAddressSummary(
+    Object address,
+    Object number,
+    Object attributes,
+  ) {
+    return '주소 $address • EP# $number • 속성 $attributes';
+  }
+
+  @override
+  String deviceEndpointMaxPacket(Object value) {
+    return '최대 패킷 $value';
+  }
+
+  @override
+  String deviceEndpointInterval(Object value) {
+    return '간격 $value';
+  }
+
+  @override
+  String get deviceControlTransferDefaultTitle => '제어 전송';
+
+  @override
+  String get deviceRequestedLengthLabel => '요청 길이';
+
+  @override
+  String get deviceActualLengthLabel => '실제 길이';
+
+  @override
+  String get deviceResultLabel => '결과';
+
+  @override
+  String get deviceTransferSuccess => '성공';
+
+  @override
+  String get deviceTransferFailed => '실패';
+
+  @override
+  String get deviceResponseBytesHexTitle => '응답 바이트(16진수)';
+
+  @override
+  String get deviceParsedFieldsTitle => '파싱된 필드';
+
+  @override
+  String get deviceNoParsedFieldsAvailable => '파싱된 필드가 없습니다.';
+
+  @override
+  String get deviceRawBytesTitle => '원시 바이트';
+
+  @override
+  String deviceInterfaceReportTitle(
+    Object interfaceNumber,
+    Object reportLength,
+  ) {
+    return '인터페이스 $interfaceNumber • 리포트 $reportLength바이트';
+  }
+
+  @override
+  String get deviceParsedSummaryTitle => '파싱 요약';
+
+  @override
+  String get deviceNoParsedHidSummaryAvailable => '파싱된 HID 요약이 없습니다.';
+
+  @override
+  String get deviceReportHexTitle => '리포트(16진수)';
+
+  @override
+  String get historyEntryNotFoundTitle => '항목을 찾을 수 없음';
+
+  @override
+  String get historyEntryNotFoundBody => '이 기록 항목은 더 이상 존재하지 않습니다.';
+
+  @override
+  String get historyUnableToOpenDetail => '기록 상세를 열 수 없습니다.';
 }

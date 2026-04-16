@@ -4828,7 +4828,7 @@ class AppLocalizationsVi extends AppLocalizations {
       'USBDevInfo liệt kê các thiết bị OTG/USB host, hiển thị bộ mô tả và chi tiết lớp/giao thức, phân giải VID/PID bằng cơ sở dữ liệu USB IDs ngoại tuyến và ghi lại lịch sử kết nối. Không tài khoản, không theo dõi, không quảng cáo.';
 
   @override
-  String get usbAboutUsbHostPill => 'USB host';
+  String get usbAboutUsbHostPill => 'Chế độ host USB';
 
   @override
   String get usbAboutDescriptorsPill => 'Bộ mô tả';
@@ -5271,6 +5271,21 @@ class AppLocalizationsVi extends AppLocalizations {
   String get deviceShowPermissionDiagnostics => 'Hiện chẩn đoán quyền';
 
   @override
+  String get devicePermissionStateTemporary => 'Tạm thời';
+
+  @override
+  String get devicePermissionStatePermanent => 'Vĩnh viễn';
+
+  @override
+  String get devicePermissionStateReenumerated => 'Đã nhận diện lại';
+
+  @override
+  String get devicePermissionStateNotInApp => 'Không có trong ứng dụng';
+
+  @override
+  String get devicePermissionStateRevoked => 'Đã thu hồi';
+
+  @override
   String get deviceAndroidVersionLabel => 'Phiên bản Android';
 
   @override
@@ -5305,6 +5320,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get deviceWhyDataUnavailableTitle => 'Vì sao dữ liệu không khả dụng';
+
+  @override
+  String get deviceWhyDataUnavailableSubtitle =>
+      'Giới hạn chính xác từ Android hoặc từ thiết bị đối với các trường bị ẩn';
 
   @override
   String get deviceReconnectDiffTitle => 'Khác biệt khi kết nối lại';
@@ -5422,14 +5441,14 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get deviceAdvancedDataUnavailableSubtitle =>
-      'Không có payload truyền điều khiển thô hoặc bộ mô tả cho thiết bị này';
+      'Không có dữ liệu truyền điều khiển thô hoặc bộ mô tả cho thiết bị này';
 
   @override
   String get deviceGrantPermissionReconnectNote =>
       'Hãy cấp quyền USB và kết nối lại thiết bị nếu bạn muốn Android cung cấp dữ liệu bộ mô tả và truyền trực tiếp.';
 
   @override
-  String get deviceExportFormatJson => 'Payload JSON';
+  String get deviceExportFormatJson => 'Dữ liệu JSON';
 
   @override
   String get deviceExportFormatReport => 'Báo cáo văn bản thuần';
@@ -5613,7 +5632,629 @@ class AppLocalizationsVi extends AppLocalizations {
   String get deviceInputSourcesLabel => 'Nguồn nhập';
 
   @override
+  String deviceShowingFirstFields(int count) {
+    return 'Chỉ hiển thị $count trường đầu tiên.';
+  }
+
+  @override
   String deviceShowingFirstDescriptors(int count) {
     return 'Đang hiển thị $count bộ mô tả đầu tiên.';
   }
+
+  @override
+  String get settingsUsbBehaviorTitle => 'Hành vi USB';
+
+  @override
+  String get settingsUsbBehaviorSubtitle =>
+      'Điều khiển lời nhắc hệ thống khi thiết bị USB được cắm vào';
+
+  @override
+  String get settingsUsbOfferOnAttachTitle => 'Đề nghị mở khi gắn USB';
+
+  @override
+  String get settingsUsbOfferOnAttachSubtitle =>
+      'Xuất hiện trong bộ chọn Android khi một thiết bị USB được cắm vào.';
+
+  @override
+  String get settingsUsbDisableAttachNote =>
+      'Tắt mục này để Android không còn gợi ý USBDevInfo khi cắm thiết bị. Ứng dụng vẫn sẽ phát hiện thiết bị khi đang mở.';
+
+  @override
+  String get settingsAttachFilterScopeLabel => 'Phạm vi bộ lọc kết nối';
+
+  @override
+  String get settingsAttachFilterScopeAllUsbDevices => 'Tất cả thiết bị USB';
+
+  @override
+  String get settingsAttachLaunchBehaviorLabel => 'Hành vi khi kết nối';
+
+  @override
+  String get settingsAttachLaunchBehaviorEnabled =>
+      'Chỉ mở khi Android chủ động khởi chạy USBDevInfo từ bộ chọn USB';
+
+  @override
+  String get settingsAttachLaunchBehaviorDisabled => 'Bí danh bộ chọn đã tắt';
+
+  @override
+  String get settingsWhileAppOpenLabel => 'Khi ứng dụng đang mở';
+
+  @override
+  String get settingsWhileAppOpenValue =>
+      'Sự kiện gắn/rút USB làm mới dữ liệu thiết bị mà không ép điều hướng';
+
+  @override
+  String get settingsBackupDataTitle => 'Sao lưu và dữ liệu';
+
+  @override
+  String get settingsBackupDataSubtitle =>
+      'Xuất lịch sử thiết bị dưới dạng JSON';
+
+  @override
+  String get settingsHistoryLabel => 'Lịch sử';
+
+  @override
+  String get settingsMostRecentLabel => 'Gần đây nhất';
+
+  @override
+  String get settingsNoHistoryYet => 'Chưa có lịch sử';
+
+  @override
+  String settingsHistoryRecordedCount(int count) {
+    return 'Đã ghi $count mục';
+  }
+
+  @override
+  String get settingsBackupExportIncludes =>
+      'Bản xuất bao gồm ID nhà cung cấp/sản phẩm, tên đã nhận diện, chuỗi, lớp/giao thức, dấu thời gian và chi tiết nâng cao (descriptor, cấu hình, giao diện, báo cáo HID) khi đã được cấp quyền.';
+
+  @override
+  String get settingsExportJsonAction => 'Xuất JSON';
+
+  @override
+  String get settingsImportJsonAction => 'Nhập JSON';
+
+  @override
+  String get settingsUsbIdsDatabaseTitle => 'Cơ sở dữ liệu ID USB';
+
+  @override
+  String get settingsUsbIdsDatabaseSubtitle => 'Siêu dữ liệu và bộ cập nhật';
+
+  @override
+  String deviceConfigurationTitle(Object id, Object suffix) {
+    return 'Cấu hình $id$suffix';
+  }
+
+  @override
+  String get deviceAttributesLabel => 'Thuộc tính';
+
+  @override
+  String get deviceInterfacesSummaryTitle => 'Giao diện (tóm tắt)';
+
+  @override
+  String deviceInterfaceShortLabel(Object id) {
+    return 'Giao diện $id';
+  }
+
+  @override
+  String deviceInterfaceSummaryValue(Object classValue, Object endpointCount) {
+    return 'Lớp $classValue • EP $endpointCount';
+  }
+
+  @override
+  String deviceInterfaceStringLabel(
+    Object interfaceNumber,
+    Object alternateSetting,
+  ) {
+    return 'Giao diện $interfaceNumber (Alt $alternateSetting)';
+  }
+
+  @override
+  String get deviceKeyboardChip => 'Bàn phím';
+
+  @override
+  String get deviceMouseChip => 'Chuột';
+
+  @override
+  String deviceReportIdsChip(Object count) {
+    return 'ID báo cáo: $count';
+  }
+
+  @override
+  String deviceCollectionsChip(Object count) {
+    return 'Bộ sưu tập: $count';
+  }
+
+  @override
+  String deviceUsagePagesChip(Object pages) {
+    return 'Trang usage: $pages';
+  }
+
+  @override
+  String get homeCapabilityAudio => 'Âm thanh';
+
+  @override
+  String get homeCapabilityVideo => 'Thiết bị video';
+
+  @override
+  String get homeCapabilityHid => 'Thiết bị HID';
+
+  @override
+  String get homeCapabilityMidi => 'Thiết bị MIDI';
+
+  @override
+  String get homeCapabilityStorage => 'Lưu trữ';
+
+  @override
+  String get homeCapabilityHub => 'Bộ chia';
+
+  @override
+  String get homeCapabilityCdc => 'Thiết bị CDC';
+
+  @override
+  String get homeCapabilityComposite => 'Tổng hợp';
+
+  @override
+  String get homeCapabilityInput => 'Đầu vào';
+
+  @override
+  String get settingsUsbIdsLocalVersionLabel => 'Phiên bản cục bộ';
+
+  @override
+  String get settingsUsbIdsLocalDateLabel => 'Ngày cục bộ';
+
+  @override
+  String get settingsUsbIdsRemoteShaNotFetched =>
+      'SHA từ xa vẫn chưa được lấy.';
+
+  @override
+  String get settingsUsbIdsInstalledShaAfterUpdate =>
+      'SHA đã cài sẽ được lưu sau khi cập nhật thành công.';
+
+  @override
+  String get settingsUsbIdsInstalledShaMatchesRemote =>
+      'SHA đã cài khớp với SHA từ xa.';
+
+  @override
+  String get settingsUsbIdsInstalledShaDiffersRemote =>
+      'SHA đã cài khác với SHA từ xa (có bản cập nhật).';
+
+  @override
+  String get settingsUsbIdsDetailsTitle => 'Chi tiết';
+
+  @override
+  String get settingsUsbIdsInstalledShaLabel => 'SHA-256 đã cài';
+
+  @override
+  String get settingsUsbIdsRemoteShaLabel => 'SHA-256 từ xa';
+
+  @override
+  String get settingsUsbIdsShaMatchLabel => 'Khớp SHA';
+
+  @override
+  String get settingsUsbIdsLastCheckedLabel => 'Lần kiểm tra cuối';
+
+  @override
+  String get settingsUsbIdsUpdateHintLabel => 'Gợi ý cập nhật';
+
+  @override
+  String get settingsUsbIdsUpdateHintAvailable => 'Có sẵn';
+
+  @override
+  String get settingsUsbIdsUpdateHintNone => 'Không có';
+
+  @override
+  String get settingsUsbIdsAutoCheckTitle => 'Tự động kiểm tra cập nhật';
+
+  @override
+  String get settingsUsbIdsAutoCheckSubtitle =>
+      'Kiểm tra tệp .sha256 từ xa khoảng mỗi tuần một lần.';
+
+  @override
+  String get settingsUpdateNow => 'Cập nhật ngay';
+
+  @override
+  String get settingsCheckNow => 'Kiểm tra ngay';
+
+  @override
+  String get settingsAboutSectionTitle => 'Giới thiệu';
+
+  @override
+  String get settingsAboutSectionSubtitle => 'Thông tin ứng dụng và pháp lý';
+
+  @override
+  String settingsAboutAppTileTitle(Object appName, Object developer) {
+    return 'Giới thiệu $appName · $developer';
+  }
+
+  @override
+  String settingsAboutVersion(Object version) {
+    return 'Phiên bản $version';
+  }
+
+  @override
+  String get settingsLicensesTitle => 'Giấy phép';
+
+  @override
+  String get settingsLicensesSubtitle => 'Giấy phép mã nguồn mở';
+
+  @override
+  String get settingsReportIssueTitle => 'Báo cáo sự cố';
+
+  @override
+  String get settingsReportIssueSubtitle => 'Lỗi và yêu cầu tính năng';
+
+  @override
+  String get settingsIssuesLinkCopied => 'Đã sao chép liên kết vấn đề';
+
+  @override
+  String get settingsNoHistoryToExport => 'Không có lịch sử để xuất.';
+
+  @override
+  String get settingsExportCopied => 'Đã sao chép dữ liệu xuất vào bộ nhớ tạm.';
+
+  @override
+  String settingsExportFailed(Object error) {
+    return 'Xuất thất bại: $error';
+  }
+
+  @override
+  String get settingsImportUnsupportedFormat =>
+      'Định dạng JSON không được hỗ trợ. Cần một danh sách hoặc dữ liệu xuất có schema=device_history_export_v1.';
+
+  @override
+  String get settingsImportNoValidHistoryEntries =>
+      'Không tìm thấy mục lịch sử hợp lệ.';
+
+  @override
+  String settingsImportedItems(int count) {
+    return 'Đã nhập $count mục.';
+  }
+
+  @override
+  String settingsImportFailed(Object error) {
+    return 'Nhập thất bại: $error';
+  }
+
+  @override
+  String get settingsClearHistoryBodyDetailed =>
+      'Thao tác này sẽ xóa tất cả thiết bị đã ghi khỏi bộ nhớ cục bộ.';
+
+  @override
+  String get settingsHistoryCleared => 'Đã xóa lịch sử.';
+
+  @override
+  String get settingsExportHistoryTitle => 'Xuất lịch sử';
+
+  @override
+  String settingsExportHistorySubtitle(int count) {
+    return '$count mục • JSON';
+  }
+
+  @override
+  String get settingsExportFormatPretty => 'Đẹp';
+
+  @override
+  String get settingsExportFormatCompact => 'Gọn';
+
+  @override
+  String get settingsExportSafeShareNote =>
+      'Bản xuất này có thể chia sẻ an toàn để gỡ lỗi, nhưng có thể chứa tên/đường dẫn thiết bị và số sê-ri.';
+
+  @override
+  String get settingsImportHistoryTitle => 'Nhập lịch sử';
+
+  @override
+  String get settingsImportHistorySubtitle =>
+      'Dán dữ liệu xuất hoặc danh sách mục thô';
+
+  @override
+  String get settingsImportSupportedFormats =>
+      'Định dạng hỗ trợ: dữ liệu device_history_export_v1 (khuyến nghị) hoặc danh sách JSON thô của các mục lịch sử.';
+
+  @override
+  String get settingsImportHint => 'Dán JSON vào đây…';
+
+  @override
+  String get settingsImportAction => 'Nhập';
+
+  @override
+  String get settingsImporting => 'Đang nhập…';
+
+  @override
+  String get settingsImportReplacesHistoryNote =>
+      'Nhập sẽ thay thế lịch sử hiện tại của bạn. Nếu chưa chắc chắn, hãy xuất trước.';
+
+  @override
+  String get settingsClipboardEmpty => 'Bộ nhớ tạm trống.';
+
+  @override
+  String get settingsPasteJsonFirst => 'Hãy dán JSON trước.';
+
+  @override
+  String get pasteAction => 'Dán';
+
+  @override
+  String get donationFocusCompatTitle => 'Tương thích và quyền';
+
+  @override
+  String get donationFocusCompatSubtitle =>
+      'Đặc thù OEM, luồng quyền, trường hợp biên';
+
+  @override
+  String get donationFocusUsbIdsTitle => 'Cập nhật cơ sở dữ liệu ID USB';
+
+  @override
+  String get donationFocusUsbIdsSubtitle =>
+      'Phân tích, độ mới và độ tin cậy cập nhật';
+
+  @override
+  String get donationFocusUiTitle => 'Tinh chỉnh UI/UX';
+
+  @override
+  String get donationFocusUiSubtitle => 'Rõ ràng, tốc độ, khả năng truy cập';
+
+  @override
+  String get donationFocusFeaturesTitle => 'Tính năng mới';
+
+  @override
+  String get donationFocusFeaturesSubtitle => 'Bộ lọc, xuất dữ liệu, thông tin';
+
+  @override
+  String donationShareHeader(Object appName) {
+    return 'Hỗ trợ $appName - Ứng dụng mã nguồn mở';
+  }
+
+  @override
+  String donationShareFocusLine(Object title) {
+    return 'Trọng tâm: $title';
+  }
+
+  @override
+  String get donationShareChainBtc =>
+      'Bitcoin (BTC) - chỉ gửi trên mạng Bitcoin.';
+
+  @override
+  String get donationShareChainEth =>
+      'Ethereum (ERC-20) - chỉ gửi trên mạng chính Ethereum.';
+
+  @override
+  String donationShareBtcAddress(Object address) {
+    return 'Địa chỉ BTC: $address';
+  }
+
+  @override
+  String donationShareEthAddress(Object address) {
+    return 'Địa chỉ ETH: $address';
+  }
+
+  @override
+  String donationShareRepo(Object url) {
+    return 'Kho mã: $url';
+  }
+
+  @override
+  String get donationNoBrowserForLiberapay =>
+      'Không có trình duyệt để mở Liberapay';
+
+  @override
+  String get donationFailedToOpenLiberapay =>
+      'Không thể mở Liberapay trong trình duyệt';
+
+  @override
+  String donationErrorOpeningLiberapay(Object error) {
+    return 'Lỗi khi mở Liberapay: $error';
+  }
+
+  @override
+  String get donationThankYouTitle => 'Cảm ơn';
+
+  @override
+  String get donationThankYouBody =>
+      'Sự ủng hộ của bạn giúp ứng dụng này luôn miễn phí, nhanh và được duy trì tích cực. Cảm ơn bạn đã ủng hộ phần mềm mã nguồn mở.';
+
+  @override
+  String get donationFocusTitle => 'Trọng tâm quyên góp';
+
+  @override
+  String get donationFocusSubtitle =>
+      'Không bắt buộc. Giúp ưu tiên việc cần làm tiếp theo.';
+
+  @override
+  String get donationGeneralSupportTitle => 'Hỗ trợ chung';
+
+  @override
+  String get donationGeneralSupportSubtitle => 'Lựa chọn tổng thể tốt nhất';
+
+  @override
+  String get donationSupportDevelopmentTitle => 'Hỗ trợ phát triển';
+
+  @override
+  String get donationSupportDevelopmentSubtitle =>
+      'Khoản quyên góp tùy chọn để tài trợ bảo trì và tính năng';
+
+  @override
+  String get donationOptionsTitle => 'Tùy chọn quyên góp';
+
+  @override
+  String get donationOptionsSubtitle =>
+      'Đóng góp của bạn giúp công cụ này luôn miễn phí, được chăm sóc và do cộng đồng thúc đẩy';
+
+  @override
+  String get donationRecommendedBadge => 'Khuyên dùng';
+
+  @override
+  String get donationLiberapayFlexibleSupport => 'Tùy chọn hỗ trợ linh hoạt';
+
+  @override
+  String get donationTraditionalPayments =>
+      'Phương thức thanh toán truyền thống (thẻ, PayPal, ngân hàng)';
+
+  @override
+  String get donationRecurringOrOneTime =>
+      'Hỗ trợ định kỳ linh hoạt hoặc đóng góp một lần';
+
+  @override
+  String get donationTrustedByOpenSource =>
+      'Được các nhà phát triển mã nguồn mở tin dùng';
+
+  @override
+  String get donationOpeningBrowser => 'Đang mở trình duyệt...';
+
+  @override
+  String get donationViaLiberapay => 'Quyên góp qua Liberapay';
+
+  @override
+  String get donationLiberapayNote =>
+      'Liberapay là nền tảng quyên góp phi lợi nhuận được các dự án mã nguồn mở tin tưởng.';
+
+  @override
+  String get donationCryptoSupportTitle => 'Hỗ trợ tiền mã hóa trực tiếp';
+
+  @override
+  String get donationCryptoSupportSubtitle =>
+      'Tùy chọn ưu tiên quyền riêng tư • Quét mã QR hoặc sao chép địa chỉ';
+
+  @override
+  String get donationBtcShort => 'BTC';
+
+  @override
+  String get donationEthShort => 'ETH';
+
+  @override
+  String get donationGeneralShort => 'Chung';
+
+  @override
+  String get donationBitcoinNetworkOnly => 'Chỉ mạng Bitcoin';
+
+  @override
+  String get donationEthereumNetworkOnly => 'Chỉ mạng chính Ethereum';
+
+  @override
+  String get donationBitcoinTitle => 'Quyên góp Bitcoin';
+
+  @override
+  String get donationEthereumTitle => 'Quyên góp Ethereum';
+
+  @override
+  String get donationQrUnavailable => 'Không có mã QR';
+
+  @override
+  String get donationAddressTitle => 'Địa chỉ';
+
+  @override
+  String get donationBtcAddressCopied => 'Đã sao chép địa chỉ BTC';
+
+  @override
+  String get donationEthAddressCopied => 'Đã sao chép địa chỉ ETH';
+
+  @override
+  String get donationShareTextCopied => 'Đã sao chép nội dung chia sẻ';
+
+  @override
+  String get donationCopyAddress => 'Sao chép địa chỉ';
+
+  @override
+  String get donationShareAction => 'Chia sẻ';
+
+  @override
+  String get donationSentAction => 'Tôi đã gửi quyên góp';
+
+  @override
+  String get donationSecurityNote =>
+      'Lưu ý bảo mật: đừng bao giờ tin địa chỉ quyên góp từ ảnh chụp màn hình, bài đánh giá hoặc trang bên thứ ba. Chỉ dùng màn hình trong ứng dụng này.';
+
+  @override
+  String deviceInterfaceTitle(Object id, Object classInfo) {
+    return 'Giao diện $id • $classInfo';
+  }
+
+  @override
+  String get deviceAltSettingLabel => 'Thiết lập thay thế';
+
+  @override
+  String get deviceClassLabel => 'Lớp';
+
+  @override
+  String deviceEndpointsTitle(int count) {
+    return 'Điểm cuối ($count)';
+  }
+
+  @override
+  String get deviceNoEndpoints => 'Không có điểm cuối';
+
+  @override
+  String deviceEndpointAddressSummary(
+    Object address,
+    Object number,
+    Object attributes,
+  ) {
+    return 'Địa chỉ $address • EP# $number • Thuộc tính $attributes';
+  }
+
+  @override
+  String deviceEndpointMaxPacket(Object value) {
+    return 'Gói tối đa $value';
+  }
+
+  @override
+  String deviceEndpointInterval(Object value) {
+    return 'Khoảng $value';
+  }
+
+  @override
+  String get deviceControlTransferDefaultTitle => 'Truyền điều khiển';
+
+  @override
+  String get deviceRequestedLengthLabel => 'Độ dài yêu cầu';
+
+  @override
+  String get deviceActualLengthLabel => 'Độ dài thực tế';
+
+  @override
+  String get deviceResultLabel => 'Kết quả';
+
+  @override
+  String get deviceTransferSuccess => 'Thành công';
+
+  @override
+  String get deviceTransferFailed => 'Thất bại';
+
+  @override
+  String get deviceResponseBytesHexTitle => 'Byte phản hồi (hex)';
+
+  @override
+  String get deviceParsedFieldsTitle => 'Trường đã phân tích';
+
+  @override
+  String get deviceNoParsedFieldsAvailable => 'Không có trường đã phân tích.';
+
+  @override
+  String get deviceRawBytesTitle => 'Byte thô';
+
+  @override
+  String deviceInterfaceReportTitle(
+    Object interfaceNumber,
+    Object reportLength,
+  ) {
+    return 'Giao diện $interfaceNumber • Báo cáo $reportLength byte';
+  }
+
+  @override
+  String get deviceParsedSummaryTitle => 'Tóm tắt đã phân tích';
+
+  @override
+  String get deviceNoParsedHidSummaryAvailable =>
+      'Không có tóm tắt HID đã phân tích.';
+
+  @override
+  String get deviceReportHexTitle => 'Báo cáo (hex)';
+
+  @override
+  String get historyEntryNotFoundTitle => 'Không tìm thấy mục';
+
+  @override
+  String get historyEntryNotFoundBody => 'Mục lịch sử này không còn tồn tại.';
+
+  @override
+  String get historyUnableToOpenDetail => 'Không thể mở chi tiết lịch sử.';
 }

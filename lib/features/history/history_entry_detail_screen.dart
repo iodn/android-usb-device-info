@@ -544,7 +544,7 @@ class _Body extends StatelessWidget {
           ],
           if (hasPower) ...[
             const SizedBox(height: 12),
-            _powerSection(adv.maxPowerMa),
+            _powerSection(context, adv.maxPowerMa),
           ],
           if (hasCfgs) ...[
             const SizedBox(height: 12),
@@ -644,6 +644,7 @@ class _Body extends StatelessWidget {
   }
 
   Widget _deviceDescriptorSection(BuildContext context, Map<String, dynamic> dd) {
+    final l10n = context.l10n;
     if (dd.isEmpty) return const SizedBox.shrink();
 
     final usbVersion = (dd['usbVersion'] as String?)?.trim();
@@ -665,38 +666,39 @@ class _Body extends StatelessWidget {
     }
 
     return SectionCard(
-      title: 'Device descriptor',
-      subtitle: 'Raw USB descriptor fields',
+      title: l10n.deviceDescriptorTitle,
+      subtitle: l10n.deviceDescriptorSubtitle,
       leading: const Icon(Icons.article_outlined),
       child: _ExpandableBlock(
-        title: 'Show descriptor fields',
+        title: l10n.deviceShowDescriptorFields,
         initiallyExpanded: true,
         child: Column(
           children: [
-            if (usbVersion != null && usbVersion.isNotEmpty) KeyValueRow(label: 'USB spec (bcdUSB)', value: usbVersion),
+            if (usbVersion != null && usbVersion.isNotEmpty) KeyValueRow(label: l10n.deviceUsbSpecBcdLabel, value: usbVersion),
             if (deviceRelease != null && deviceRelease.isNotEmpty)
-              KeyValueRow(label: 'Device release (bcdDevice)', value: deviceRelease),
-            if (maxPkt0 != null) KeyValueRow(label: 'EP0 max packet', value: '$maxPkt0'),
-            if (numCfg != null) KeyValueRow(label: 'Num configurations', value: '$numCfg'),
-            if (iMan != null) KeyValueRow(label: 'iManufacturer', value: '$iMan'),
-            if (iProd != null) KeyValueRow(label: 'iProduct', value: '$iProd'),
-            if (iSer != null) KeyValueRow(label: 'iSerialNumber', value: '$iSer'),
+              KeyValueRow(label: l10n.deviceReleaseBcdLabel, value: deviceRelease),
+            if (maxPkt0 != null) KeyValueRow(label: l10n.deviceEp0MaxPacketLabel, value: '$maxPkt0'),
+            if (numCfg != null) KeyValueRow(label: l10n.deviceNumConfigurationsLabel, value: '$numCfg'),
+            if (iMan != null) KeyValueRow(label: l10n.deviceIManufacturerLabel, value: '$iMan'),
+            if (iProd != null) KeyValueRow(label: l10n.deviceIProductLabel, value: '$iProd'),
+            if (iSer != null) KeyValueRow(label: l10n.deviceISerialNumberLabel, value: '$iSer'),
           ],
         ),
       ),
     );
   }
 
-  Widget _powerSection(int? maxPowerMa) {
+  Widget _powerSection(BuildContext context, int? maxPowerMa) {
+    final l10n = context.l10n;
     if (maxPowerMa == null) return const SizedBox.shrink();
     return SectionCard(
-      title: 'Power',
-      subtitle: 'Configuration power budget',
+      title: l10n.devicePowerTitle,
+      subtitle: l10n.devicePowerSubtitle,
       leading: const Icon(Icons.bolt_rounded),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          KeyValueRow(label: 'Max power (config 0)', value: '$maxPowerMa mA'),
+          KeyValueRow(label: l10n.deviceMaxPowerConfig0Label, value: '$maxPowerMa mA'),
         ],
       ),
     );
@@ -705,8 +707,8 @@ class _Body extends StatelessWidget {
   Widget _configurationsSection(BuildContext context, List<dynamic> cfgs) {
     if (cfgs.isEmpty) return const SizedBox.shrink();
     return SectionCard(
-      title: 'Configurations',
-      subtitle: 'All reported USB configurations',
+      title: context.l10n.deviceConfigurationsTitle,
+      subtitle: context.l10n.deviceConfigurationsSubtitle,
       leading: const Icon(Icons.layers_outlined),
       child: Column(
         children: [
@@ -726,8 +728,8 @@ class _Body extends StatelessWidget {
   ) {
     if (ifaces.isEmpty) return const SizedBox.shrink();
     return SectionCard(
-      title: 'Interfaces & endpoints',
-      subtitle: 'Parsed interface and endpoint descriptors',
+      title: context.l10n.deviceInterfacesEndpointsTitle,
+      subtitle: context.l10n.deviceInterfacesEndpointsSubtitle,
       leading: const Icon(Icons.account_tree_outlined),
       child: Column(
         children: [
@@ -745,6 +747,7 @@ class _Body extends StatelessWidget {
   }
 
   Widget _inputDeviceSection(BuildContext context, Map<String, dynamic> input) {
+    final l10n = context.l10n;
     if (input.isEmpty) return const SizedBox.shrink();
 
     final name = (input['name'] as String?)?.trim();
@@ -764,21 +767,21 @@ class _Body extends StatelessWidget {
     if (!hasAny) return const SizedBox.shrink();
 
     return SectionCard(
-      title: 'Input device',
-      subtitle: 'Keyboard/mouse info from InputManager',
+      title: l10n.deviceInputDeviceTitle,
+      subtitle: l10n.deviceInputDeviceSubtitle,
       leading: const Icon(Icons.keyboard_alt_outlined),
       child: Column(
         children: [
-          if (name != null && name.isNotEmpty) KeyValueRow(label: 'Name', value: name),
-          if (descriptor != null && descriptor.isNotEmpty) KeyValueRow(label: 'Descriptor', value: descriptor),
-          if (input.containsKey('isExternal')) KeyValueRow(label: 'External', value: isExternal ? 'Yes' : 'No'),
-          if (sources.isNotEmpty) KeyValueRow(label: 'Sources', value: sources.join(', ')),
-          if (keyboardType != null) KeyValueRow(label: 'Keyboard type', value: '$keyboardType'),
+          if (name != null && name.isNotEmpty) KeyValueRow(label: l10n.deviceNameLabel, value: name),
+          if (descriptor != null && descriptor.isNotEmpty) KeyValueRow(label: l10n.deviceDescriptorLabel, value: descriptor),
+          if (input.containsKey('isExternal')) KeyValueRow(label: l10n.deviceExternalLabel, value: isExternal ? l10n.deviceYes : l10n.deviceNo),
+          if (sources.isNotEmpty) KeyValueRow(label: l10n.deviceSourcesLabel, value: sources.join(', ')),
+          if (keyboardType != null) KeyValueRow(label: l10n.deviceKeyboardTypeLabel, value: '$keyboardType'),
           if (motionRanges.isNotEmpty) ...[
-            KeyValueRow(label: 'Motion ranges', value: '${motionRanges.length}'),
+            KeyValueRow(label: l10n.deviceMotionRangesLabel, value: '${motionRanges.length}'),
             const SizedBox(height: 8),
             _ExpandableBlock(
-              title: 'Show motion ranges',
+              title: l10n.deviceShowMotionRanges,
               child: Column(
                 children: [
                   for (final r in motionRanges.take(16)) ...[
@@ -792,7 +795,7 @@ class _Body extends StatelessWidget {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Showing first 16 ranges.',
+                        l10n.deviceShowingFirstRanges(16),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                       ),
                     ),
@@ -806,6 +809,7 @@ class _Body extends StatelessWidget {
   }
 
   Widget _advancedStatusSection(BuildContext context, Map<String, dynamic> state) {
+    final l10n = context.l10n;
     final activeCfg = state['activeConfiguration'];
     final status = _asMap(state['deviceStatus']);
     final ifAlt = _asList(state['interfaceAltSettings']);
@@ -816,31 +820,31 @@ class _Body extends StatelessWidget {
     final rawStatus = status['raw'];
 
     return SectionCard(
-      title: 'Device state',
-      subtitle: 'Active config, status bits, alt settings',
+      title: l10n.deviceStateTitle,
+      subtitle: l10n.deviceStateSubtitle,
       leading: const Icon(Icons.memory_rounded),
       child: Column(
         children: [
-          KeyValueRow(label: 'Active configuration', value: activeCfg == null ? 'Unknown' : '$activeCfg'),
+          KeyValueRow(label: l10n.deviceActiveConfigurationLabel, value: activeCfg == null ? l10n.unknown : '$activeCfg'),
           if (rawStatus != null)
             KeyValueRow(
-              label: 'Device status',
+              label: l10n.deviceStatusLabel,
               value: '${Fmt.decAndHex16(rawStatus is int ? rawStatus : int.tryParse('$rawStatus') ?? 0)}',
             ),
           if (selfPowered != null)
-            KeyValueRow(label: 'Self-powered', value: selfPowered == true ? 'Yes' : 'No'),
+            KeyValueRow(label: l10n.deviceSelfPoweredLabel, value: selfPowered == true ? l10n.deviceYes : l10n.deviceNo),
           if (remoteWake != null)
-            KeyValueRow(label: 'Remote wakeup', value: remoteWake == true ? 'Yes' : 'No'),
+            KeyValueRow(label: l10n.deviceRemoteWakeupLabel, value: remoteWake == true ? l10n.deviceYes : l10n.deviceNo),
           if (ifAlt.isNotEmpty) ...[
             const SizedBox(height: 8),
             _ExpandableBlock(
-              title: 'Interface alternate settings',
+              title: l10n.deviceInterfaceAlternateSettingsTitle,
               child: Column(
                 children: [
                   for (final it in ifAlt.take(32)) ...[
                     KeyValueRow(
-                      label: 'IF ${_asInt(_asMap(it)['interfaceNumber']) ?? '?'}',
-                      value: 'Alt ${_asInt(_asMap(it)['alternateSetting'])?.toString() ?? 'Unknown'}',
+                      label: l10n.deviceInterfaceShortLabel('${_asInt(_asMap(it)['interfaceNumber']) ?? '?'}'),
+                      value: l10n.deviceAltSettingValue(_asInt(_asMap(it)['alternateSetting'])?.toString() ?? l10n.unknown),
                       allowCopy: false,
                     ),
                   ],
@@ -862,6 +866,7 @@ class _Body extends StatelessWidget {
   }
 
   Widget _advancedStringsSection(BuildContext context, Map<String, dynamic> strings) {
+    final l10n = context.l10n;
     final langs = _asList(strings['languageIds']).map(_asInt).whereType<int>().toList(growable: false);
     final preferred = _asInt(strings['preferredLanguageId']);
     final dev = _asMap(strings['device']);
@@ -869,48 +874,50 @@ class _Body extends StatelessWidget {
     if (langs.isEmpty && dev.isEmpty && ifs.isEmpty) return const SizedBox.shrink();
 
     return SectionCard(
-      title: 'String descriptors',
-      subtitle: 'Languages and iManufacturer/iProduct/iSerial + iInterface',
+      title: l10n.deviceStringDescriptorsTitle,
+      subtitle: l10n.deviceStringDescriptorsSubtitle,
       leading: const Icon(Icons.translate_rounded),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (langs.isNotEmpty)
             KeyValueRow(
-              label: 'Languages',
+              label: l10n.deviceLanguagesLabel,
               value: langs.map(Fmt.hex16).join(', '),
             ),
-          if (preferred != null) KeyValueRow(label: 'Preferred', value: Fmt.hex16(preferred)),
+          if (preferred != null) KeyValueRow(label: l10n.devicePreferredLabel, value: Fmt.hex16(preferred)),
           if (dev.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(
-              'Device strings',
+              l10n.deviceDeviceStringsTitle,
               style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: 8),
             if ((dev['manufacturer'] as String?)?.trim().isNotEmpty ?? false)
-              KeyValueRow(label: 'Manufacturer', value: (dev['manufacturer'] as String).trim()),
-            if ((dev['product'] as String?)?.trim().isNotEmpty ?? false) KeyValueRow(label: 'Product', value: (dev['product'] as String).trim()),
-            if ((dev['serial'] as String?)?.trim().isNotEmpty ?? false) KeyValueRow(label: 'Serial', value: (dev['serial'] as String).trim()),
+              KeyValueRow(label: l10n.deviceManufacturerLabel, value: (dev['manufacturer'] as String).trim()),
+            if ((dev['product'] as String?)?.trim().isNotEmpty ?? false) KeyValueRow(label: l10n.deviceProductLabel, value: (dev['product'] as String).trim()),
+            if ((dev['serial'] as String?)?.trim().isNotEmpty ?? false) KeyValueRow(label: l10n.deviceSerialLabel, value: (dev['serial'] as String).trim()),
           ],
           if (ifs.isNotEmpty) ...[
             const SizedBox(height: 10),
             _ExpandableBlock(
-              title: 'Interface strings',
+              title: l10n.deviceInterfaceStringsTitle,
               child: Column(
                 children: [
                   for (final it in ifs.take(48)) ...[
                     KeyValueRow(
-                      label:
-                          'IF ${_asInt(_asMap(it)['interfaceNumber']) ?? '?'} (Alt ${_asInt(_asMap(it)['alternateSetting']) ?? 0})',
-                      value: (_asMap(it)['value'] as String?)?.trim().isEmpty ?? true ? 'Unknown' : (_asMap(it)['value'] as String),
+                      label: l10n.deviceInterfaceStringLabel(
+                        '${_asInt(_asMap(it)['interfaceNumber']) ?? '?'}',
+                        '${_asInt(_asMap(it)['alternateSetting']) ?? 0}',
+                      ),
+                      value: (_asMap(it)['value'] as String?)?.trim().isEmpty ?? true ? l10n.unknown : (_asMap(it)['value'] as String),
                     ),
                   ],
                   if (ifs.length > 48)
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Showing first 48 interface strings.',
+                        l10n.deviceShowingFirstInterfaceStrings(48),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                       ),
                     ),
@@ -924,13 +931,14 @@ class _Body extends StatelessWidget {
   }
 
   Widget _advancedDescriptorTreeSection(BuildContext context, List<dynamic> tree) {
+    final l10n = context.l10n;
     if (tree.isEmpty) return const SizedBox.shrink();
     return SectionCard(
-      title: 'Descriptor tree',
-      subtitle: '${tree.length} descriptors parsed',
+      title: l10n.deviceDescriptorTreeTitle,
+      subtitle: l10n.deviceDescriptorsParsed(tree.length),
       leading: const Icon(Icons.schema_rounded),
       child: _ExpandableBlock(
-        title: 'Show descriptors',
+        title: l10n.deviceShowDescriptors,
         child: Column(
           children: [
             for (final n in tree.take(64)) ...[
@@ -941,7 +949,7 @@ class _Body extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Showing first 64 descriptors.',
+                  l10n.deviceShowingFirstDescriptors(64),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
               ),
@@ -1417,9 +1425,9 @@ class _NotFoundBody extends StatelessWidget {
       children: [
         const Icon(Icons.search_off_rounded, size: 48),
         const SizedBox(height: 12),
-        Text('Entry not found', style: Theme.of(context).textTheme.titleLarge),
+        Text(context.l10n.historyEntryNotFoundTitle, style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
-        const Text('This history item no longer exists.'),
+        Text(context.l10n.historyEntryNotFoundBody),
       ],
     );
   }
@@ -1437,7 +1445,7 @@ class _ErrorBody extends StatelessWidget {
       children: [
         const Icon(Icons.error_outline_rounded, size: 48),
         const SizedBox(height: 12),
-        Text('Unable to open history detail.', style: Theme.of(context).textTheme.titleLarge),
+        Text(context.l10n.historyUnableToOpenDetail, style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
         Text(error),
       ],
@@ -1454,6 +1462,7 @@ class _ConfigBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     final id = _asInt(cfg['id']);
     final name = (cfg['name'] as String?)?.trim();
@@ -1475,31 +1484,37 @@ class _ConfigBlock extends StatelessWidget {
     final attrsLabel = Fmt.usbConfigAttributesLabel(attrs);
     final maxPower = maxPowerMa == null ? null : '$maxPowerMa mA';
 
-    final title = 'Configuration ${id ?? index}${(name != null && name.isNotEmpty) ? ' — $name' : ''}';
+    final title = l10n.deviceConfigurationTitle(
+      '${id ?? index}',
+      (name != null && name.isNotEmpty) ? ' — $name' : '',
+    );
 
     return _ExpandableBlock(
       title: title,
       initiallyExpanded: index == 0,
       child: Column(
         children: [
-          if (name != null && name.isNotEmpty) KeyValueRow(label: 'Name', value: name),
-          if (attrs != 0) KeyValueRow(label: 'Attributes', value: '$attrsHex • $attrsLabel'),
-          if (maxPower != null) KeyValueRow(label: 'Max power', value: maxPower),
-          if (interfaceCount != null) KeyValueRow(label: 'Interfaces', value: '$interfaceCount'),
+          if (name != null && name.isNotEmpty) KeyValueRow(label: l10n.deviceNameLabel, value: name),
+          if (attrs != 0) KeyValueRow(label: l10n.deviceAttributesLabel, value: '$attrsHex • $attrsLabel'),
+          if (maxPower != null) KeyValueRow(label: l10n.deviceMaxPowerShortLabel, value: maxPower),
+          if (interfaceCount != null) KeyValueRow(label: l10n.deviceInterfacesLabel, value: '$interfaceCount'),
           if (interfaces.isNotEmpty) ...[
             const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Interfaces (summary)',
+                l10n.deviceInterfacesSummaryTitle,
                 style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
               ),
             ),
             const SizedBox(height: 8),
             for (final i in interfaces.take(8)) ...[
               KeyValueRow(
-                label: 'IF ${_asInt(_asMap(i)['id']) ?? '?'}',
-                value: 'Class ${Fmt.decAndHex8(_asInt(_asMap(i)['interfaceClass']) ?? 0)} • EP ${_asInt(_asMap(i)['endpointCount']) ?? 0}',
+                label: l10n.deviceInterfaceShortLabel('${_asInt(_asMap(i)['id']) ?? '?'}'),
+                value: l10n.deviceInterfaceSummaryValue(
+                  Fmt.decAndHex8(_asInt(_asMap(i)['interfaceClass']) ?? 0),
+                  '${_asInt(_asMap(i)['endpointCount']) ?? 0}',
+                ),
                 allowCopy: false,
               ),
             ],
@@ -1507,7 +1522,7 @@ class _ConfigBlock extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Showing first 8 interfaces.',
+                  l10n.deviceShowingFirstInterfaces(8),
                   style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
               ),
@@ -1528,6 +1543,7 @@ class _InterfaceBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     final id = _asInt(iface['id']);
     final alt = _asInt(iface['alternateSetting']) ?? 0;
@@ -1542,25 +1558,25 @@ class _InterfaceBlock extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    String join(String? n, int id) => '${(n == null || n.trim().isEmpty) ? 'Unknown' : n} (${Fmt.decAndHex8(id)})';
+    String join(String? n, int id) => '${(n == null || n.trim().isEmpty) ? l10n.unknown : n} (${Fmt.decAndHex8(id)})';
 
     return _ExpandableBlock(
-      title: 'Interface ${id ?? index} • ${join(resolved?.className, classId)}',
+      title: l10n.deviceInterfaceTitle('${id ?? index}', join(resolved?.className, classId)),
       initiallyExpanded: index == 0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (name != null && name.isNotEmpty) KeyValueRow(label: 'Name', value: name),
-          KeyValueRow(label: 'Alt setting', value: '$alt'),
-          KeyValueRow(label: 'Class', value: join(resolved?.className, classId)),
-          KeyValueRow(label: 'Subclass', value: join(resolved?.subclassName, subclassId)),
-          KeyValueRow(label: 'Protocol', value: join(resolved?.protocolName, protocolId)),
+          if (name != null && name.isNotEmpty) KeyValueRow(label: l10n.deviceNameLabel, value: name),
+          KeyValueRow(label: l10n.deviceAltSettingLabel, value: '$alt'),
+          KeyValueRow(label: l10n.deviceClassLabel, value: join(resolved?.className, classId)),
+          KeyValueRow(label: l10n.deviceSubclassLabel, value: join(resolved?.subclassName, subclassId)),
+          KeyValueRow(label: l10n.deviceProtocolLabel, value: join(resolved?.protocolName, protocolId)),
           const SizedBox(height: 10),
-          Text('Endpoints (${endpointCount ?? endpoints.length})',
+          Text(l10n.deviceEndpointsTitle(endpointCount ?? endpoints.length),
               style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
           const SizedBox(height: 8),
           if (endpoints.isEmpty)
-            Text('No endpoints', style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant))
+            Text(l10n.deviceNoEndpoints, style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant))
           else
             Column(
               children: [
@@ -1584,10 +1600,11 @@ class _EndpointTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     final address = _asInt(ep['address']) ?? 0;
-    final direction = (ep['direction'] as String?)?.trim() ?? 'Unknown';
-    final type = (ep['type'] as String?)?.trim() ?? 'Unknown';
+    final direction = (ep['direction'] as String?)?.trim() ?? l10n.unknown;
+    final type = (ep['type'] as String?)?.trim() ?? l10n.unknown;
     final maxPacketSize = _asInt(ep['maxPacketSize']) ?? 0;
     final interval = _asInt(ep['interval']) ?? 0;
     final attributes = _asInt(ep['attributes']) ?? 0;
@@ -1629,7 +1646,7 @@ class _EndpointTile extends StatelessWidget {
                   Text('$type • $direction', style: theme.textTheme.titleSmall),
                   const SizedBox(height: 2),
                   Text(
-                    'Addr ${Fmt.decAndHex8(address)} • EP# $number • Attr ${Fmt.decAndHex8(attributes)}',
+                    l10n.deviceEndpointAddressSummary(Fmt.decAndHex8(address), '$number', Fmt.decAndHex8(attributes)),
                     style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                   ),
                 ],
@@ -1639,8 +1656,8 @@ class _EndpointTile extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('MaxPkt $maxPacketSize', style: theme.textTheme.labelMedium),
-                Text('Interval $interval', style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                Text(l10n.deviceEndpointMaxPacket('$maxPacketSize'), style: theme.textTheme.labelMedium),
+                Text(l10n.deviceEndpointInterval('$interval'), style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
               ],
             ),
           ],
@@ -1681,10 +1698,11 @@ class _DescriptorNodeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     final off = _asInt(node['offset']);
     final len = _asInt(node['length']);
-    final typeName = (node['descriptorTypeName'] as String?) ?? 'Unknown';
+    final typeName = (node['descriptorTypeName'] as String?) ?? l10n.unknown;
     final type = _asInt(node['descriptorType']);
     final fields = _asMap(node['fields']);
     final rawHex = (node['rawHex'] as String?) ?? '';
@@ -1726,7 +1744,7 @@ class _DescriptorNodeTile extends StatelessWidget {
             if (fields.isNotEmpty) ...[
               const SizedBox(height: 10),
               _ExpandableBlock(
-                title: 'Fields',
+                title: l10n.deviceParsedFieldsTitle,
                 child: Column(
                   children: [
                     for (final e in fields.entries.take(14)) ...[
@@ -1736,7 +1754,7 @@ class _DescriptorNodeTile extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Showing first 14 fields.',
+                          l10n.deviceShowingFirstDescriptors(14),
                           style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                         ),
                       ),
@@ -1747,7 +1765,7 @@ class _DescriptorNodeTile extends StatelessWidget {
             if (rawHex.trim().isNotEmpty) ...[
               const SizedBox(height: 10),
               _ExpandableBlock(
-                title: 'Raw bytes (hex)',
+                title: l10n.deviceRawBytesTitle,
                 child: SelectableText(
                   Fmt.hexWrap(rawHex, group: 2, groupsPerLine: 16),
                   style: theme.textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
@@ -1769,6 +1787,7 @@ class _HidReportBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     final ifNum = _asInt(report['interfaceNumber']);
     final repLen = _asInt(report['reportLength']);
@@ -1781,14 +1800,14 @@ class _HidReportBlock extends StatelessWidget {
     final collections = _asInt(summary['collectionCount']);
 
     final chips = <String>[];
-    if (hasKb) chips.add('Keyboard');
-    if (hasMouse) chips.add('Mouse');
-    if (reportIdCount != null) chips.add('Report IDs: $reportIdCount');
-    if (collections != null) chips.add('Collections: $collections');
-    if (usagePages.isNotEmpty) chips.add('Usage pages: ${usagePages.map(Fmt.hex16).join(', ')}');
+    if (hasKb) chips.add(l10n.deviceKeyboardChip);
+    if (hasMouse) chips.add(l10n.deviceMouseChip);
+    if (reportIdCount != null) chips.add(l10n.deviceReportIdsChip(reportIdCount.toString()));
+    if (collections != null) chips.add(l10n.deviceCollectionsChip(collections.toString()));
+    if (usagePages.isNotEmpty) chips.add(l10n.deviceUsagePagesChip(usagePages.map(Fmt.hex16).join(', ')));
 
     return _ExpandableBlock(
-      title: 'Interface ${ifNum ?? '?'} • Report ${repLen ?? '?'} bytes',
+      title: l10n.deviceInterfaceReportTitle('${ifNum ?? '?'}', '${repLen ?? '?'}'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1801,12 +1820,12 @@ class _HidReportBlock extends StatelessWidget {
           ],
           if (hex == null || hex.isEmpty)
             Text(
-              'Report descriptor not available.',
+              l10n.deviceNoParsedHidSummaryAvailable,
               style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             )
           else
             _ExpandableBlock(
-              title: 'Raw report descriptor (hex)',
+              title: l10n.deviceReportHexTitle,
               initiallyExpanded: false,
               child: SelectableText(
                 Fmt.hexWrap(hex, group: 2, groupsPerLine: 16),

@@ -512,13 +512,14 @@ class SettingsScreen extends ConsumerWidget {
   Widget _buildUsbBehaviorSection(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final l10n = context.l10n;
     final enabled = ref.watch(usbOfferAttachControllerProvider);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SectionCard(
-        title: 'USB behavior',
-        subtitle: 'Control system prompts when a USB device is attached',
+        title: l10n.settingsUsbBehaviorTitle,
+        subtitle: l10n.settingsUsbBehaviorSubtitle,
         leading: Icon(Icons.usb_rounded, color: cs.primary),
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -527,8 +528,8 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               SwitchListTile.adaptive(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Offer to open on USB attach'),
-                subtitle: const Text('Appear in the Android chooser when a USB device is plugged in.'),
+                title: Text(l10n.settingsUsbOfferOnAttachTitle),
+                subtitle: Text(l10n.settingsUsbOfferOnAttachSubtitle),
                 value: enabled,
                 onChanged: (v) async {
                   await ref.read(usbOfferAttachControllerProvider.notifier).setEnabled(v);
@@ -545,24 +546,24 @@ class SettingsScreen extends ConsumerWidget {
                   border: Border.all(color: cs.outlineVariant.withOpacity(0.3)),
                 ),
                 child: Text(
-                  'Disable this to stop Android from suggesting USBDevInfo on device attach. The app will still detect devices while open.',
+                  l10n.settingsUsbDisableAttachNote,
                   style: theme.textTheme.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                 ),
               ),
               const SizedBox(height: 10),
               KeyValueRow(
-                label: 'Attach filter scope',
-                value: 'All USB devices',
+                label: l10n.settingsAttachFilterScopeLabel,
+                value: l10n.settingsAttachFilterScopeAllUsbDevices,
               ),
               KeyValueRow(
-                label: 'Attach launch behavior',
+                label: l10n.settingsAttachLaunchBehaviorLabel,
                 value: enabled
-                    ? 'Open only when Android explicitly launches USBDevInfo from the USB attach chooser'
-                    : 'Chooser alias disabled',
+                    ? l10n.settingsAttachLaunchBehaviorEnabled
+                    : l10n.settingsAttachLaunchBehaviorDisabled,
               ),
               KeyValueRow(
-                label: 'While app is open',
-                value: 'USB attach/detach events refresh device data without forcing navigation',
+                label: l10n.settingsWhileAppOpenLabel,
+                value: l10n.settingsWhileAppOpenValue,
               ),
             ],
           ),
@@ -578,6 +579,7 @@ class SettingsScreen extends ConsumerWidget {
   ) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final l10n = context.l10n;
 
     int? count;
     DateTime? latest;
@@ -592,25 +594,25 @@ class SettingsScreen extends ConsumerWidget {
     });
 
     final countLabel = count == null
-        ? 'Loading…'
+        ? l10n.loading
         : count == 0
-            ? 'No history yet'
-            : '$count item${count == 1 ? '' : 's'} recorded';
+            ? l10n.settingsNoHistoryYet
+            : l10n.settingsHistoryRecordedCount(count!);
     final latestLabel = latest == null ? '—' : DateFormat('yyyy-MM-dd HH:mm').format(latest!);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SectionCard(
-        title: 'Backup & data',
-        subtitle: 'Export your device history as JSON',
+        title: l10n.settingsBackupDataTitle,
+        subtitle: l10n.settingsBackupDataSubtitle,
         leading: Icon(Icons.backup_rounded, color: cs.primary),
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              KeyValueRow(label: 'History', value: countLabel, allowCopy: false),
-              KeyValueRow(label: 'Most recent', value: latestLabel, allowCopy: false),
+              KeyValueRow(label: l10n.settingsHistoryLabel, value: countLabel, allowCopy: false),
+              KeyValueRow(label: l10n.settingsMostRecentLabel, value: latestLabel, allowCopy: false),
               const SizedBox(height: 10),
               Container(
                 width: double.infinity,
@@ -621,7 +623,7 @@ class SettingsScreen extends ConsumerWidget {
                   border: Border.all(color: cs.outlineVariant.withOpacity(0.22)),
                 ),
                 child: Text(
-                  'Export includes vendor/product IDs, resolved names, strings, class/protocol, timestamps, and advanced details (descriptors, configurations, interfaces, HID reports) when permission was granted.',
+                  l10n.settingsBackupExportIncludes,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: cs.onSurface.withOpacity(0.80),
                     fontWeight: FontWeight.w700,
@@ -636,7 +638,7 @@ class SettingsScreen extends ConsumerWidget {
                     child: FilledButton.icon(
                       onPressed: historyAsync.isLoading ? null : () => _exportHistoryJson(context, ref),
                       icon: const Icon(Icons.file_download_rounded),
-                      label: const Text('Export JSON'),
+                      label: Text(l10n.settingsExportJsonAction),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -644,7 +646,7 @@ class SettingsScreen extends ConsumerWidget {
                     child: OutlinedButton.icon(
                       onPressed: historyAsync.isLoading ? null : () => _importHistoryJson(context, ref),
                       icon: const Icon(Icons.file_upload_rounded),
-                      label: const Text('Import JSON'),
+                      label: Text(l10n.settingsImportJsonAction),
                     ),
                   ),
                 ],
@@ -663,6 +665,7 @@ class SettingsScreen extends ConsumerWidget {
   ) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final l10n = context.l10n;
 
     String dt(DateTime? v) {
       if (v == null) return '—';
@@ -676,26 +679,26 @@ class SettingsScreen extends ConsumerWidget {
     final shaMatch = hasInstalled && hasRemote && installed == remote;
 
     final statusLine = !hasRemote
-        ? 'Remote SHA not fetched yet.'
+        ? l10n.settingsUsbIdsRemoteShaNotFetched
         : !hasInstalled
-            ? 'Installed SHA will be saved after a successful update.'
+            ? l10n.settingsUsbIdsInstalledShaAfterUpdate
             : shaMatch
-                ? 'Installed SHA matches remote.'
-                : 'Installed SHA differs from remote (update available).';
+                ? l10n.settingsUsbIdsInstalledShaMatchesRemote
+                : l10n.settingsUsbIdsInstalledShaDiffersRemote;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SectionCard(
-        title: 'USB IDs database',
-        subtitle: 'Metadata and updater',
+        title: l10n.settingsUsbIdsDatabaseTitle,
+        subtitle: l10n.settingsUsbIdsDatabaseSubtitle,
         leading: Icon(Icons.storage_rounded, color: cs.primary),
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              KeyValueRow(label: 'Local version', value: st.localMeta.versionLabel),
-              KeyValueRow(label: 'Local date', value: st.localMeta.dateLabel),
+              KeyValueRow(label: l10n.settingsUsbIdsLocalVersionLabel, value: st.localMeta.versionLabel),
+              KeyValueRow(label: l10n.settingsUsbIdsLocalDateLabel, value: st.localMeta.dateLabel),
               const SizedBox(height: 10),
               Theme(
                 data: theme.copyWith(dividerColor: Colors.transparent),
@@ -705,7 +708,7 @@ class SettingsScreen extends ConsumerWidget {
                   shape: const RoundedRectangleBorder(side: BorderSide.none),
                   collapsedShape: const RoundedRectangleBorder(side: BorderSide.none),
                   title: Text(
-                    'Details',
+                    l10n.settingsUsbIdsDetailsTitle,
                     style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
                   ),
                   subtitle: Text(
@@ -717,32 +720,32 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   children: [
                     KeyValueRow(
-                      label: 'Installed SHA-256',
+                      label: l10n.settingsUsbIdsInstalledShaLabel,
                       value: hasInstalled ? installed : '—',
                       valueStyle: theme.textTheme.bodySmall,
                     ),
                     KeyValueRow(
-                      label: 'Remote SHA-256',
+                      label: l10n.settingsUsbIdsRemoteShaLabel,
                       value: hasRemote ? remote : '—',
                       valueStyle: theme.textTheme.bodySmall,
                     ),
                     KeyValueRow(
-                      label: 'SHA match',
-                      value: (!hasInstalled || !hasRemote) ? '—' : (shaMatch ? 'Yes' : 'No'),
+                      label: l10n.settingsUsbIdsShaMatchLabel,
+                      value: (!hasInstalled || !hasRemote) ? '—' : (shaMatch ? l10n.deviceYes : l10n.deviceNo),
                       allowCopy: false,
                     ),
                     const Divider(height: 24),
-                    KeyValueRow(label: 'Last checked', value: dt(st.lastCheckedAt), allowCopy: false),
+                    KeyValueRow(label: l10n.settingsUsbIdsLastCheckedLabel, value: dt(st.lastCheckedAt), allowCopy: false),
                     KeyValueRow(
-                      label: 'Update hint',
-                      value: st.updateAvailableHint ? 'Available' : 'None',
+                      label: l10n.settingsUsbIdsUpdateHintLabel,
+                      value: st.updateAvailableHint ? l10n.settingsUsbIdsUpdateHintAvailable : l10n.settingsUsbIdsUpdateHintNone,
                       allowCopy: false,
                     ),
                     const SizedBox(height: 8),
                     SwitchListTile.adaptive(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('Auto-check for updates'),
-                      subtitle: const Text('Checks the remote .sha256 about once per week.'),
+                      title: Text(l10n.settingsUsbIdsAutoCheckTitle),
+                      subtitle: Text(l10n.settingsUsbIdsAutoCheckSubtitle),
                       value: st.autoCheckEnabled,
                       onChanged: st.busy
                           ? null
@@ -763,7 +766,7 @@ class SettingsScreen extends ConsumerWidget {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              st.message ?? 'Working…',
+                              st.message ?? l10n.working,
                               style: theme.textTheme.bodyMedium,
                             ),
                           ),
@@ -808,7 +811,7 @@ class SettingsScreen extends ConsumerWidget {
                                     await ref.read(usbIdsUpdateControllerProvider.notifier).checkAndUpdateNow();
                                   },
                             icon: const Icon(Icons.system_update_alt_rounded),
-                            label: Text(st.updateAvailableHint ? 'Update now' : 'Check now'),
+                            label: Text(st.updateAvailableHint ? l10n.settingsUpdateNow : l10n.settingsCheckNow),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -820,7 +823,7 @@ class SettingsScreen extends ConsumerWidget {
                                   ref.invalidate(usbIdsUpdateControllerProvider);
                                 },
                           icon: const Icon(Icons.refresh_rounded),
-                          label: const Text('Refresh'),
+                          label: Text(l10n.refresh),
                         ),
                       ],
                     ),
@@ -837,12 +840,13 @@ class SettingsScreen extends ConsumerWidget {
   Widget _buildAboutSection(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final l10n = context.l10n;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SectionCard(
-        title: 'About',
-        subtitle: 'App information and legal',
+        title: l10n.settingsAboutSectionTitle,
+        subtitle: l10n.settingsAboutSectionSubtitle,
         leading: Icon(Icons.info_outline, color: cs.primary),
         child: Column(
           children: [
@@ -863,8 +867,8 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  title: Text('$_appName - $_developerLabel'),
-                  subtitle: Text('Version $version'),
+                  title: Text(l10n.settingsAboutAppTileTitle(_appName, _developerLabel)),
+                  subtitle: Text(l10n.settingsAboutVersion(version)),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
                     Navigator.of(context).push(
@@ -877,8 +881,8 @@ class SettingsScreen extends ConsumerWidget {
             const Divider(height: 1),
             ListTile(
               leading: const Icon(Icons.gavel),
-              title: const Text('Licenses'),
-              subtitle: const Text('Open source licenses'),
+              title: Text(l10n.settingsLicensesTitle),
+              subtitle: Text(l10n.settingsLicensesSubtitle),
               trailing: const Icon(Icons.chevron_right),
               onTap: () {
                 showLicensePage(
@@ -900,14 +904,14 @@ class SettingsScreen extends ConsumerWidget {
             const Divider(height: 1),
             ListTile(
               leading: const Icon(Icons.bug_report),
-              title: const Text('Report an issue'),
-              subtitle: const Text('Bugs & feature requests'),
+              title: Text(l10n.settingsReportIssueTitle),
+              subtitle: Text(l10n.settingsReportIssueSubtitle),
               trailing: const Icon(Icons.open_in_new),
               onTap: () => _launchUrl(context, _issuesUrl),
               onLongPress: () => _copyToClipboard(
                 context,
                 text: _issuesUrl,
-                message: 'Issues link copied',
+                message: l10n.settingsIssuesLinkCopied,
               ),
             ),
           ],
@@ -917,12 +921,13 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Future<void> _exportHistoryJson(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
     try {
       final items = await ref.read(deviceHistoryControllerProvider.future);
       if (!context.mounted) return;
 
       if (items.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No history to export.')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.settingsNoHistoryToExport)));
         return;
       }
 
@@ -951,18 +956,19 @@ class SettingsScreen extends ConsumerWidget {
               count: items.length,
               prettyJson: pretty,
               compactJson: compact,
-              onCopy: (text) => _copyToClipboard(ctx, text: text, message: 'Export copied to clipboard.'),
+              onCopy: (text) => _copyToClipboard(ctx, text: text, message: l10n.settingsExportCopied),
             ),
           );
         },
       );
     } catch (e) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Export failed: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.settingsExportFailed('$e'))));
     }
   }
 
   Future<void> _importHistoryJson(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
     await showModalBottomSheet<void>(
       context: context,
       useSafeArea: true,
@@ -982,7 +988,7 @@ class SettingsScreen extends ConsumerWidget {
             } else if (decoded is List) {
               itemsDyn = decoded;
             } else {
-              throw 'Unsupported JSON format. Expecting an array or an export payload with schema=device_history_export_v1.';
+              throw l10n.settingsImportUnsupportedFormat;
             }
 
             final items = itemsDyn
@@ -991,7 +997,7 @@ class SettingsScreen extends ConsumerWidget {
                 .where((e) => e.id.isNotEmpty)
                 .toList();
 
-            if (items.isEmpty) throw 'No valid history entries found.';
+            if (items.isEmpty) throw l10n.settingsImportNoValidHistoryEntries;
 
             await ref.read(deviceHistoryControllerProvider.notifier).replaceAll(items);
 
@@ -999,10 +1005,10 @@ class SettingsScreen extends ConsumerWidget {
             Navigator.of(ctx).pop();
 
             if (!context.mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Imported ${items.length} item(s).')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.settingsImportedItems(items.length))));
           } catch (e) {
             if (!context.mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Import failed: $e')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.settingsImportFailed('$e'))));
           }
         },
       ),
@@ -1013,16 +1019,16 @@ class SettingsScreen extends ConsumerWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Clear history?'),
-        content: const Text('This will remove all recorded devices from local storage.'),
+        title: Text(context.l10n.historyClearDialogTitle),
+        content: Text(context.l10n.settingsClearHistoryBodyDetailed),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Clear'),
+            child: Text(context.l10n.clearAction),
           ),
         ],
       ),
@@ -1031,7 +1037,7 @@ class SettingsScreen extends ConsumerWidget {
     if (ok == true) {
       await ref.read(deviceHistoryControllerProvider.notifier).clearAll();
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('History cleared.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.settingsHistoryCleared)));
       HapticFeedback.selectionClick();
     }
   }
@@ -1111,20 +1117,21 @@ class _LoadingSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final l10n = context.l10n;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SectionCard(
-        title: 'USB IDs database',
-        subtitle: 'Metadata and updater',
+        title: l10n.settingsUsbIdsDatabaseTitle,
+        subtitle: l10n.settingsUsbIdsDatabaseSubtitle,
         leading: Icon(Icons.storage_rounded, color: cs.primary),
-        child: const Padding(
-          padding: EdgeInsets.all(14),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
           child: Row(
             children: [
-              SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
-              SizedBox(width: 10),
-              Expanded(child: Text('Loading…')),
+              const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
+              const SizedBox(width: 10),
+              Expanded(child: Text(l10n.loading)),
             ],
           ),
         ),
@@ -1142,12 +1149,13 @@ class _ErrorSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final l10n = context.l10n;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SectionCard(
-        title: 'USB IDs database',
-        subtitle: 'Metadata and updater',
+        title: l10n.settingsUsbIdsDatabaseTitle,
+        subtitle: l10n.settingsUsbIdsDatabaseSubtitle,
         leading: Icon(Icons.storage_rounded, color: cs.primary),
         child: Padding(
           padding: const EdgeInsets.all(14),
@@ -1194,6 +1202,7 @@ class _ExportHistorySheetState extends State<_ExportHistorySheet> {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final content = _pretty ? widget.prettyJson : widget.compactJson;
+    final l10n = context.l10n;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -1216,12 +1225,12 @@ class _ExportHistorySheetState extends State<_ExportHistorySheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Export history',
+                      l10n.settingsExportHistoryTitle,
                       style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '${widget.count} item${widget.count == 1 ? '' : 's'} • JSON',
+                      l10n.settingsExportHistorySubtitle(widget.count),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: cs.onSurface.withOpacity(0.72),
                         fontWeight: FontWeight.w700,
@@ -1231,7 +1240,7 @@ class _ExportHistorySheetState extends State<_ExportHistorySheet> {
                 ),
               ),
               IconButton(
-                tooltip: 'Close',
+                tooltip: l10n.close,
                 onPressed: () => Navigator.of(context).pop(),
                 icon: const Icon(Icons.close_rounded),
               ),
@@ -1242,15 +1251,15 @@ class _ExportHistorySheetState extends State<_ExportHistorySheet> {
             children: [
               Expanded(
                 child: SegmentedButton<bool>(
-                  segments: const [
+                  segments: [
                     ButtonSegment<bool>(
                       value: true,
-                      label: Text('Pretty'),
+                      label: Text(l10n.settingsExportFormatPretty),
                       icon: Icon(Icons.format_align_left_rounded),
                     ),
                     ButtonSegment<bool>(
                       value: false,
-                      label: Text('Compact'),
+                      label: Text(l10n.settingsExportFormatCompact),
                       icon: Icon(Icons.compress_rounded),
                     ),
                   ],
@@ -1263,7 +1272,7 @@ class _ExportHistorySheetState extends State<_ExportHistorySheet> {
               FilledButton.icon(
                 onPressed: () => widget.onCopy(content),
                 icon: const Icon(Icons.copy_rounded),
-                label: const Text('Copy'),
+                label: Text(l10n.copy),
               ),
             ],
           ),
@@ -1291,9 +1300,7 @@ class _ExportHistorySheetState extends State<_ExportHistorySheet> {
             ),
           ),
           const SizedBox(height: 10),
-          const _FooterNote(
-            text: 'This export is safe to share for debugging, but it may contain device names/paths and serials.',
-          ),
+          _FooterNote(text: l10n.settingsExportSafeShareNote),
         ],
       ),
     );
@@ -1324,7 +1331,7 @@ class _ImportHistorySheetState extends State<_ImportHistorySheet> {
     final text = (data?.text ?? '').trim();
     if (!mounted) return;
     if (text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Clipboard is empty.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.settingsClipboardEmpty)));
       return;
     }
     setState(() => _controller.text = text);
@@ -1335,7 +1342,7 @@ class _ImportHistorySheetState extends State<_ImportHistorySheet> {
     final text = _controller.text.trim();
     if (text.isEmpty) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Paste JSON first.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.settingsPasteJsonFirst)));
       return;
     }
 
@@ -1351,6 +1358,7 @@ class _ImportHistorySheetState extends State<_ImportHistorySheet> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final l10n = context.l10n;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -1373,12 +1381,12 @@ class _ImportHistorySheetState extends State<_ImportHistorySheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Import history',
+                      l10n.settingsImportHistoryTitle,
                       style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Paste an export payload or a raw list of entries',
+                      l10n.settingsImportHistorySubtitle,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: cs.onSurface.withOpacity(0.72),
                         fontWeight: FontWeight.w700,
@@ -1388,7 +1396,7 @@ class _ImportHistorySheetState extends State<_ImportHistorySheet> {
                 ),
               ),
               IconButton(
-                tooltip: 'Close',
+                tooltip: l10n.close,
                 onPressed: _busy ? null : () => Navigator.of(context).pop(),
                 icon: const Icon(Icons.close_rounded),
               ),
@@ -1404,7 +1412,7 @@ class _ImportHistorySheetState extends State<_ImportHistorySheet> {
               border: Border.all(color: cs.outlineVariant.withOpacity(0.25)),
             ),
             child: Text(
-              'Supported formats: device_history_export_v1 payload (recommended) or a raw JSON array of history entry maps.',
+              l10n.settingsImportSupportedFormats,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: cs.onSurfaceVariant,
                 height: 1.3,
@@ -1430,7 +1438,7 @@ class _ImportHistorySheetState extends State<_ImportHistorySheet> {
                 fontWeight: FontWeight.w700,
               ),
               decoration: InputDecoration(
-                hintText: 'Paste JSON here…',
+                hintText: l10n.settingsImportHint,
                 filled: true,
                 fillColor: cs.surfaceContainerHighest.withOpacity(0.35),
                 border: OutlineInputBorder(
@@ -1456,7 +1464,7 @@ class _ImportHistorySheetState extends State<_ImportHistorySheet> {
                 child: OutlinedButton.icon(
                   onPressed: _busy ? null : _pasteFromClipboard,
                   icon: const Icon(Icons.content_paste_rounded),
-                  label: const Text('Paste'),
+                  label: Text(l10n.pasteAction),
                 ),
               ),
               const SizedBox(width: 12),
@@ -1466,13 +1474,13 @@ class _ImportHistorySheetState extends State<_ImportHistorySheet> {
                   icon: _busy
                       ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
                       : const Icon(Icons.file_upload_rounded),
-                  label: Text(_busy ? 'Importing…' : 'Import'),
+                  label: Text(_busy ? l10n.settingsImporting : l10n.settingsImportAction),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 10),
-          const _FooterNote(text: 'Import replaces your current history. If you are unsure, export first.'),
+          _FooterNote(text: l10n.settingsImportReplacesHistoryNote),
         ],
       ),
     );
@@ -1488,11 +1496,12 @@ class _FooterNote extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final l10n = context.l10n;
 
     return Padding(
       padding: const EdgeInsets.only(top: 4),
       child: Text(
-        text,
+        text.isEmpty ? l10n.notAvailableSymbol : text,
         style: theme.textTheme.bodySmall?.copyWith(color: cs.onSurface.withOpacity(0.65)),
       ),
     );

@@ -350,7 +350,7 @@ class AppLocalizationsHi extends AppLocalizations {
       'कोई विज्ञापन नहीं, कोई ट्रैकिंग नहीं, कोई बंद फीचर नहीं। आपका समर्थन प्रोटोकॉल कार्य, USB डोंगल समर्थन और उपकरणों में बेहतर संगतता को वित्त देता है।';
 
   @override
-  String get donate => 'Donate';
+  String get donate => 'दान करें';
 
   @override
   String get starRepo => 'रिपॉजिटरी को स्टार करें';
@@ -4839,7 +4839,7 @@ class AppLocalizationsHi extends AppLocalizations {
       'USBDevInfo OTG/USB host उपकरणों की सूची दिखाता है, डिस्क्रिप्टर और class/protocol विवरण दिखाता है, ऑफ़लाइन USB IDs डेटाबेस की मदद से VID/PID पहचानता है, और कनेक्शन इतिहास सहेजता है। न खाता चाहिए, न ट्रैकिंग है, न विज्ञापन।';
 
   @override
-  String get usbAboutUsbHostPill => 'USB host';
+  String get usbAboutUsbHostPill => 'USB होस्ट';
 
   @override
   String get usbAboutDescriptorsPill => 'डिस्क्रिप्टर';
@@ -5034,7 +5034,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get devicePathLabel => 'डिवाइस पथ';
 
   @override
-  String get deviceAndroidDeviceIdLabel => 'Android deviceId';
+  String get deviceAndroidDeviceIdLabel => 'Android डिवाइस ID';
 
   @override
   String get devicePortNumberLabel => 'पोर्ट नंबर';
@@ -5090,7 +5090,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get devicePortChainLabel => 'पोर्ट श्रृंखला';
 
   @override
-  String get deviceDevpathLabel => 'Devpath';
+  String get deviceDevpathLabel => 'डिवपाथ';
 
   @override
   String get deviceAuthorizedLabel => 'अधिकृत';
@@ -5132,13 +5132,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get deviceNumConfigurationsLabel => 'कॉन्फ़िगरेशन की संख्या';
 
   @override
-  String get deviceIManufacturerLabel => 'iManufacturer';
+  String get deviceIManufacturerLabel => 'iManufacturer इंडेक्स';
 
   @override
-  String get deviceIProductLabel => 'iProduct';
+  String get deviceIProductLabel => 'iProduct इंडेक्स';
 
   @override
-  String get deviceISerialNumberLabel => 'iSerialNumber';
+  String get deviceISerialNumberLabel => 'iSerialNumber इंडेक्स';
 
   @override
   String get deviceUsbAudioTitle => 'USB ऑडियो';
@@ -5176,7 +5176,7 @@ class AppLocalizationsHi extends AppLocalizations {
       'Android इस डिवाइस के लिए कोई मेल खाता USB ऑडियो एंडपॉइंट रिपोर्ट नहीं करता।';
 
   @override
-  String get deviceUsbMidiTitle => 'USB MIDI';
+  String get deviceUsbMidiTitle => 'USB MIDI डिवाइस';
 
   @override
   String get deviceUsbMidiSubtitle => 'MidiManager उपकरण और पोर्ट जानकारी';
@@ -5277,6 +5277,21 @@ class AppLocalizationsHi extends AppLocalizations {
   String get deviceShowPermissionDiagnostics => 'अनुमति निदान दिखाएँ';
 
   @override
+  String get devicePermissionStateTemporary => 'अस्थायी';
+
+  @override
+  String get devicePermissionStatePermanent => 'स्थायी';
+
+  @override
+  String get devicePermissionStateReenumerated => 'फिर से पहचाना गया';
+
+  @override
+  String get devicePermissionStateNotInApp => 'ऐप में उपलब्ध नहीं';
+
+  @override
+  String get devicePermissionStateRevoked => 'रद्द किया गया';
+
+  @override
   String get deviceAndroidVersionLabel => 'Android संस्करण';
 
   @override
@@ -5311,6 +5326,10 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get deviceWhyDataUnavailableTitle => 'यह जानकारी उपलब्ध क्यों नहीं है';
+
+  @override
+  String get deviceWhyDataUnavailableSubtitle =>
+      'छिपे हुए फ़ील्ड के लिए सटीक Android या डिवाइस-स्तरीय सीमा';
 
   @override
   String get deviceReconnectDiffTitle => 'पुनः कनेक्ट अंतर';
@@ -5441,7 +5460,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get deviceExportFormatReport => 'सादा पाठ रिपोर्ट';
 
   @override
-  String get deviceExportFormatRawHex => 'रॉ hex डिस्क्रिप्टर';
+  String get deviceExportFormatRawHex => 'रॉ हेक्स डिस्क्रिप्टर';
 
   @override
   String get deviceRawDumpExportTitle => 'रॉ डंप निर्यात';
@@ -5451,13 +5470,13 @@ class AppLocalizationsHi extends AppLocalizations {
       'इतिहास का उपयोग किए बिना इस जुड़े हुए उपकरण का स्नैपशॉट सीधे निर्यात करें।';
 
   @override
-  String get deviceExportChipJson => 'JSON';
+  String get deviceExportChipJson => 'JSON डेटा';
 
   @override
   String get deviceExportChipReport => 'रिपोर्ट';
 
   @override
-  String get deviceExportChipRawHex => 'रॉ hex';
+  String get deviceExportChipRawHex => 'रॉ हेक्स';
 
   @override
   String get deviceCopyAction => 'कॉपी करें';
@@ -5552,7 +5571,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String deviceAndroidVersionValue(Object sdk, Object release) {
-    return 'SDK $sdk ($release)';
+    return 'SDK स्तर $sdk ($release)';
   }
 
   @override
@@ -5582,7 +5601,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String deviceAltSettingValue(Object value) {
-    return 'Alt $value';
+    return 'वैकल्पिक $value';
   }
 
   @override
@@ -5619,7 +5638,632 @@ class AppLocalizationsHi extends AppLocalizations {
   String get deviceInputSourcesLabel => 'इनपुट स्रोत';
 
   @override
+  String deviceShowingFirstFields(int count) {
+    return 'केवल पहले $count फ़ील्ड दिखाए जा रहे हैं।';
+  }
+
+  @override
   String deviceShowingFirstDescriptors(int count) {
     return 'पहले $count डिस्क्रिप्टर दिखाए जा रहे हैं।';
   }
+
+  @override
+  String get settingsUsbBehaviorTitle => 'USB व्यवहार';
+
+  @override
+  String get settingsUsbBehaviorSubtitle =>
+      'USB डिवाइस कनेक्ट होने पर सिस्टम संकेतों को नियंत्रित करें';
+
+  @override
+  String get settingsUsbOfferOnAttachTitle =>
+      'USB कनेक्ट होने पर खोलने का विकल्प दिखाएँ';
+
+  @override
+  String get settingsUsbOfferOnAttachSubtitle =>
+      'USB डिवाइस लगाने पर ऐप Android चयन सूची में दिखेगा।';
+
+  @override
+  String get settingsUsbDisableAttachNote =>
+      'इसे बंद करने पर डिवाइस कनेक्ट होने पर Android USBDevInfo सुझाना बंद कर देगा। ऐप खुला होने पर भी डिवाइस पहचान जारी रहेगी।';
+
+  @override
+  String get settingsAttachFilterScopeLabel => 'अटैच फ़िल्टर दायरा';
+
+  @override
+  String get settingsAttachFilterScopeAllUsbDevices => 'सभी USB डिवाइस';
+
+  @override
+  String get settingsAttachLaunchBehaviorLabel => 'अटैच लॉन्च व्यवहार';
+
+  @override
+  String get settingsAttachLaunchBehaviorEnabled =>
+      'केवल तब खोलें जब Android USB attach चयन सूची से USBDevInfo को स्पष्ट रूप से लॉन्च करे';
+
+  @override
+  String get settingsAttachLaunchBehaviorDisabled => 'चयन सूची उपनाम बंद है';
+
+  @override
+  String get settingsWhileAppOpenLabel => 'जब ऐप खुला हो';
+
+  @override
+  String get settingsWhileAppOpenValue =>
+      'USB attach/detach घटनाएँ बिना जबरन नेविगेशन के डिवाइस डेटा रीफ़्रेश करती हैं';
+
+  @override
+  String get settingsBackupDataTitle => 'बैकअप और डेटा';
+
+  @override
+  String get settingsBackupDataSubtitle =>
+      'अपना डिवाइस इतिहास JSON में निर्यात करें';
+
+  @override
+  String get settingsHistoryLabel => 'इतिहास';
+
+  @override
+  String get settingsMostRecentLabel => 'सबसे हाल का';
+
+  @override
+  String get settingsNoHistoryYet => 'अभी तक कोई इतिहास नहीं है';
+
+  @override
+  String settingsHistoryRecordedCount(int count) {
+    return '$count आइटम रिकॉर्ड किए गए';
+  }
+
+  @override
+  String get settingsBackupExportIncludes =>
+      'निर्यात में vendor/product ID, resolved names, strings, class/protocol, timestamps और अनुमति मिलने पर उन्नत विवरण (descriptors, configurations, interfaces, HID reports) शामिल होते हैं।';
+
+  @override
+  String get settingsExportJsonAction => 'JSON निर्यात करें';
+
+  @override
+  String get settingsImportJsonAction => 'JSON आयात करें';
+
+  @override
+  String get settingsUsbIdsDatabaseTitle => 'USB IDs डेटाबेस';
+
+  @override
+  String get settingsUsbIdsDatabaseSubtitle => 'मेटाडेटा और अपडेटर';
+
+  @override
+  String deviceConfigurationTitle(Object id, Object suffix) {
+    return 'कॉन्फ़िगरेशन $id$suffix';
+  }
+
+  @override
+  String get deviceAttributesLabel => 'विशेषताएँ';
+
+  @override
+  String get deviceInterfacesSummaryTitle => 'इंटरफ़ेस (सारांश)';
+
+  @override
+  String deviceInterfaceShortLabel(Object id) {
+    return 'इंटरफ़ेस $id';
+  }
+
+  @override
+  String deviceInterfaceSummaryValue(Object classValue, Object endpointCount) {
+    return 'क्लास $classValue • EP $endpointCount';
+  }
+
+  @override
+  String deviceInterfaceStringLabel(
+    Object interfaceNumber,
+    Object alternateSetting,
+  ) {
+    return 'इंटरफ़ेस $interfaceNumber (Alt $alternateSetting)';
+  }
+
+  @override
+  String get deviceKeyboardChip => 'कीबोर्ड';
+
+  @override
+  String get deviceMouseChip => 'माउस';
+
+  @override
+  String deviceReportIdsChip(Object count) {
+    return 'रिपोर्ट आईडी: $count';
+  }
+
+  @override
+  String deviceCollectionsChip(Object count) {
+    return 'कलेक्शन: $count';
+  }
+
+  @override
+  String deviceUsagePagesChip(Object pages) {
+    return 'यूज़ेज पेज: $pages';
+  }
+
+  @override
+  String get homeCapabilityAudio => 'ऑडियो';
+
+  @override
+  String get homeCapabilityVideo => 'वीडियो';
+
+  @override
+  String get homeCapabilityHid => 'HID डिवाइस';
+
+  @override
+  String get homeCapabilityMidi => 'MIDI डिवाइस';
+
+  @override
+  String get homeCapabilityStorage => 'स्टोरेज';
+
+  @override
+  String get homeCapabilityHub => 'हब';
+
+  @override
+  String get homeCapabilityCdc => 'CDC डिवाइस';
+
+  @override
+  String get homeCapabilityComposite => 'कम्पोज़िट';
+
+  @override
+  String get homeCapabilityInput => 'इनपुट';
+
+  @override
+  String get settingsUsbIdsLocalVersionLabel => 'लोकल संस्करण';
+
+  @override
+  String get settingsUsbIdsLocalDateLabel => 'लोकल तारीख';
+
+  @override
+  String get settingsUsbIdsRemoteShaNotFetched =>
+      'रिमोट SHA अभी तक प्राप्त नहीं किया गया है।';
+
+  @override
+  String get settingsUsbIdsInstalledShaAfterUpdate =>
+      'सफल अपडेट के बाद इंस्टॉल किया गया SHA सहेजा जाएगा।';
+
+  @override
+  String get settingsUsbIdsInstalledShaMatchesRemote =>
+      'इंस्टॉल किया गया SHA रिमोट से मेल खाता है।';
+
+  @override
+  String get settingsUsbIdsInstalledShaDiffersRemote =>
+      'इंस्टॉल किया गया SHA रिमोट से अलग है (अपडेट उपलब्ध है)।';
+
+  @override
+  String get settingsUsbIdsDetailsTitle => 'विवरण';
+
+  @override
+  String get settingsUsbIdsInstalledShaLabel => 'इंस्टॉल किया गया SHA-256';
+
+  @override
+  String get settingsUsbIdsRemoteShaLabel => 'रिमोट SHA-256';
+
+  @override
+  String get settingsUsbIdsShaMatchLabel => 'SHA मिलान';
+
+  @override
+  String get settingsUsbIdsLastCheckedLabel => 'आखिरी जाँच';
+
+  @override
+  String get settingsUsbIdsUpdateHintLabel => 'अपडेट संकेत';
+
+  @override
+  String get settingsUsbIdsUpdateHintAvailable => 'उपलब्ध';
+
+  @override
+  String get settingsUsbIdsUpdateHintNone => 'कोई नहीं';
+
+  @override
+  String get settingsUsbIdsAutoCheckTitle => 'अपडेट के लिए स्वतः जाँच';
+
+  @override
+  String get settingsUsbIdsAutoCheckSubtitle =>
+      'रिमोट .sha256 को लगभग सप्ताह में एक बार जाँचता है।';
+
+  @override
+  String get settingsUpdateNow => 'अभी अपडेट करें';
+
+  @override
+  String get settingsCheckNow => 'अभी जाँचें';
+
+  @override
+  String get settingsAboutSectionTitle => 'जानकारी';
+
+  @override
+  String get settingsAboutSectionSubtitle => 'ऐप जानकारी और कानूनी विवरण';
+
+  @override
+  String settingsAboutAppTileTitle(Object appName, Object developer) {
+    return '$appName के बारे में · $developer';
+  }
+
+  @override
+  String settingsAboutVersion(Object version) {
+    return 'संस्करण $version';
+  }
+
+  @override
+  String get settingsLicensesTitle => 'लाइसेंस';
+
+  @override
+  String get settingsLicensesSubtitle => 'ओपन-सोर्स लाइसेंस';
+
+  @override
+  String get settingsReportIssueTitle => 'समस्या रिपोर्ट करें';
+
+  @override
+  String get settingsReportIssueSubtitle => 'बग और फीचर अनुरोध';
+
+  @override
+  String get settingsIssuesLinkCopied => 'समस्याओं का लिंक कॉपी किया गया';
+
+  @override
+  String get settingsNoHistoryToExport =>
+      'निर्यात करने के लिए कोई इतिहास नहीं है।';
+
+  @override
+  String get settingsExportCopied => 'निर्यात क्लिपबोर्ड में कॉपी किया गया।';
+
+  @override
+  String settingsExportFailed(Object error) {
+    return 'निर्यात विफल: $error';
+  }
+
+  @override
+  String get settingsImportUnsupportedFormat =>
+      'असमर्थित JSON प्रारूप। यह एक सूची होनी चाहिए या schema=device_history_export_v1 वाला निर्यात डेटा होना चाहिए।';
+
+  @override
+  String get settingsImportNoValidHistoryEntries =>
+      'कोई मान्य इतिहास प्रविष्टि नहीं मिली।';
+
+  @override
+  String settingsImportedItems(int count) {
+    return '$count आइटम आयात किए गए।';
+  }
+
+  @override
+  String settingsImportFailed(Object error) {
+    return 'आयात विफल: $error';
+  }
+
+  @override
+  String get settingsClearHistoryBodyDetailed =>
+      'इससे लोकल स्टोरेज से सभी रिकॉर्ड किए गए डिवाइस हट जाएँगे।';
+
+  @override
+  String get settingsHistoryCleared => 'इतिहास साफ़ कर दिया गया।';
+
+  @override
+  String get settingsExportHistoryTitle => 'इतिहास निर्यात करें';
+
+  @override
+  String settingsExportHistorySubtitle(int count) {
+    return '$count आइटम • JSON';
+  }
+
+  @override
+  String get settingsExportFormatPretty => 'सुसज्जित';
+
+  @override
+  String get settingsExportFormatCompact => 'संक्षिप्त';
+
+  @override
+  String get settingsExportSafeShareNote =>
+      'यह निर्यात डिबगिंग के लिए साझा करना सुरक्षित है, लेकिन इसमें डिवाइस नाम/पथ और serial शामिल हो सकते हैं।';
+
+  @override
+  String get settingsImportHistoryTitle => 'इतिहास आयात करें';
+
+  @override
+  String get settingsImportHistorySubtitle =>
+      'निर्यात डेटा या प्रविष्टियों की कच्ची सूची पेस्ट करें';
+
+  @override
+  String get settingsImportSupportedFormats =>
+      'समर्थित प्रारूप: device_history_export_v1 डेटा (अनुशंसित) या इतिहास प्रविष्टियों की कच्ची JSON सूची।';
+
+  @override
+  String get settingsImportHint => 'यहाँ JSON पेस्ट करें…';
+
+  @override
+  String get settingsImportAction => 'आयात करें';
+
+  @override
+  String get settingsImporting => 'आयात किया जा रहा है…';
+
+  @override
+  String get settingsImportReplacesHistoryNote =>
+      'आयात आपके वर्तमान इतिहास को बदल देगा। यदि आप सुनिश्चित नहीं हैं, तो पहले निर्यात कर लें।';
+
+  @override
+  String get settingsClipboardEmpty => 'क्लिपबोर्ड खाली है।';
+
+  @override
+  String get settingsPasteJsonFirst => 'पहले JSON पेस्ट करें।';
+
+  @override
+  String get pasteAction => 'पेस्ट';
+
+  @override
+  String get donationFocusCompatTitle => 'संगतता और अनुमतियाँ';
+
+  @override
+  String get donationFocusCompatSubtitle =>
+      'OEM भिन्नताएँ, अनुमति प्रवाह, edge cases';
+
+  @override
+  String get donationFocusUsbIdsTitle => 'USB IDs डेटाबेस अपडेट';
+
+  @override
+  String get donationFocusUsbIdsSubtitle =>
+      'पार्सिंग, ताज़गी, अपडेट विश्वसनीयता';
+
+  @override
+  String get donationFocusUiTitle => 'UI/UX सुधार';
+
+  @override
+  String get donationFocusUiSubtitle => 'स्पष्टता, गति, पहुँच';
+
+  @override
+  String get donationFocusFeaturesTitle => 'नई सुविधाएँ';
+
+  @override
+  String get donationFocusFeaturesSubtitle => 'फ़िल्टर, निर्यात, अंतर्दृष्टि';
+
+  @override
+  String donationShareHeader(Object appName) {
+    return '$appName का समर्थन करें - ओपन-सोर्स ऐप';
+  }
+
+  @override
+  String donationShareFocusLine(Object title) {
+    return 'फोकस: $title';
+  }
+
+  @override
+  String get donationShareChainBtc =>
+      'Bitcoin (BTC) - केवल Bitcoin नेटवर्क पर भेजें।';
+
+  @override
+  String get donationShareChainEth =>
+      'Ethereum (ERC-20) - केवल Ethereum के मुख्य नेटवर्क पर भेजें।';
+
+  @override
+  String donationShareBtcAddress(Object address) {
+    return 'BTC पता: $address';
+  }
+
+  @override
+  String donationShareEthAddress(Object address) {
+    return 'ETH पता: $address';
+  }
+
+  @override
+  String donationShareRepo(Object url) {
+    return 'रिपॉज़िटरी: $url';
+  }
+
+  @override
+  String get donationNoBrowserForLiberapay =>
+      'Liberapay खोलने के लिए कोई ब्राउज़र उपलब्ध नहीं है';
+
+  @override
+  String get donationFailedToOpenLiberapay =>
+      'ब्राउज़र में Liberapay खोलना विफल रहा';
+
+  @override
+  String donationErrorOpeningLiberapay(Object error) {
+    return 'Liberapay खोलते समय त्रुटि: $error';
+  }
+
+  @override
+  String get donationThankYouTitle => 'धन्यवाद';
+
+  @override
+  String get donationThankYouBody =>
+      'आपका समर्थन इस ऐप को मुफ़्त, तेज़ और सक्रिय रूप से अनुरक्षित बनाए रखने में मदद करता है। ओपन-सोर्स सॉफ़्टवेयर का समर्थन करने के लिए धन्यवाद।';
+
+  @override
+  String get donationFocusTitle => 'दान फोकस';
+
+  @override
+  String get donationFocusSubtitle =>
+      'वैकल्पिक। इससे अगले काम की प्राथमिकता तय करने में मदद मिलती है।';
+
+  @override
+  String get donationGeneralSupportTitle => 'सामान्य समर्थन';
+
+  @override
+  String get donationGeneralSupportSubtitle => 'कुल मिलाकर सबसे अच्छा विकल्प';
+
+  @override
+  String get donationSupportDevelopmentTitle => 'विकास का समर्थन करें';
+
+  @override
+  String get donationSupportDevelopmentSubtitle =>
+      'रखरखाव और सुविधाओं के लिए वैकल्पिक दान';
+
+  @override
+  String get donationOptionsTitle => 'दान विकल्प';
+
+  @override
+  String get donationOptionsSubtitle =>
+      'आपका योगदान इस टूल को मुफ़्त, अनुरक्षित और समुदाय-आधारित बनाए रखता है';
+
+  @override
+  String get donationRecommendedBadge => 'अनुशंसित';
+
+  @override
+  String get donationLiberapayFlexibleSupport => 'लचीले समर्थन विकल्प';
+
+  @override
+  String get donationTraditionalPayments =>
+      'पारंपरिक भुगतान तरीके (कार्ड, PayPal, बैंक)';
+
+  @override
+  String get donationRecurringOrOneTime =>
+      'लचीला आवर्ती समर्थन या एक बार का योगदान';
+
+  @override
+  String get donationTrustedByOpenSource =>
+      'ओपन-सोर्स डेवलपर्स द्वारा विश्वसनीय';
+
+  @override
+  String get donationOpeningBrowser => 'ब्राउज़र खोला जा रहा है...';
+
+  @override
+  String get donationViaLiberapay => 'Liberapay के जरिए दान करें';
+
+  @override
+  String get donationLiberapayNote =>
+      'Liberapay एक गैर-लाभकारी दान मंच है जिस पर ओपन-सोर्स प्रोजेक्ट भरोसा करते हैं।';
+
+  @override
+  String get donationCryptoSupportTitle => 'सीधा क्रिप्टोकरेंसी समर्थन';
+
+  @override
+  String get donationCryptoSupportSubtitle =>
+      'गोपनीयता-केंद्रित विकल्प • QR स्कैन करें या पता कॉपी करें';
+
+  @override
+  String get donationBtcShort => 'BTC';
+
+  @override
+  String get donationEthShort => 'ETH';
+
+  @override
+  String get donationGeneralShort => 'सामान्य';
+
+  @override
+  String get donationBitcoinNetworkOnly => 'केवल Bitcoin नेटवर्क';
+
+  @override
+  String get donationEthereumNetworkOnly => 'केवल Ethereum का मुख्य नेटवर्क';
+
+  @override
+  String get donationBitcoinTitle => 'Bitcoin दान';
+
+  @override
+  String get donationEthereumTitle => 'Ethereum दान';
+
+  @override
+  String get donationQrUnavailable => 'QR कोड उपलब्ध नहीं है';
+
+  @override
+  String get donationAddressTitle => 'पता';
+
+  @override
+  String get donationBtcAddressCopied => 'BTC पता कॉपी किया गया';
+
+  @override
+  String get donationEthAddressCopied => 'ETH पता कॉपी किया गया';
+
+  @override
+  String get donationShareTextCopied => 'साझा पाठ कॉपी किया गया';
+
+  @override
+  String get donationCopyAddress => 'पता कॉपी करें';
+
+  @override
+  String get donationShareAction => 'साझा करें';
+
+  @override
+  String get donationSentAction => 'मैंने दान भेज दिया है';
+
+  @override
+  String get donationSecurityNote =>
+      'सुरक्षा नोट: स्क्रीनशॉट, रिव्यू या थर्ड-पार्टी पेज से मिले दान पतों पर भरोसा न करें। केवल इसी इन-ऐप स्क्रीन का उपयोग करें।';
+
+  @override
+  String deviceInterfaceTitle(Object id, Object classInfo) {
+    return 'इंटरफ़ेस $id • $classInfo';
+  }
+
+  @override
+  String get deviceAltSettingLabel => 'वैकल्पिक सेटिंग';
+
+  @override
+  String get deviceClassLabel => 'क्लास';
+
+  @override
+  String deviceEndpointsTitle(int count) {
+    return 'एंडपॉइंट ($count)';
+  }
+
+  @override
+  String get deviceNoEndpoints => 'कोई एंडपॉइंट नहीं';
+
+  @override
+  String deviceEndpointAddressSummary(
+    Object address,
+    Object number,
+    Object attributes,
+  ) {
+    return 'पता $address • EP# $number • गुण $attributes';
+  }
+
+  @override
+  String deviceEndpointMaxPacket(Object value) {
+    return 'अधिकतम पैकेट $value';
+  }
+
+  @override
+  String deviceEndpointInterval(Object value) {
+    return 'अंतराल $value';
+  }
+
+  @override
+  String get deviceControlTransferDefaultTitle => 'कंट्रोल ट्रांसफ़र';
+
+  @override
+  String get deviceRequestedLengthLabel => 'अनुरोधित लंबाई';
+
+  @override
+  String get deviceActualLengthLabel => 'वास्तविक लंबाई';
+
+  @override
+  String get deviceResultLabel => 'परिणाम';
+
+  @override
+  String get deviceTransferSuccess => 'सफल';
+
+  @override
+  String get deviceTransferFailed => 'विफल';
+
+  @override
+  String get deviceResponseBytesHexTitle => 'प्रतिक्रिया बाइट्स (हेक्स)';
+
+  @override
+  String get deviceParsedFieldsTitle => 'पार्स किए गए फ़ील्ड';
+
+  @override
+  String get deviceNoParsedFieldsAvailable =>
+      'कोई पार्स किया गया फ़ील्ड उपलब्ध नहीं है।';
+
+  @override
+  String get deviceRawBytesTitle => 'रॉ बाइट्स';
+
+  @override
+  String deviceInterfaceReportTitle(
+    Object interfaceNumber,
+    Object reportLength,
+  ) {
+    return 'इंटरफ़ेस $interfaceNumber • रिपोर्ट $reportLength बाइट';
+  }
+
+  @override
+  String get deviceParsedSummaryTitle => 'पार्स सारांश';
+
+  @override
+  String get deviceNoParsedHidSummaryAvailable =>
+      'कोई पार्स किया गया HID सारांश उपलब्ध नहीं है।';
+
+  @override
+  String get deviceReportHexTitle => 'रिपोर्ट हेक्स';
+
+  @override
+  String get historyEntryNotFoundTitle => 'प्रविष्टि नहीं मिली';
+
+  @override
+  String get historyEntryNotFoundBody => 'यह इतिहास आइटम अब मौजूद नहीं है।';
+
+  @override
+  String get historyUnableToOpenDetail => 'इतिहास विवरण नहीं खोला जा सका।';
 }

@@ -4753,16 +4753,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deviceUnableToReadDetails => '无法读取设备详情。';
 
   @override
-  String get deviceAudioClassDescriptorsTitle => 'Audio class descriptors';
+  String get deviceAudioClassDescriptorsTitle => '音频类描述符';
 
   @override
-  String get deviceVideoClassDescriptorsTitle => 'Video class descriptors';
+  String get deviceVideoClassDescriptorsTitle => '视频类描述符';
 
   @override
-  String get deviceCdcSerialDescriptorsTitle => 'CDC / serial descriptors';
+  String get deviceCdcSerialDescriptorsTitle => 'CDC / 串口描述符';
 
   @override
-  String get deviceHubDescriptorsTitle => 'Hub descriptors';
+  String get deviceHubDescriptorsTitle => '集线器描述符';
 
   @override
   String get deviceBosCapabilitiesTitle => 'BOS & capabilities';
@@ -4981,23 +4981,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deviceAvailable => 'Available';
 
   @override
-  String get deviceConnectedUsbAudioEndpointsLabel =>
-      'Connected USB audio endpoints';
+  String get deviceConnectedUsbAudioEndpointsLabel => '已连接的 USB 音频端点';
 
   @override
-  String get deviceMatchedEndpointsLabel => 'Matched endpoints';
+  String get deviceMatchedEndpointsLabel => '匹配的端点';
 
   @override
   String get deviceAudioManagerUnavailableNote =>
-      'AudioManager data is not available on this Android version or device.';
+      '此 Android 版本或此设备不提供 AudioManager 数据。';
 
   @override
   String get deviceNoAudioEndpointMatchedNote =>
-      'No AudioDeviceInfo endpoint could be matched to this USB device yet.';
+      '尚未能将任何 AudioDeviceInfo 端点与此 USB 设备匹配。';
 
   @override
   String get deviceAndroidNoMatchedAudioEndpointNote =>
-      'Android does not report a matched USB audio endpoint for this device.';
+      'Android 没有报告与此设备匹配的 USB 音频端点。';
 
   @override
   String get deviceUsbMidiTitle => 'USB MIDI';
@@ -5006,29 +5005,28 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deviceUsbMidiSubtitle => 'MidiManager 设备和端口元数据';
 
   @override
-  String get deviceProbableUsbMidiInterfaceLabel =>
-      'Probable USB MIDI interface';
+  String get deviceProbableUsbMidiInterfaceLabel => '可能的 USB MIDI 接口';
 
   @override
-  String get devicePlatformMidiApiLabel => 'Platform MIDI API';
+  String get devicePlatformMidiApiLabel => '平台 MIDI API';
 
   @override
-  String get deviceConnectedMidiDevicesLabel => 'Connected MIDI devices';
+  String get deviceConnectedMidiDevicesLabel => '已连接的 MIDI 设备';
 
   @override
-  String get deviceMatchedMidiDevicesLabel => 'Matched MIDI devices';
+  String get deviceMatchedMidiDevicesLabel => '匹配的 MIDI 设备';
 
   @override
   String get deviceMidiManagerUnavailableNote =>
-      'MidiManager data is not available on this Android version or device.';
+      '此 Android 版本或此设备不提供 MidiManager 数据。';
 
   @override
   String get deviceDescriptorsLookLikeMidiNote =>
-      'The USB descriptors look like MIDI, but Android did not expose a matching MidiManager device.';
+      '这些 USB 描述符看起来像 MIDI，但 Android 没有暴露匹配的 MidiManager 设备。';
 
   @override
   String get deviceAndroidNoMatchedMidiDeviceNote =>
-      'Android does not report a matched MIDI device for this USB device.';
+      'Android 没有报告与此 USB 设备匹配的 MIDI 设备。';
 
   @override
   String get devicePowerTitle => '电源';
@@ -5061,7 +5059,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deviceNameLabel => 'Name';
 
   @override
-  String get deviceDescriptorLabel => 'Descriptor';
+  String get deviceDescriptorLabel => '描述符';
 
   @override
   String get deviceExternalLabel => 'External';
@@ -5097,6 +5095,21 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get deviceShowPermissionDiagnostics => 'Show permission diagnostics';
+
+  @override
+  String get devicePermissionStateTemporary => '临时';
+
+  @override
+  String get devicePermissionStatePermanent => '永久';
+
+  @override
+  String get devicePermissionStateReenumerated => '已重新枚举';
+
+  @override
+  String get devicePermissionStateNotInApp => '应用内不可用';
+
+  @override
+  String get devicePermissionStateRevoked => '已撤销';
 
   @override
   String get deviceAndroidVersionLabel => 'Android version';
@@ -5135,6 +5148,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deviceWhyDataUnavailableTitle => 'Why data is unavailable';
 
   @override
+  String get deviceWhyDataUnavailableSubtitle => '隐藏字段对应的精确 Android 或设备侧限制';
+
+  @override
   String get deviceReconnectDiffTitle => '重连差异';
 
   @override
@@ -5159,8 +5175,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deviceRemoteWakeupLabel => 'Remote wakeup';
 
   @override
-  String get deviceInterfaceAlternateSettingsTitle =>
-      'Interface alternate settings';
+  String get deviceInterfaceAlternateSettingsTitle => '接口备用设置';
 
   @override
   String get deviceStringDescriptorsTitle => '字符串描述符';
@@ -5182,16 +5197,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deviceManufacturerLabel => 'Manufacturer';
 
   @override
-  String get deviceInterfaceStringsTitle => 'Interface strings';
+  String get deviceInterfaceStringsTitle => '接口字符串';
 
   @override
-  String get deviceDescriptorTreeTitle => 'Descriptor tree';
+  String get deviceDescriptorTreeTitle => '描述符树';
 
   @override
-  String get deviceShowDescriptors => 'Show descriptors';
+  String get deviceShowDescriptors => '显示描述符';
 
   @override
-  String get deviceHidReportDescriptorsTitle => 'HID report descriptors';
+  String get deviceHidReportDescriptorsTitle => 'HID 报告描述符';
 
   @override
   String get devicePermissionRequiredTitle => '需要权限';
@@ -5214,41 +5229,38 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deviceAdvancedRawViewTitle => '高级原始视图';
 
   @override
-  String get deviceDescriptorNodesLabel => 'Descriptor nodes';
+  String get deviceDescriptorNodesLabel => '描述符节点';
 
   @override
-  String get deviceControlTransfersLabel => 'Control transfers';
+  String get deviceControlTransfersLabel => '控制传输';
 
   @override
-  String get deviceHidReportDumpsLabel => 'HID report dumps';
+  String get deviceHidReportDumpsLabel => 'HID 报告转储';
 
   @override
-  String get deviceControlTransfersTitle => 'Control transfers';
+  String get deviceControlTransfersTitle => '控制传输';
 
   @override
   String get deviceControlTransfersSubtitle =>
       'Raw setup/result records from direct USB control reads';
 
   @override
-  String get deviceDescriptorsSideBySideTitle => 'Descriptors side by side';
+  String get deviceDescriptorsSideBySideTitle => '并排查看描述符';
 
   @override
-  String get deviceDescriptorsSideBySideSubtitle =>
-      'Parsed fields next to the raw descriptor bytes';
+  String get deviceDescriptorsSideBySideSubtitle => '解析字段显示在原始描述符字节旁边';
 
   @override
-  String get deviceHidReportDumpsTitle => 'HID report dumps';
+  String get deviceHidReportDumpsTitle => 'HID 报告转储';
 
   @override
-  String get deviceHidReportDumpsSubtitle =>
-      'Report descriptor hex with parsed summary';
+  String get deviceHidReportDumpsSubtitle => '报告描述符十六进制数据及解析摘要';
 
   @override
   String get deviceAdvancedDataUnavailableTitle => 'Advanced data unavailable';
 
   @override
-  String get deviceAdvancedDataUnavailableSubtitle =>
-      'No raw control-transfer or descriptor payload is available for this device';
+  String get deviceAdvancedDataUnavailableSubtitle => '此设备没有可用的原始控制传输数据或描述符数据。';
 
   @override
   String get deviceGrantPermissionReconnectNote =>
@@ -5273,10 +5285,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deviceExportChipJson => 'JSON';
 
   @override
-  String get deviceExportChipReport => 'Report';
+  String get deviceExportChipReport => '报告';
 
   @override
-  String get deviceExportChipRawHex => 'Raw hex';
+  String get deviceExportChipRawHex => '原始十六进制数据';
 
   @override
   String get deviceCopyAction => '复制';
@@ -5332,8 +5344,7 @@ class AppLocalizationsZh extends AppLocalizations {
       'Physical port + interface fingerprint';
 
   @override
-  String get deviceIdentityStrategyInterfaceFingerprint =>
-      'Interface fingerprint';
+  String get deviceIdentityStrategyInterfaceFingerprint => '接口指纹';
 
   @override
   String get deviceIdentityStrategyModelFingerprint => 'Model fingerprint';
@@ -5359,7 +5370,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String deviceDescriptorsCount(int count) {
-    return '$count descriptor(s)';
+    return '$count 个描述符';
   }
 
   @override
@@ -5414,7 +5425,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String deviceDescriptorsParsed(int count) {
-    return '$count descriptors parsed';
+    return '已解析 $count 个描述符';
   }
 
   @override
@@ -5436,7 +5447,600 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deviceInputSourcesLabel => 'Input sources';
 
   @override
-  String deviceShowingFirstDescriptors(int count) {
-    return 'Showing first $count descriptors.';
+  String deviceShowingFirstFields(int count) {
+    return '仅显示前 $count 个字段。';
   }
+
+  @override
+  String deviceShowingFirstDescriptors(int count) {
+    return '正在显示前 $count 个描述符。';
+  }
+
+  @override
+  String get settingsUsbBehaviorTitle => 'USB 行为';
+
+  @override
+  String get settingsUsbBehaviorSubtitle => '控制 USB 设备连接时的系统提示行为';
+
+  @override
+  String get settingsUsbOfferOnAttachTitle => 'USB 连接时提供打开选项';
+
+  @override
+  String get settingsUsbOfferOnAttachSubtitle =>
+      '插入 USB 设备时，在 Android 选择器中显示本应用。';
+
+  @override
+  String get settingsUsbDisableAttachNote =>
+      '关闭此项后，Android 在设备连接时将不再推荐 USBDevInfo。应用打开期间仍会继续检测设备。';
+
+  @override
+  String get settingsAttachFilterScopeLabel => '连接过滤范围';
+
+  @override
+  String get settingsAttachFilterScopeAllUsbDevices => '所有 USB 设备';
+
+  @override
+  String get settingsAttachLaunchBehaviorLabel => '连接启动行为';
+
+  @override
+  String get settingsAttachLaunchBehaviorEnabled =>
+      '仅当 Android 从 USB 连接选择器中明确启动 USBDevInfo 时打开';
+
+  @override
+  String get settingsAttachLaunchBehaviorDisabled => '选择器别名已禁用';
+
+  @override
+  String get settingsWhileAppOpenLabel => '应用打开时';
+
+  @override
+  String get settingsWhileAppOpenValue => 'USB 连接/断开事件会刷新设备数据，但不会强制跳转页面';
+
+  @override
+  String get settingsBackupDataTitle => '备份与数据';
+
+  @override
+  String get settingsBackupDataSubtitle => '将设备历史导出为 JSON';
+
+  @override
+  String get settingsHistoryLabel => '历史';
+
+  @override
+  String get settingsMostRecentLabel => '最近';
+
+  @override
+  String get settingsNoHistoryYet => '还没有历史记录';
+
+  @override
+  String settingsHistoryRecordedCount(int count) {
+    return '已记录 $count 项';
+  }
+
+  @override
+  String get settingsBackupExportIncludes =>
+      '导出内容包括厂商/产品 ID、解析后的名称、字符串、类别/协议、时间戳，以及在已授予权限时可用的高级详情（描述符、配置、接口、HID 报告）。';
+
+  @override
+  String get settingsExportJsonAction => '导出 JSON';
+
+  @override
+  String get settingsImportJsonAction => '导入 JSON';
+
+  @override
+  String get settingsUsbIdsDatabaseTitle => 'USB IDs 数据库';
+
+  @override
+  String get settingsUsbIdsDatabaseSubtitle => '元数据与更新';
+
+  @override
+  String deviceConfigurationTitle(Object id, Object suffix) {
+    return '配置 $id$suffix';
+  }
+
+  @override
+  String get deviceAttributesLabel => '属性';
+
+  @override
+  String get deviceInterfacesSummaryTitle => '接口（摘要）';
+
+  @override
+  String deviceInterfaceShortLabel(Object id) {
+    return 'IF $id';
+  }
+
+  @override
+  String deviceInterfaceSummaryValue(Object classValue, Object endpointCount) {
+    return '类 $classValue • EP $endpointCount';
+  }
+
+  @override
+  String deviceInterfaceStringLabel(
+    Object interfaceNumber,
+    Object alternateSetting,
+  ) {
+    return 'IF $interfaceNumber（Alt $alternateSetting）';
+  }
+
+  @override
+  String get deviceKeyboardChip => '键盘';
+
+  @override
+  String get deviceMouseChip => '鼠标';
+
+  @override
+  String deviceReportIdsChip(Object count) {
+    return '报告 ID：$count';
+  }
+
+  @override
+  String deviceCollectionsChip(Object count) {
+    return '集合：$count';
+  }
+
+  @override
+  String deviceUsagePagesChip(Object pages) {
+    return '用途页：$pages';
+  }
+
+  @override
+  String get homeCapabilityAudio => '音频';
+
+  @override
+  String get homeCapabilityVideo => '视频';
+
+  @override
+  String get homeCapabilityHid => 'HID';
+
+  @override
+  String get homeCapabilityMidi => 'MIDI';
+
+  @override
+  String get homeCapabilityStorage => '存储';
+
+  @override
+  String get homeCapabilityHub => '集线器';
+
+  @override
+  String get homeCapabilityCdc => 'CDC';
+
+  @override
+  String get homeCapabilityComposite => '复合';
+
+  @override
+  String get homeCapabilityInput => '输入';
+
+  @override
+  String get settingsUsbIdsLocalVersionLabel => '本地版本';
+
+  @override
+  String get settingsUsbIdsLocalDateLabel => '本地日期';
+
+  @override
+  String get settingsUsbIdsRemoteShaNotFetched => '尚未获取远程 SHA。';
+
+  @override
+  String get settingsUsbIdsInstalledShaAfterUpdate => '更新成功后会保存已安装的 SHA。';
+
+  @override
+  String get settingsUsbIdsInstalledShaMatchesRemote => '已安装的 SHA 与远程一致。';
+
+  @override
+  String get settingsUsbIdsInstalledShaDiffersRemote =>
+      '已安装的 SHA 与远程不同（有可用更新）。';
+
+  @override
+  String get settingsUsbIdsDetailsTitle => '详情';
+
+  @override
+  String get settingsUsbIdsInstalledShaLabel => '已安装 SHA-256';
+
+  @override
+  String get settingsUsbIdsRemoteShaLabel => '远程 SHA-256';
+
+  @override
+  String get settingsUsbIdsShaMatchLabel => 'SHA 匹配';
+
+  @override
+  String get settingsUsbIdsLastCheckedLabel => '上次检查';
+
+  @override
+  String get settingsUsbIdsUpdateHintLabel => '更新提示';
+
+  @override
+  String get settingsUsbIdsUpdateHintAvailable => '可用';
+
+  @override
+  String get settingsUsbIdsUpdateHintNone => '无';
+
+  @override
+  String get settingsUsbIdsAutoCheckTitle => '自动检查更新';
+
+  @override
+  String get settingsUsbIdsAutoCheckSubtitle => '大约每周检查一次远程 .sha256。';
+
+  @override
+  String get settingsUpdateNow => '立即更新';
+
+  @override
+  String get settingsCheckNow => '立即检查';
+
+  @override
+  String get settingsAboutSectionTitle => '关于';
+
+  @override
+  String get settingsAboutSectionSubtitle => '应用信息与法律说明';
+
+  @override
+  String settingsAboutAppTileTitle(Object appName, Object developer) {
+    return '$appName - $developer';
+  }
+
+  @override
+  String settingsAboutVersion(Object version) {
+    return '版本 $version';
+  }
+
+  @override
+  String get settingsLicensesTitle => '许可证';
+
+  @override
+  String get settingsLicensesSubtitle => '开源许可证';
+
+  @override
+  String get settingsReportIssueTitle => '报告问题';
+
+  @override
+  String get settingsReportIssueSubtitle => 'Bug 与功能请求';
+
+  @override
+  String get settingsIssuesLinkCopied => '问题链接已复制';
+
+  @override
+  String get settingsNoHistoryToExport => '没有可导出的历史记录。';
+
+  @override
+  String get settingsExportCopied => '导出内容已复制到剪贴板。';
+
+  @override
+  String settingsExportFailed(Object error) {
+    return '导出失败：$error';
+  }
+
+  @override
+  String get settingsImportUnsupportedFormat =>
+      '不支持的 JSON 格式。应为数组，或包含 schema=device_history_export_v1 的导出载荷。';
+
+  @override
+  String get settingsImportNoValidHistoryEntries => '未找到有效的历史记录项。';
+
+  @override
+  String settingsImportedItems(int count) {
+    return '已导入 $count 项。';
+  }
+
+  @override
+  String settingsImportFailed(Object error) {
+    return '导入失败：$error';
+  }
+
+  @override
+  String get settingsClearHistoryBodyDetailed => '这将从本地存储中移除所有已记录的设备。';
+
+  @override
+  String get settingsHistoryCleared => '历史记录已清除。';
+
+  @override
+  String get settingsExportHistoryTitle => '导出历史记录';
+
+  @override
+  String settingsExportHistorySubtitle(int count) {
+    return '$count 项 • JSON';
+  }
+
+  @override
+  String get settingsExportFormatPretty => '美化';
+
+  @override
+  String get settingsExportFormatCompact => '紧凑';
+
+  @override
+  String get settingsExportSafeShareNote => '此导出内容适合用于调试分享，但其中可能包含设备名称/路径和序列号。';
+
+  @override
+  String get settingsImportHistoryTitle => '导入历史记录';
+
+  @override
+  String get settingsImportHistorySubtitle => '粘贴导出载荷或原始条目列表';
+
+  @override
+  String get settingsImportSupportedFormats =>
+      '支持的格式：device_history_export_v1 载荷（推荐），或历史条目映射的原始 JSON 数组。';
+
+  @override
+  String get settingsImportHint => '在此粘贴 JSON…';
+
+  @override
+  String get settingsImportAction => '导入';
+
+  @override
+  String get settingsImporting => '正在导入…';
+
+  @override
+  String get settingsImportReplacesHistoryNote => '导入会替换当前历史记录。如不确定，请先导出。';
+
+  @override
+  String get settingsClipboardEmpty => '剪贴板为空。';
+
+  @override
+  String get settingsPasteJsonFirst => '请先粘贴 JSON。';
+
+  @override
+  String get pasteAction => '粘贴';
+
+  @override
+  String get donationFocusCompatTitle => '兼容性与权限';
+
+  @override
+  String get donationFocusCompatSubtitle => 'OEM 差异、权限流程、边界情况';
+
+  @override
+  String get donationFocusUsbIdsTitle => 'USB IDs 数据库更新';
+
+  @override
+  String get donationFocusUsbIdsSubtitle => '解析、时效性、更新可靠性';
+
+  @override
+  String get donationFocusUiTitle => 'UI/UX 打磨';
+
+  @override
+  String get donationFocusUiSubtitle => '清晰度、速度、无障碍';
+
+  @override
+  String get donationFocusFeaturesTitle => '新功能';
+
+  @override
+  String get donationFocusFeaturesSubtitle => '筛选、导出、洞察';
+
+  @override
+  String donationShareHeader(Object appName) {
+    return '支持 $appName - 开源应用';
+  }
+
+  @override
+  String donationShareFocusLine(Object title) {
+    return '重点：$title';
+  }
+
+  @override
+  String get donationShareChainBtc => 'Bitcoin (BTC) - 仅可通过 Bitcoin 网络转账。';
+
+  @override
+  String get donationShareChainEth => 'Ethereum (ERC-20) - 仅可通过 Ethereum 主网转账。';
+
+  @override
+  String donationShareBtcAddress(Object address) {
+    return 'BTC 地址：$address';
+  }
+
+  @override
+  String donationShareEthAddress(Object address) {
+    return 'ETH 地址：$address';
+  }
+
+  @override
+  String donationShareRepo(Object url) {
+    return '仓库：$url';
+  }
+
+  @override
+  String get donationNoBrowserForLiberapay => '没有可用于打开 Liberapay 的浏览器';
+
+  @override
+  String get donationFailedToOpenLiberapay => '无法在浏览器中打开 Liberapay';
+
+  @override
+  String donationErrorOpeningLiberapay(Object error) {
+    return '打开 Liberapay 时出错：$error';
+  }
+
+  @override
+  String get donationThankYouTitle => '谢谢';
+
+  @override
+  String get donationThankYouBody => '你的支持有助于让这款应用保持免费、快速并持续维护。感谢你支持开源软件。';
+
+  @override
+  String get donationFocusTitle => '捐赠重点';
+
+  @override
+  String get donationFocusSubtitle => '可选。帮助确定下一步的工作优先级。';
+
+  @override
+  String get donationGeneralSupportTitle => '通用支持';
+
+  @override
+  String get donationGeneralSupportSubtitle => '整体上最推荐的选项';
+
+  @override
+  String get donationSupportDevelopmentTitle => '支持开发';
+
+  @override
+  String get donationSupportDevelopmentSubtitle => '用于维护和新增功能的可选捐赠';
+
+  @override
+  String get donationOptionsTitle => '捐赠方式';
+
+  @override
+  String get donationOptionsSubtitle => '你的贡献让这款工具保持免费、持续维护并由社区推动';
+
+  @override
+  String get donationRecommendedBadge => '推荐';
+
+  @override
+  String get donationLiberapayFlexibleSupport => '灵活的支持方式';
+
+  @override
+  String get donationTraditionalPayments => '传统支付方式（银行卡、PayPal、银行转账）';
+
+  @override
+  String get donationRecurringOrOneTime => '支持按期捐赠或一次性捐赠';
+
+  @override
+  String get donationTrustedByOpenSource => '受到开源开发者信赖';
+
+  @override
+  String get donationOpeningBrowser => '正在打开浏览器...';
+
+  @override
+  String get donationViaLiberapay => '通过 Liberapay 捐赠';
+
+  @override
+  String get donationLiberapayNote => 'Liberapay 是一个受到开源项目信赖的非营利捐赠平台。';
+
+  @override
+  String get donationCryptoSupportTitle => '直接使用加密货币支持';
+
+  @override
+  String get donationCryptoSupportSubtitle => '注重隐私的选项 • 扫描二维码或复制地址';
+
+  @override
+  String get donationBtcShort => 'BTC';
+
+  @override
+  String get donationEthShort => 'ETH';
+
+  @override
+  String get donationGeneralShort => '通用';
+
+  @override
+  String get donationBitcoinNetworkOnly => '仅限 Bitcoin 网络';
+
+  @override
+  String get donationEthereumNetworkOnly => '仅限 Ethereum 主网';
+
+  @override
+  String get donationBitcoinTitle => 'Bitcoin 捐赠';
+
+  @override
+  String get donationEthereumTitle => 'Ethereum 捐赠';
+
+  @override
+  String get donationQrUnavailable => '二维码不可用';
+
+  @override
+  String get donationAddressTitle => '地址';
+
+  @override
+  String get donationBtcAddressCopied => 'BTC 地址已复制';
+
+  @override
+  String get donationEthAddressCopied => 'ETH 地址已复制';
+
+  @override
+  String get donationShareTextCopied => '分享文本已复制';
+
+  @override
+  String get donationCopyAddress => '复制地址';
+
+  @override
+  String get donationShareAction => '分享';
+
+  @override
+  String get donationSentAction => '我已完成捐赠';
+
+  @override
+  String get donationSecurityNote => '安全提示：不要信任截图、评论或第三方页面中的捐赠地址。请只使用应用内此页面。';
+
+  @override
+  String deviceInterfaceTitle(Object id, Object classInfo) {
+    return '接口 $id • $classInfo';
+  }
+
+  @override
+  String get deviceAltSettingLabel => '备用设置';
+
+  @override
+  String get deviceClassLabel => '类别';
+
+  @override
+  String deviceEndpointsTitle(int count) {
+    return '端点 ($count)';
+  }
+
+  @override
+  String get deviceNoEndpoints => '无端点';
+
+  @override
+  String deviceEndpointAddressSummary(
+    Object address,
+    Object number,
+    Object attributes,
+  ) {
+    return '地址 $address • EP# $number • 属性 $attributes';
+  }
+
+  @override
+  String deviceEndpointMaxPacket(Object value) {
+    return '最大包 $value';
+  }
+
+  @override
+  String deviceEndpointInterval(Object value) {
+    return '间隔 $value';
+  }
+
+  @override
+  String get deviceControlTransferDefaultTitle => '控制传输';
+
+  @override
+  String get deviceRequestedLengthLabel => '请求长度';
+
+  @override
+  String get deviceActualLengthLabel => '实际长度';
+
+  @override
+  String get deviceResultLabel => '结果';
+
+  @override
+  String get deviceTransferSuccess => '成功';
+
+  @override
+  String get deviceTransferFailed => '失败';
+
+  @override
+  String get deviceResponseBytesHexTitle => '响应字节（十六进制）';
+
+  @override
+  String get deviceParsedFieldsTitle => '解析字段';
+
+  @override
+  String get deviceNoParsedFieldsAvailable => '没有可用的解析字段。';
+
+  @override
+  String get deviceRawBytesTitle => '原始字节';
+
+  @override
+  String deviceInterfaceReportTitle(
+    Object interfaceNumber,
+    Object reportLength,
+  ) {
+    return '接口 $interfaceNumber • 报告 $reportLength 字节';
+  }
+
+  @override
+  String get deviceParsedSummaryTitle => '解析摘要';
+
+  @override
+  String get deviceNoParsedHidSummaryAvailable => '没有可用的解析 HID 摘要。';
+
+  @override
+  String get deviceReportHexTitle => '报告（十六进制）';
+
+  @override
+  String get historyEntryNotFoundTitle => '未找到条目';
+
+  @override
+  String get historyEntryNotFoundBody => '该历史记录项已不存在。';
+
+  @override
+  String get historyUnableToOpenDetail => '无法打开历史详情。';
 }

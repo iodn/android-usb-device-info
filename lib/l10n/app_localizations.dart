@@ -9668,6 +9668,36 @@ abstract class AppLocalizations {
   /// **'Show permission diagnostics'**
   String get deviceShowPermissionDiagnostics;
 
+  /// No description provided for @devicePermissionStateTemporary.
+  ///
+  /// In en, this message translates to:
+  /// **'Temporary'**
+  String get devicePermissionStateTemporary;
+
+  /// No description provided for @devicePermissionStatePermanent.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanent'**
+  String get devicePermissionStatePermanent;
+
+  /// No description provided for @devicePermissionStateReenumerated.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enumerated'**
+  String get devicePermissionStateReenumerated;
+
+  /// No description provided for @devicePermissionStateNotInApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Not in app'**
+  String get devicePermissionStateNotInApp;
+
+  /// No description provided for @devicePermissionStateRevoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoked'**
+  String get devicePermissionStateRevoked;
+
   /// No description provided for @deviceAndroidVersionLabel.
   ///
   /// In en, this message translates to:
@@ -9739,6 +9769,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Why data is unavailable'**
   String get deviceWhyDataUnavailableTitle;
+
+  /// No description provided for @deviceWhyDataUnavailableSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exact Android or device-side limitation for hidden fields'**
+  String get deviceWhyDataUnavailableSubtitle;
 
   /// No description provided for @deviceReconnectDiffTitle.
   ///
@@ -10256,11 +10292,1065 @@ abstract class AppLocalizations {
   /// **'Input sources'**
   String get deviceInputSourcesLabel;
 
+  /// No description provided for @deviceShowingFirstFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing first {count} fields.'**
+  String deviceShowingFirstFields(int count);
+
   /// No description provided for @deviceShowingFirstDescriptors.
   ///
   /// In en, this message translates to:
   /// **'Showing first {count} descriptors.'**
   String deviceShowingFirstDescriptors(int count);
+
+  /// No description provided for @settingsUsbBehaviorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'USB behavior'**
+  String get settingsUsbBehaviorTitle;
+
+  /// No description provided for @settingsUsbBehaviorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Control system prompts when a USB device is attached'**
+  String get settingsUsbBehaviorSubtitle;
+
+  /// No description provided for @settingsUsbOfferOnAttachTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer to open on USB attach'**
+  String get settingsUsbOfferOnAttachTitle;
+
+  /// No description provided for @settingsUsbOfferOnAttachSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Appear in the Android chooser when a USB device is plugged in.'**
+  String get settingsUsbOfferOnAttachSubtitle;
+
+  /// No description provided for @settingsUsbDisableAttachNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable this to stop Android from suggesting USBDevInfo on device attach. The app will still detect devices while open.'**
+  String get settingsUsbDisableAttachNote;
+
+  /// No description provided for @settingsAttachFilterScopeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach filter scope'**
+  String get settingsAttachFilterScopeLabel;
+
+  /// No description provided for @settingsAttachFilterScopeAllUsbDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'All USB devices'**
+  String get settingsAttachFilterScopeAllUsbDevices;
+
+  /// No description provided for @settingsAttachLaunchBehaviorLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach launch behavior'**
+  String get settingsAttachLaunchBehaviorLabel;
+
+  /// No description provided for @settingsAttachLaunchBehaviorEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Open only when Android explicitly launches USBDevInfo from the USB attach chooser'**
+  String get settingsAttachLaunchBehaviorEnabled;
+
+  /// No description provided for @settingsAttachLaunchBehaviorDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Chooser alias disabled'**
+  String get settingsAttachLaunchBehaviorDisabled;
+
+  /// No description provided for @settingsWhileAppOpenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'While app is open'**
+  String get settingsWhileAppOpenLabel;
+
+  /// No description provided for @settingsWhileAppOpenValue.
+  ///
+  /// In en, this message translates to:
+  /// **'USB attach/detach events refresh device data without forcing navigation'**
+  String get settingsWhileAppOpenValue;
+
+  /// No description provided for @settingsBackupDataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup & data'**
+  String get settingsBackupDataTitle;
+
+  /// No description provided for @settingsBackupDataSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export your device history as JSON'**
+  String get settingsBackupDataSubtitle;
+
+  /// No description provided for @settingsHistoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get settingsHistoryLabel;
+
+  /// No description provided for @settingsMostRecentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Most recent'**
+  String get settingsMostRecentLabel;
+
+  /// No description provided for @settingsNoHistoryYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No history yet'**
+  String get settingsNoHistoryYet;
+
+  /// No description provided for @settingsHistoryRecordedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} item(s) recorded'**
+  String settingsHistoryRecordedCount(int count);
+
+  /// No description provided for @settingsBackupExportIncludes.
+  ///
+  /// In en, this message translates to:
+  /// **'Export includes vendor/product IDs, resolved names, strings, class/protocol, timestamps, and advanced details (descriptors, configurations, interfaces, HID reports) when permission was granted.'**
+  String get settingsBackupExportIncludes;
+
+  /// No description provided for @settingsExportJsonAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Export JSON'**
+  String get settingsExportJsonAction;
+
+  /// No description provided for @settingsImportJsonAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Import JSON'**
+  String get settingsImportJsonAction;
+
+  /// No description provided for @settingsUsbIdsDatabaseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'USB IDs database'**
+  String get settingsUsbIdsDatabaseTitle;
+
+  /// No description provided for @settingsUsbIdsDatabaseSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata and updater'**
+  String get settingsUsbIdsDatabaseSubtitle;
+
+  /// No description provided for @deviceConfigurationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Configuration {id}{suffix}'**
+  String deviceConfigurationTitle(Object id, Object suffix);
+
+  /// No description provided for @deviceAttributesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Attributes'**
+  String get deviceAttributesLabel;
+
+  /// No description provided for @deviceInterfacesSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Interfaces (summary)'**
+  String get deviceInterfacesSummaryTitle;
+
+  /// No description provided for @deviceInterfaceShortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'IF {id}'**
+  String deviceInterfaceShortLabel(Object id);
+
+  /// No description provided for @deviceInterfaceSummaryValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Class {classValue} • EP {endpointCount}'**
+  String deviceInterfaceSummaryValue(Object classValue, Object endpointCount);
+
+  /// No description provided for @deviceInterfaceStringLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'IF {interfaceNumber} (Alt {alternateSetting})'**
+  String deviceInterfaceStringLabel(
+    Object interfaceNumber,
+    Object alternateSetting,
+  );
+
+  /// No description provided for @deviceKeyboardChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Keyboard'**
+  String get deviceKeyboardChip;
+
+  /// No description provided for @deviceMouseChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Mouse'**
+  String get deviceMouseChip;
+
+  /// No description provided for @deviceReportIdsChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Report IDs: {count}'**
+  String deviceReportIdsChip(Object count);
+
+  /// No description provided for @deviceCollectionsChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Collections: {count}'**
+  String deviceCollectionsChip(Object count);
+
+  /// No description provided for @deviceUsagePagesChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage pages: {pages}'**
+  String deviceUsagePagesChip(Object pages);
+
+  /// No description provided for @homeCapabilityAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get homeCapabilityAudio;
+
+  /// No description provided for @homeCapabilityVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get homeCapabilityVideo;
+
+  /// No description provided for @homeCapabilityHid.
+  ///
+  /// In en, this message translates to:
+  /// **'HID'**
+  String get homeCapabilityHid;
+
+  /// No description provided for @homeCapabilityMidi.
+  ///
+  /// In en, this message translates to:
+  /// **'MIDI'**
+  String get homeCapabilityMidi;
+
+  /// No description provided for @homeCapabilityStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get homeCapabilityStorage;
+
+  /// No description provided for @homeCapabilityHub.
+  ///
+  /// In en, this message translates to:
+  /// **'Hub'**
+  String get homeCapabilityHub;
+
+  /// No description provided for @homeCapabilityCdc.
+  ///
+  /// In en, this message translates to:
+  /// **'CDC'**
+  String get homeCapabilityCdc;
+
+  /// No description provided for @homeCapabilityComposite.
+  ///
+  /// In en, this message translates to:
+  /// **'Composite'**
+  String get homeCapabilityComposite;
+
+  /// No description provided for @homeCapabilityInput.
+  ///
+  /// In en, this message translates to:
+  /// **'Input'**
+  String get homeCapabilityInput;
+
+  /// No description provided for @settingsUsbIdsLocalVersionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Local version'**
+  String get settingsUsbIdsLocalVersionLabel;
+
+  /// No description provided for @settingsUsbIdsLocalDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Local date'**
+  String get settingsUsbIdsLocalDateLabel;
+
+  /// No description provided for @settingsUsbIdsRemoteShaNotFetched.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote SHA not fetched yet.'**
+  String get settingsUsbIdsRemoteShaNotFetched;
+
+  /// No description provided for @settingsUsbIdsInstalledShaAfterUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed SHA will be saved after a successful update.'**
+  String get settingsUsbIdsInstalledShaAfterUpdate;
+
+  /// No description provided for @settingsUsbIdsInstalledShaMatchesRemote.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed SHA matches remote.'**
+  String get settingsUsbIdsInstalledShaMatchesRemote;
+
+  /// No description provided for @settingsUsbIdsInstalledShaDiffersRemote.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed SHA differs from remote (update available).'**
+  String get settingsUsbIdsInstalledShaDiffersRemote;
+
+  /// No description provided for @settingsUsbIdsDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get settingsUsbIdsDetailsTitle;
+
+  /// No description provided for @settingsUsbIdsInstalledShaLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed SHA-256'**
+  String get settingsUsbIdsInstalledShaLabel;
+
+  /// No description provided for @settingsUsbIdsRemoteShaLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote SHA-256'**
+  String get settingsUsbIdsRemoteShaLabel;
+
+  /// No description provided for @settingsUsbIdsShaMatchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'SHA match'**
+  String get settingsUsbIdsShaMatchLabel;
+
+  /// No description provided for @settingsUsbIdsLastCheckedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last checked'**
+  String get settingsUsbIdsLastCheckedLabel;
+
+  /// No description provided for @settingsUsbIdsUpdateHintLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Update hint'**
+  String get settingsUsbIdsUpdateHintLabel;
+
+  /// No description provided for @settingsUsbIdsUpdateHintAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get settingsUsbIdsUpdateHintAvailable;
+
+  /// No description provided for @settingsUsbIdsUpdateHintNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get settingsUsbIdsUpdateHintNone;
+
+  /// No description provided for @settingsUsbIdsAutoCheckTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-check for updates'**
+  String get settingsUsbIdsAutoCheckTitle;
+
+  /// No description provided for @settingsUsbIdsAutoCheckSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Checks the remote .sha256 about once per week.'**
+  String get settingsUsbIdsAutoCheckSubtitle;
+
+  /// No description provided for @settingsUpdateNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Update now'**
+  String get settingsUpdateNow;
+
+  /// No description provided for @settingsCheckNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Check now'**
+  String get settingsCheckNow;
+
+  /// No description provided for @settingsAboutSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get settingsAboutSectionTitle;
+
+  /// No description provided for @settingsAboutSectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'App information and legal'**
+  String get settingsAboutSectionSubtitle;
+
+  /// No description provided for @settingsAboutAppTileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{appName} - {developer}'**
+  String settingsAboutAppTileTitle(Object appName, Object developer);
+
+  /// No description provided for @settingsAboutVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String settingsAboutVersion(Object version);
+
+  /// No description provided for @settingsLicensesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Licenses'**
+  String get settingsLicensesTitle;
+
+  /// No description provided for @settingsLicensesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open source licenses'**
+  String get settingsLicensesSubtitle;
+
+  /// No description provided for @settingsReportIssueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report an issue'**
+  String get settingsReportIssueTitle;
+
+  /// No description provided for @settingsReportIssueSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bugs & feature requests'**
+  String get settingsReportIssueSubtitle;
+
+  /// No description provided for @settingsIssuesLinkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Issues link copied'**
+  String get settingsIssuesLinkCopied;
+
+  /// No description provided for @settingsNoHistoryToExport.
+  ///
+  /// In en, this message translates to:
+  /// **'No history to export.'**
+  String get settingsNoHistoryToExport;
+
+  /// No description provided for @settingsExportCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Export copied to clipboard.'**
+  String get settingsExportCopied;
+
+  /// No description provided for @settingsExportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Export failed: {error}'**
+  String settingsExportFailed(Object error);
+
+  /// No description provided for @settingsImportUnsupportedFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported JSON format. Expecting an array or an export payload with schema=device_history_export_v1.'**
+  String get settingsImportUnsupportedFormat;
+
+  /// No description provided for @settingsImportNoValidHistoryEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'No valid history entries found.'**
+  String get settingsImportNoValidHistoryEntries;
+
+  /// No description provided for @settingsImportedItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported {count} item(s).'**
+  String settingsImportedItems(int count);
+
+  /// No description provided for @settingsImportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Import failed: {error}'**
+  String settingsImportFailed(Object error);
+
+  /// No description provided for @settingsClearHistoryBodyDetailed.
+  ///
+  /// In en, this message translates to:
+  /// **'This will remove all recorded devices from local storage.'**
+  String get settingsClearHistoryBodyDetailed;
+
+  /// No description provided for @settingsHistoryCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'History cleared.'**
+  String get settingsHistoryCleared;
+
+  /// No description provided for @settingsExportHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export history'**
+  String get settingsExportHistoryTitle;
+
+  /// No description provided for @settingsExportHistorySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} item(s) • JSON'**
+  String settingsExportHistorySubtitle(int count);
+
+  /// No description provided for @settingsExportFormatPretty.
+  ///
+  /// In en, this message translates to:
+  /// **'Pretty'**
+  String get settingsExportFormatPretty;
+
+  /// No description provided for @settingsExportFormatCompact.
+  ///
+  /// In en, this message translates to:
+  /// **'Compact'**
+  String get settingsExportFormatCompact;
+
+  /// No description provided for @settingsExportSafeShareNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This export is safe to share for debugging, but it may contain device names/paths and serials.'**
+  String get settingsExportSafeShareNote;
+
+  /// No description provided for @settingsImportHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import history'**
+  String get settingsImportHistoryTitle;
+
+  /// No description provided for @settingsImportHistorySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste an export payload or a raw list of entries'**
+  String get settingsImportHistorySubtitle;
+
+  /// No description provided for @settingsImportSupportedFormats.
+  ///
+  /// In en, this message translates to:
+  /// **'Supported formats: device_history_export_v1 payload (recommended) or a raw JSON array of history entry maps.'**
+  String get settingsImportSupportedFormats;
+
+  /// No description provided for @settingsImportHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste JSON here…'**
+  String get settingsImportHint;
+
+  /// No description provided for @settingsImportAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get settingsImportAction;
+
+  /// No description provided for @settingsImporting.
+  ///
+  /// In en, this message translates to:
+  /// **'Importing…'**
+  String get settingsImporting;
+
+  /// No description provided for @settingsImportReplacesHistoryNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Import replaces your current history. If you are unsure, export first.'**
+  String get settingsImportReplacesHistoryNote;
+
+  /// No description provided for @settingsClipboardEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Clipboard is empty.'**
+  String get settingsClipboardEmpty;
+
+  /// No description provided for @settingsPasteJsonFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste JSON first.'**
+  String get settingsPasteJsonFirst;
+
+  /// No description provided for @pasteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste'**
+  String get pasteAction;
+
+  /// No description provided for @donationFocusCompatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compatibility & permissions'**
+  String get donationFocusCompatTitle;
+
+  /// No description provided for @donationFocusCompatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'OEM quirks, permission flows, edge cases'**
+  String get donationFocusCompatSubtitle;
+
+  /// No description provided for @donationFocusUsbIdsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'USB IDs database updates'**
+  String get donationFocusUsbIdsTitle;
+
+  /// No description provided for @donationFocusUsbIdsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Parsing, freshness, update reliability'**
+  String get donationFocusUsbIdsSubtitle;
+
+  /// No description provided for @donationFocusUiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'UI/UX polish'**
+  String get donationFocusUiTitle;
+
+  /// No description provided for @donationFocusUiSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clarity, speed, accessibility'**
+  String get donationFocusUiSubtitle;
+
+  /// No description provided for @donationFocusFeaturesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New features'**
+  String get donationFocusFeaturesTitle;
+
+  /// No description provided for @donationFocusFeaturesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters, exports, insights'**
+  String get donationFocusFeaturesSubtitle;
+
+  /// No description provided for @donationShareHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Support {appName} - Open Source App'**
+  String donationShareHeader(Object appName);
+
+  /// No description provided for @donationShareFocusLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus: {title}'**
+  String donationShareFocusLine(Object title);
+
+  /// No description provided for @donationShareChainBtc.
+  ///
+  /// In en, this message translates to:
+  /// **'Bitcoin (BTC) - send on Bitcoin network only.'**
+  String get donationShareChainBtc;
+
+  /// No description provided for @donationShareChainEth.
+  ///
+  /// In en, this message translates to:
+  /// **'Ethereum (ERC-20) - send on Ethereum mainnet only.'**
+  String get donationShareChainEth;
+
+  /// No description provided for @donationShareBtcAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'BTC address: {address}'**
+  String donationShareBtcAddress(Object address);
+
+  /// No description provided for @donationShareEthAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'ETH address: {address}'**
+  String donationShareEthAddress(Object address);
+
+  /// No description provided for @donationShareRepo.
+  ///
+  /// In en, this message translates to:
+  /// **'Repo: {url}'**
+  String donationShareRepo(Object url);
+
+  /// No description provided for @donationNoBrowserForLiberapay.
+  ///
+  /// In en, this message translates to:
+  /// **'No browser available to open Liberapay'**
+  String get donationNoBrowserForLiberapay;
+
+  /// No description provided for @donationFailedToOpenLiberapay.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to open Liberapay in browser'**
+  String get donationFailedToOpenLiberapay;
+
+  /// No description provided for @donationErrorOpeningLiberapay.
+  ///
+  /// In en, this message translates to:
+  /// **'Error opening Liberapay: {error}'**
+  String donationErrorOpeningLiberapay(Object error);
+
+  /// No description provided for @donationThankYouTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you'**
+  String get donationThankYouTitle;
+
+  /// No description provided for @donationThankYouBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your support helps keep this app free, fast, and actively maintained. Thank you for supporting open-source software.'**
+  String get donationThankYouBody;
+
+  /// No description provided for @donationFocusTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Donation focus'**
+  String get donationFocusTitle;
+
+  /// No description provided for @donationFocusSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. Helps prioritize what to work on next.'**
+  String get donationFocusSubtitle;
+
+  /// No description provided for @donationGeneralSupportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'General support'**
+  String get donationGeneralSupportTitle;
+
+  /// No description provided for @donationGeneralSupportSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Best overall option'**
+  String get donationGeneralSupportSubtitle;
+
+  /// No description provided for @donationSupportDevelopmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Support development'**
+  String get donationSupportDevelopmentTitle;
+
+  /// No description provided for @donationSupportDevelopmentSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional donation that funds maintenance and features'**
+  String get donationSupportDevelopmentSubtitle;
+
+  /// No description provided for @donationOptionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Donation options'**
+  String get donationOptionsTitle;
+
+  /// No description provided for @donationOptionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your contribution keeps this tool free, maintained, and community-driven'**
+  String get donationOptionsSubtitle;
+
+  /// No description provided for @donationRecommendedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get donationRecommendedBadge;
+
+  /// No description provided for @donationLiberapayFlexibleSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Flexible support options'**
+  String get donationLiberapayFlexibleSupport;
+
+  /// No description provided for @donationTraditionalPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Traditional payment methods (card, PayPal, bank)'**
+  String get donationTraditionalPayments;
+
+  /// No description provided for @donationRecurringOrOneTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Flexible recurring support or one-time contribution'**
+  String get donationRecurringOrOneTime;
+
+  /// No description provided for @donationTrustedByOpenSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Trusted by open-source developers'**
+  String get donationTrustedByOpenSource;
+
+  /// No description provided for @donationOpeningBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening browser...'**
+  String get donationOpeningBrowser;
+
+  /// No description provided for @donationViaLiberapay.
+  ///
+  /// In en, this message translates to:
+  /// **'Donate via Liberapay'**
+  String get donationViaLiberapay;
+
+  /// No description provided for @donationLiberapayNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Liberapay is a non-profit donation platform trusted by open-source projects.'**
+  String get donationLiberapayNote;
+
+  /// No description provided for @donationCryptoSupportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct cryptocurrency support'**
+  String get donationCryptoSupportTitle;
+
+  /// No description provided for @donationCryptoSupportSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy-focused option • Scan QR or copy address'**
+  String get donationCryptoSupportSubtitle;
+
+  /// No description provided for @donationBtcShort.
+  ///
+  /// In en, this message translates to:
+  /// **'BTC'**
+  String get donationBtcShort;
+
+  /// No description provided for @donationEthShort.
+  ///
+  /// In en, this message translates to:
+  /// **'ETH'**
+  String get donationEthShort;
+
+  /// No description provided for @donationGeneralShort.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get donationGeneralShort;
+
+  /// No description provided for @donationBitcoinNetworkOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Bitcoin network only'**
+  String get donationBitcoinNetworkOnly;
+
+  /// No description provided for @donationEthereumNetworkOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Ethereum mainnet only'**
+  String get donationEthereumNetworkOnly;
+
+  /// No description provided for @donationBitcoinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bitcoin donation'**
+  String get donationBitcoinTitle;
+
+  /// No description provided for @donationEthereumTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ethereum donation'**
+  String get donationEthereumTitle;
+
+  /// No description provided for @donationQrUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code not available'**
+  String get donationQrUnavailable;
+
+  /// No description provided for @donationAddressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get donationAddressTitle;
+
+  /// No description provided for @donationBtcAddressCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'BTC address copied'**
+  String get donationBtcAddressCopied;
+
+  /// No description provided for @donationEthAddressCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'ETH address copied'**
+  String get donationEthAddressCopied;
+
+  /// No description provided for @donationShareTextCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Share text copied'**
+  String get donationShareTextCopied;
+
+  /// No description provided for @donationCopyAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy address'**
+  String get donationCopyAddress;
+
+  /// No description provided for @donationShareAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get donationShareAction;
+
+  /// No description provided for @donationSentAction.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ve sent a donation'**
+  String get donationSentAction;
+
+  /// No description provided for @donationSecurityNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Security note: Never trust donation addresses from screenshots, reviews, or third-party pages. Use only this in-app screen.'**
+  String get donationSecurityNote;
+
+  /// No description provided for @deviceInterfaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Interface {id} • {classInfo}'**
+  String deviceInterfaceTitle(Object id, Object classInfo);
+
+  /// No description provided for @deviceAltSettingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Alt setting'**
+  String get deviceAltSettingLabel;
+
+  /// No description provided for @deviceClassLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Class'**
+  String get deviceClassLabel;
+
+  /// No description provided for @deviceEndpointsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Endpoints ({count})'**
+  String deviceEndpointsTitle(int count);
+
+  /// No description provided for @deviceNoEndpoints.
+  ///
+  /// In en, this message translates to:
+  /// **'No endpoints'**
+  String get deviceNoEndpoints;
+
+  /// No description provided for @deviceEndpointAddressSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Addr {address} • EP# {number} • Attr {attributes}'**
+  String deviceEndpointAddressSummary(
+    Object address,
+    Object number,
+    Object attributes,
+  );
+
+  /// No description provided for @deviceEndpointMaxPacket.
+  ///
+  /// In en, this message translates to:
+  /// **'MaxPkt {value}'**
+  String deviceEndpointMaxPacket(Object value);
+
+  /// No description provided for @deviceEndpointInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Interval {value}'**
+  String deviceEndpointInterval(Object value);
+
+  /// No description provided for @deviceControlTransferDefaultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Control transfer'**
+  String get deviceControlTransferDefaultTitle;
+
+  /// No description provided for @deviceRequestedLengthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested length'**
+  String get deviceRequestedLengthLabel;
+
+  /// No description provided for @deviceActualLengthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual length'**
+  String get deviceActualLengthLabel;
+
+  /// No description provided for @deviceResultLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Result'**
+  String get deviceResultLabel;
+
+  /// No description provided for @deviceTransferSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get deviceTransferSuccess;
+
+  /// No description provided for @deviceTransferFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get deviceTransferFailed;
+
+  /// No description provided for @deviceResponseBytesHexTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Response bytes (hex)'**
+  String get deviceResponseBytesHexTitle;
+
+  /// No description provided for @deviceParsedFieldsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Parsed fields'**
+  String get deviceParsedFieldsTitle;
+
+  /// No description provided for @deviceNoParsedFieldsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No parsed fields available.'**
+  String get deviceNoParsedFieldsAvailable;
+
+  /// No description provided for @deviceRawBytesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Raw bytes'**
+  String get deviceRawBytesTitle;
+
+  /// No description provided for @deviceInterfaceReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Interface {interfaceNumber} • Report {reportLength} bytes'**
+  String deviceInterfaceReportTitle(
+    Object interfaceNumber,
+    Object reportLength,
+  );
+
+  /// No description provided for @deviceParsedSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Parsed summary'**
+  String get deviceParsedSummaryTitle;
+
+  /// No description provided for @deviceNoParsedHidSummaryAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No parsed HID summary available.'**
+  String get deviceNoParsedHidSummaryAvailable;
+
+  /// No description provided for @deviceReportHexTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report hex'**
+  String get deviceReportHexTitle;
+
+  /// No description provided for @historyEntryNotFoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry not found'**
+  String get historyEntryNotFoundTitle;
+
+  /// No description provided for @historyEntryNotFoundBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This history item no longer exists.'**
+  String get historyEntryNotFoundBody;
+
+  /// No description provided for @historyUnableToOpenDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open history detail.'**
+  String get historyUnableToOpenDetail;
 }
 
 class _AppLocalizationsDelegate
