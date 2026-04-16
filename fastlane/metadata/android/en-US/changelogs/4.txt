@@ -1,1 +1,23 @@
 Add localization support
+  - Arabic
+  - Arabic (Egypt)
+  - German
+  - Spanish
+  - Filipino
+  - French
+  - Hindi
+  - Indonesian
+  - Italian
+  - Japanese
+  - Korean
+  - Malay
+  - Dutch
+  - Polish
+  - Portuguese
+  - Portuguese (Brazil)
+  - Russian
+  - Thai
+  - Turkish
+  - Ukrainian
+  - Vietnamese
+  - Chinese
