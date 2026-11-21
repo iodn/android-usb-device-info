@@ -16,10 +16,11 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.4+4
+version: 1.0.5+5
 
 environment:
-  sdk: ^3.10.4
+  sdk: ^3.14.0
+  flutter: ">=3.50.1"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -35,17 +36,19 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
-  device_info_plus: ^12.3.0
-  dynamic_color: ^1.8.1
-  flutter_riverpod: ^3.1.0
-  go_router: ^17.0.1
-  intl: ^0.20.2
-  package_info_plus: ^9.0.0
-  path: ^1.9.0
-  shared_preferences: ^2.5.4
-  sqflite: ^2.4.2
-  url_launcher: ^6.3.2
+  cupertino_icons: ^2.0.0
+  device_info_plus: ^13.3.0
+  dynamic_color: ^2.1.0
+  flutter_riverpod: ^3.5.0
+  go_router: ^18.1.4
+  intl: ^0.20.3
+  material_ui: ^1.11.1
+  package_info_plus: ^10.2.2
+  path: ^1.9.1
+  shared_preferences: ^2.5.6
+  sqflite: ^2.4.6
+  url_launcher: ^6.3.3
+  flutter_svg: ^2.5.0
 
 dev_dependencies:
   flutter_test:
@@ -74,6 +77,7 @@ flutter:
   assets:
     - assets/db/usbids.sqlite
     - assets/images/logo.png
+    - assets/vendor_logos/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

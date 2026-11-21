@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -6279,4 +6280,53 @@ class AppLocalizationsMs extends AppLocalizations {
   @override
   String get historyUnableToOpenDetail =>
       'Tidak dapat membuka butiran sejarah.';
+
+  @override
+  String get deviceTechnicalDetailsTitle => 'Butiran teknikal';
+
+  @override
+  String get deviceDisconnectedTitle => 'Peranti terputus';
+
+  @override
+  String get deviceDisconnectedReconnect =>
+      'Sambungkan semula peranti, kemudian bukanya daripada senarai.';
+
+  @override
+  String get deviceVideoModesTitle => 'Mod video kamera';
+
+  @override
+  String get deviceVideoModesDescription =>
+      'Resolusi dan kadar bingkai yang dilaporkan oleh peranti.';
+
+  @override
+  String deviceVideoModesCount(int count) {
+    return '$count mod video';
+  }
+
+  @override
+  String deviceVideoFrameRates(String rates) {
+    return '$rates fps';
+  }
+
+  @override
+  String get usbAccessoryTitle => 'Aksesori USB';
+
+  @override
+  String get usbAccessoryVersionLabel => 'Versi';
+
+  @override
+  String get usbAccessoryUriLabel => 'URI aksesori';
+
+  @override
+  String get usbAccessoryPermissionBody =>
+      'Benarkan akses USB untuk membaca nombor siri aksesori.';
+
+  @override
+  String get deviceSupportedButtonsLabel => 'Butang yang disokong';
+
+  @override
+  String get deviceAudioStreamFormatsTitle => 'Format strim audio';
+
+  @override
+  String get deviceUsbFunctionsTitle => 'Fungsi USB';
 }

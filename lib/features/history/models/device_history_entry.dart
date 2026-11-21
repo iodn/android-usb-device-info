@@ -43,12 +43,14 @@ class DeviceHistoryEntry {
     this.strings,
     this.descriptorTree,
     this.hidReports,
+    this.accessory,
   });
 
   final String id;
   final DateTime testedAt;
 
   final String deviceName;
+  bool get isAccessory => deviceName.startsWith('accessory:');
 
   final int vendorId;
   final int productId;
@@ -97,6 +99,7 @@ class DeviceHistoryEntry {
   final Map<String, Object?>? strings;
   final List<Object?>? descriptorTree;
   final List<Object?>? hidReports;
+  final Map<String, Object?>? accessory;
 
   Map<String, Object?> toMap() => <String, Object?>{
         'id': id,
@@ -139,6 +142,7 @@ class DeviceHistoryEntry {
         'strings': strings,
         'descriptorTree': descriptorTree,
         'hidReports': hidReports,
+        if (accessory != null) 'accessory': accessory,
       };
 
   factory DeviceHistoryEntry.fromMap(Map<Object?, Object?> map) {
@@ -196,6 +200,7 @@ class DeviceHistoryEntry {
       deviceState: (map['deviceState'] is Map) ? (map['deviceState'] as Map).cast<String, Object?>() : null,
       strings: (map['strings'] is Map) ? (map['strings'] as Map).cast<String, Object?>() : null,
       descriptorTree: (map['descriptorTree'] is List) ? (map['descriptorTree'] as List).cast<Object?>() : null,
+      accessory: map['accessory'] is Map ? (map['accessory'] as Map).cast<String, Object?>() : null,
       hidReports: (map['hidReports'] is List) ? (map['hidReports'] as List).cast<Object?>() : null,
     );
   }
@@ -259,6 +264,7 @@ class DeviceHistoryEntry {
       strings: strings ?? this.strings,
       descriptorTree: descriptorTree ?? this.descriptorTree,
       hidReports: hidReports ?? this.hidReports,
+      accessory: accessory,
     );
   }
 }

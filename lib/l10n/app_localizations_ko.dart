@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -6122,4 +6123,50 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get historyUnableToOpenDetail => '기록 상세를 열 수 없습니다.';
+
+  @override
+  String get deviceTechnicalDetailsTitle => '기술 정보';
+
+  @override
+  String get deviceDisconnectedTitle => '기기 연결이 끊겼습니다';
+
+  @override
+  String get deviceDisconnectedReconnect => '기기를 다시 연결한 후 목록에서 여세요.';
+
+  @override
+  String get deviceVideoModesTitle => '카메라 동영상 모드';
+
+  @override
+  String get deviceVideoModesDescription => '기기가 알린 해상도와 프레임 속도입니다.';
+
+  @override
+  String deviceVideoModesCount(int count) {
+    return '동영상 모드 $count개';
+  }
+
+  @override
+  String deviceVideoFrameRates(String rates) {
+    return '$rates fps';
+  }
+
+  @override
+  String get usbAccessoryTitle => 'USB 액세서리';
+
+  @override
+  String get usbAccessoryVersionLabel => '버전';
+
+  @override
+  String get usbAccessoryUriLabel => '액세서리 URI';
+
+  @override
+  String get usbAccessoryPermissionBody => '액세서리의 일련번호를 읽으려면 USB 액세스를 허용하세요.';
+
+  @override
+  String get deviceSupportedButtonsLabel => '지원되는 버튼';
+
+  @override
+  String get deviceAudioStreamFormatsTitle => '오디오 스트림 형식';
+
+  @override
+  String get deviceUsbFunctionsTitle => 'USB 기능';
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/theme_mode_controller.dart';
+import '../../../core/utils/fnv1a64.dart';
 import '../../../data/usb/models.dart';
 import '../../../data/usb/usb_repository.dart';
 import '../models/device_history_entry.dart';
@@ -150,6 +151,10 @@ class DeviceHistoryController extends AsyncNotifier<List<DeviceHistoryEntry>> {
       speed: s.speed,
       deviceId: s.deviceId,
       portNumber: s.portNumber,
+      accessory: s.isAccessory ? {
+        'version': s.deviceRelease,
+        if (raw?['accessory'] case final Map metadata) ...metadata.cast<String, Object?>(),
+      } : null,
       // Prefer raw snapshot data when provided; otherwise derive from enriched view where possible
       maxPowerMa: raw?['summary']?['maxPowerMa'] as int? ?? s.maxPowerMa,
       deviceDescriptor: (raw?['deviceDescriptor'] is Map)
@@ -224,28 +229,7 @@ class DeviceHistoryController extends AsyncNotifier<List<DeviceHistoryEntry>> {
               .toList(),
       input: (raw?['input'] is Map)
           ? (raw!['input'] as Map).cast<String, Object?>()
-          : (view.details.input == null
-              ? null
-              : {
-                  'id': view.details.input!.id,
-                  'name': view.details.input!.name,
-                  'descriptor': view.details.input!.descriptor,
-                  'isExternal': view.details.input!.isExternal,
-                  'vendorId': view.details.input!.vendorId,
-                  'productId': view.details.input!.productId,
-                  'sources': view.details.input!.sources,
-                  'keyboardType': view.details.input!.keyboardType,
-                  'motionRanges': view.details.input!.motionRanges
-                      .map((r) => {
-                            'axis': r.axis,
-                            'min': r.min,
-                            'max': r.max,
-                            'flat': r.flat,
-                            'fuzz': r.fuzz,
-                            'resolution': r.resolution,
-                          })
-                      .toList(),
-                }),
+          : view.details.input?.toMap(),
       deviceState: (raw?['deviceState'] is Map) ? (raw!['deviceState'] as Map).cast<String, Object?>() : null,
       strings: (raw?['strings'] is Map) ? (raw!['strings'] as Map).cast<String, Object?>() : null,
       descriptorTree: (raw?['descriptorTree'] is List) ? (raw!['descriptorTree'] as List).cast<Object?>() : null,
@@ -290,6 +274,12 @@ class DeviceHistoryController extends AsyncNotifier<List<DeviceHistoryEntry>> {
   }
 
   String _makeStableIdFromSummary(UsbDeviceSummary s) {
+    if (s.isAccessory) {
+      final serial = s.serialNumber;
+      if (serial == null || serial.isEmpty) return s.deviceName;
+      final hash = Fnv1a64()..addBytes(utf8.encode(serial));
+      return '${s.deviceName}:${hash.digestHex()}';
+    }
     final stableIdentityKey = (s.stableIdentityKey ?? '').trim();
     if (stableIdentityKey.isNotEmpty) {
       return stableIdentityKey;
@@ -316,6 +306,7 @@ class DeviceHistoryController extends AsyncNotifier<List<DeviceHistoryEntry>> {
     for (final candidate in current) {
       if (candidate.id == entry.id) return candidate;
     }
+    if (entry.isAccessory) return null;
 
     final entryStable = _normalized(entry.stableIdentityKey);
     if (entryStable != null) {
@@ -406,6 +397,7 @@ class DeviceHistoryController extends AsyncNotifier<List<DeviceHistoryEntry>> {
       strings: latest.strings ?? previous?.strings,
       descriptorTree: latest.descriptorTree ?? previous?.descriptorTree,
       hidReports: latest.hidReports ?? previous?.hidReports,
+      accessory: latest.accessory ?? previous?.accessory,
     );
   }
 

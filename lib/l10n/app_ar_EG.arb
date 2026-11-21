@@ -2791,5 +2791,12 @@
   "homeCapabilityHub": "موزّع",
   "homeCapabilityCdc": "CDC",
   "homeCapabilityComposite": "مركّب",
-  "homeCapabilityInput": "إدخال"
+  "homeCapabilityInput": "إدخال",
+  "usbAccessoryTitle": "ملحق USB",
+  "usbAccessoryVersionLabel": "الإصدار",
+  "usbAccessoryUriLabel": "معرّف URI للملحق",
+  "usbAccessoryPermissionBody": "اسمح بالوصول عبر USB لقراءة الرقم التسلسلي للملحق.",
+  "deviceSupportedButtonsLabel": "الأزرار المدعومة",
+  "deviceAudioStreamFormatsTitle": "تنسيقات تدفق الصوت",
+  "deviceUsbFunctionsTitle": "وظائف USB"
 }

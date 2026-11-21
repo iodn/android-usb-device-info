@@ -2791,5 +2791,19 @@
   "homeCapabilityHub": "Hab",
   "homeCapabilityCdc": "Peranti CDC",
   "homeCapabilityComposite": "Komposit",
-  "homeCapabilityInput": "Peranti input"
+  "homeCapabilityInput": "Peranti input",
+  "deviceTechnicalDetailsTitle": "Butiran teknikal",
+  "deviceDisconnectedTitle": "Peranti terputus",
+  "deviceDisconnectedReconnect": "Sambungkan semula peranti, kemudian bukanya daripada senarai.",
+  "deviceVideoModesTitle": "Mod video kamera",
+  "deviceVideoModesDescription": "Resolusi dan kadar bingkai yang dilaporkan oleh peranti.",
+  "deviceVideoModesCount": "{count} mod video",
+  "deviceVideoFrameRates": "{rates} fps",
+  "usbAccessoryTitle": "Aksesori USB",
+  "usbAccessoryVersionLabel": "Versi",
+  "usbAccessoryUriLabel": "URI aksesori",
+  "usbAccessoryPermissionBody": "Benarkan akses USB untuk membaca nombor siri aksesori.",
+  "deviceSupportedButtonsLabel": "Butang yang disokong",
+  "deviceAudioStreamFormatsTitle": "Format strim audio",
+  "deviceUsbFunctionsTitle": "Fungsi USB"
 }

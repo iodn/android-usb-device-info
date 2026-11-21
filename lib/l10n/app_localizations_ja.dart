@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -6114,4 +6115,50 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get historyUnableToOpenDetail => '履歴詳細を開けません。';
+
+  @override
+  String get deviceTechnicalDetailsTitle => '技術情報';
+
+  @override
+  String get deviceDisconnectedTitle => 'デバイスが切断されました';
+
+  @override
+  String get deviceDisconnectedReconnect => 'デバイスを再接続し、一覧から開いてください。';
+
+  @override
+  String get deviceVideoModesTitle => 'カメラの映像モード';
+
+  @override
+  String get deviceVideoModesDescription => 'デバイスが通知した解像度とフレームレート。';
+
+  @override
+  String deviceVideoModesCount(int count) {
+    return '映像モード $count 件';
+  }
+
+  @override
+  String deviceVideoFrameRates(String rates) {
+    return '$rates fps';
+  }
+
+  @override
+  String get usbAccessoryTitle => 'USBアクセサリ';
+
+  @override
+  String get usbAccessoryVersionLabel => 'バージョン';
+
+  @override
+  String get usbAccessoryUriLabel => 'アクセサリのURI';
+
+  @override
+  String get usbAccessoryPermissionBody => 'USBアクセスを許可すると、アクセサリのシリアル番号を読み取れます。';
+
+  @override
+  String get deviceSupportedButtonsLabel => '対応ボタン';
+
+  @override
+  String get deviceAudioStreamFormatsTitle => 'オーディオストリーム形式';
+
+  @override
+  String get deviceUsbFunctionsTitle => 'USB 機能';
 }

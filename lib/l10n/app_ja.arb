@@ -2791,5 +2791,19 @@
   "homeCapabilityHub": "ハブ",
   "homeCapabilityCdc": "CDC",
   "homeCapabilityComposite": "複合",
-  "homeCapabilityInput": "入力"
+  "homeCapabilityInput": "入力",
+  "deviceTechnicalDetailsTitle": "技術情報",
+  "deviceDisconnectedTitle": "デバイスが切断されました",
+  "deviceDisconnectedReconnect": "デバイスを再接続し、一覧から開いてください。",
+  "deviceVideoModesTitle": "カメラの映像モード",
+  "deviceVideoModesDescription": "デバイスが通知した解像度とフレームレート。",
+  "deviceVideoModesCount": "映像モード {count} 件",
+  "deviceVideoFrameRates": "{rates} fps",
+  "usbAccessoryTitle": "USBアクセサリ",
+  "usbAccessoryVersionLabel": "バージョン",
+  "usbAccessoryUriLabel": "アクセサリのURI",
+  "usbAccessoryPermissionBody": "USBアクセスを許可すると、アクセサリのシリアル番号を読み取れます。",
+  "deviceSupportedButtonsLabel": "対応ボタン",
+  "deviceAudioStreamFormatsTitle": "オーディオストリーム形式",
+  "deviceUsbFunctionsTitle": "USB 機能"
 }

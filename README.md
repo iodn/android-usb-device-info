@@ -42,16 +42,24 @@ USBDevInfo works fully offline, stores all data locally, and never transmits dev
   - Automatically reacts to USB attach/detach and can auto‑open a device's details view on attach
   - Permission request flow for devices that require user consent
   - Instant visibility into attached USB devices, hubs, and HID/gamepad/touch devices
+  - Android USB accessory mode with manufacturer, model, version, description, and accessory URI when available
+  - Android input-device details for controllers, pointing devices, and keyboards, including reported buttons and motion axes
 - Device list with search
   - Shows vendor/product names when known, plus VID:PID and basic class info
-  - Text search across vendor, product, id string, and device path
+  - Search by names, capabilities, USB IDs in decimal or hexadecimal, and device path
 - Detailed device view
-  - Full device and configuration/endpoint breakdown (classes, subclasses, protocols)
+  - Device identity and USB information at a glance, with expandable configuration, interface, and endpoint details
+  - Advertised USB camera formats, resolutions, and frame rates
+  - USB Audio Class 1 and 2 stream formats, including advertised Class 1 sample-rate lists and ranges
+  - USB capability descriptors and configuration power budgets when available
+  - Hub port counts, power switching, over-current protection, and SuperSpeed endpoint companion descriptors
+  - Negotiated connection speed and the path through USB hubs on Android devices that expose kernel USB metadata
   - Human‑readable names for USB class/subclass/protocol when available
   - Copy any field, view raw JSON payload, and neatly wrapped hex where applicable
 - Device history
   - Maintains a chronological history of attach events; drill into past entries
   - Export/import history as JSON from the Settings screen
+  - Preserve USB accessory metadata and serial numbers captured with user permission
 - Theming and UX
   - Material 3 design, light/dark theme, optional Android dynamic color support
   - Polished section cards, key/value rows, and snack‑bar copy confirmations
@@ -127,7 +135,7 @@ Or download the latest APK from the Releases Section.
 
 ## Build from source
 - Requirements
-  - Flutter SDK (Dart 3.x), Android SDK/NDK as needed, a device/emulator running Android
+  - Flutter SDK 3.50.1 or later (Dart 3.14+), JDK 17 or later, Android SDK/NDK, and an Android device or emulator for running the app
 - Steps
   - flutter pub get
   - flutter build apk (or flutter run for development)
@@ -138,7 +146,8 @@ The app bundles assets/db/usbids.sqlite. If you need to refresh the USB IDs data
 
 
 ## Permissions and compatibility
-- Uses Android's USB host APIs; user permission prompts appear for certain device interactions
+- Android grants direct USB access for the selected device until it disconnects. Basic information is visible before you grant access.
+- Android 9 and later can require camera permission for USB video devices. The app uses it for read-only descriptor inspection.
 - Works offline for lookups once installed (DB is local)
 - Dynamic color support is enabled by default on Android
 
@@ -149,8 +158,10 @@ The app bundles assets/db/usbids.sqlite. If you need to refresh the USB IDs data
   - data/: platform bridge wrapper, repository, DB layer, providers
   - features/: home, device detail, history, settings (and subcontrollers)
 - android/: Kotlin bridge (UsbBridge), activity configuration, and intent plumbing
-- assets/: USB IDs SQLite DB and sources
+- assets/: USB IDs SQLite DB, database sources, and bundled SVG vendor logos
 - tools/: scripts to rebuild and update the USB IDs database
+
+Vendor logos are stored in [assets/vendor_logos](assets/vendor_logos) and matched by USB vendor ID in [vendor_logo_assets.dart](lib/data/usb/vendor_logo_assets.dart). Add an SVG and a confirmed vendor ID mapping to extend the collection. [Logo sources](tools/vendor_logo_sources.tsv)
 
 
 ## Screenshots

@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -6307,4 +6308,59 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get historyUnableToOpenDetail => 'Unable to open history detail.';
+
+  @override
+  String get deviceTechnicalDetailsTitle => 'Technical details';
+
+  @override
+  String get deviceDisconnectedTitle => 'Device disconnected';
+
+  @override
+  String get deviceDisconnectedReconnect =>
+      'Reconnect the device, then open it from the device list.';
+
+  @override
+  String get deviceVideoModesTitle => 'Camera video modes';
+
+  @override
+  String get deviceVideoModesDescription =>
+      'Resolutions and frame rates advertised by the device.';
+
+  @override
+  String deviceVideoModesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count video modes',
+      one: '1 video mode',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String deviceVideoFrameRates(String rates) {
+    return '$rates fps';
+  }
+
+  @override
+  String get usbAccessoryTitle => 'USB accessory';
+
+  @override
+  String get usbAccessoryVersionLabel => 'Version';
+
+  @override
+  String get usbAccessoryUriLabel => 'Accessory URI';
+
+  @override
+  String get usbAccessoryPermissionBody =>
+      'Allow USB access to read the accessory’s serial number.';
+
+  @override
+  String get deviceSupportedButtonsLabel => 'Supported buttons';
+
+  @override
+  String get deviceAudioStreamFormatsTitle => 'Audio stream formats';
+
+  @override
+  String get deviceUsbFunctionsTitle => 'USB functions';
 }

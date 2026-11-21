@@ -2791,5 +2791,19 @@
   "homeCapabilityHub": "موزّع",
   "homeCapabilityCdc": "CDC",
   "homeCapabilityComposite": "مركّب",
-  "homeCapabilityInput": "إدخال"
+  "homeCapabilityInput": "إدخال",
+  "deviceTechnicalDetailsTitle": "التفاصيل التقنية",
+  "deviceDisconnectedTitle": "تم فصل الجهاز",
+  "deviceDisconnectedReconnect": "أعد توصيل الجهاز، ثم افتحه من قائمة الأجهزة.",
+  "deviceVideoModesTitle": "أوضاع فيديو الكاميرا",
+  "deviceVideoModesDescription": "الدقات ومعدلات الإطارات التي يعلن عنها الجهاز.",
+  "deviceVideoModesCount": "{count} من أوضاع الفيديو",
+  "deviceVideoFrameRates": "{rates} إطار/ث",
+  "usbAccessoryTitle": "ملحق USB",
+  "usbAccessoryVersionLabel": "الإصدار",
+  "usbAccessoryUriLabel": "معرّف URI للملحق",
+  "usbAccessoryPermissionBody": "اسمح بالوصول عبر USB لقراءة الرقم التسلسلي للملحق.",
+  "deviceSupportedButtonsLabel": "الأزرار المدعومة",
+  "deviceAudioStreamFormatsTitle": "تنسيقات تدفق الصوت",
+  "deviceUsbFunctionsTitle": "وظائف USB"
 }

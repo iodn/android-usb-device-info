@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -6281,4 +6282,53 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get historyUnableToOpenDetail =>
       'Не удалось открыть подробности истории.';
+
+  @override
+  String get deviceTechnicalDetailsTitle => 'Технические сведения';
+
+  @override
+  String get deviceDisconnectedTitle => 'Устройство отключено';
+
+  @override
+  String get deviceDisconnectedReconnect =>
+      'Подключите устройство снова и откройте его из списка.';
+
+  @override
+  String get deviceVideoModesTitle => 'Видеорежимы камеры';
+
+  @override
+  String get deviceVideoModesDescription =>
+      'Разрешения и частоты кадров, заявленные устройством.';
+
+  @override
+  String deviceVideoModesCount(int count) {
+    return 'Видеорежимы: $count';
+  }
+
+  @override
+  String deviceVideoFrameRates(String rates) {
+    return '$rates кадр/с';
+  }
+
+  @override
+  String get usbAccessoryTitle => 'USB-аксессуар';
+
+  @override
+  String get usbAccessoryVersionLabel => 'Версия';
+
+  @override
+  String get usbAccessoryUriLabel => 'URI аксессуара';
+
+  @override
+  String get usbAccessoryPermissionBody =>
+      'Разрешите доступ через USB, чтобы прочитать серийный номер аксессуара.';
+
+  @override
+  String get deviceSupportedButtonsLabel => 'Поддерживаемые кнопки';
+
+  @override
+  String get deviceAudioStreamFormatsTitle => 'Форматы аудиопотока';
+
+  @override
+  String get deviceUsbFunctionsTitle => 'Функции USB';
 }

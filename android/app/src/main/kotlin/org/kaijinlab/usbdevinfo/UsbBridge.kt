@@ -14,6 +14,7 @@ import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.media.midi.MidiDeviceInfo
 import android.media.midi.MidiManager
+import android.hardware.usb.UsbAccessory
 import android.hardware.usb.UsbConfiguration
 import android.hardware.usb.UsbConstants
 import android.hardware.usb.UsbDevice
@@ -21,13 +22,17 @@ import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbEndpoint
 import android.hardware.usb.UsbInterface
 import android.hardware.usb.UsbManager
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.util.Log
 import android.view.InputDevice
+import android.view.KeyEvent
+import android.view.MotionEvent
 import android.content.pm.PackageManager
 import androidx.annotation.MainThread
 import io.flutter.plugin.common.BinaryMessenger
@@ -36,7 +41,9 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
 import java.util.Locale
-import java.util.concurrent.ConcurrentHashMap
+import java.security.MessageDigest
+import java.util.UUID
+import java.util.concurrent.Executors
 import kotlin.math.min
 
 class UsbBridge(
@@ -64,107 +71,69 @@ class UsbBridge(
   private val permissionPrefs by lazy { ctx.getSharedPreferences(permissionPrefsName, Context.MODE_PRIVATE) }
   private val permissionFailurePrefs by lazy { ctx.getSharedPreferences(permissionFailurePrefsName, Context.MODE_PRIVATE) }
   private val mainHandler = Handler(Looper.getMainLooper())
+  private val usbReadExecutor = Executors.newSingleThreadExecutor()
   private val methodChannel = MethodChannel(messenger, "usbdevinfo/methods")
   private val eventChannel = EventChannel(messenger, "usbdevinfo/events")
   private var eventSink: EventChannel.EventSink? = null
-  private data class PendingRuntimePerm(
-    val permission: String,
-    val result: MethodChannel.Result,
-    val deviceName: String?,
-    val vid: Int?,
-    val pid: Int?,
-    val deviceClass: Int?
+  private data class PendingCameraPermission(
+    val device: UsbDevice,
+    val result: MethodChannel.Result
   )
-  private val pendingCameraPermissionResults = mutableListOf<PendingRuntimePerm>()
+  private val pendingCameraPermissionResults = mutableListOf<PendingCameraPermission>()
+  private var cameraPromptInFlight = false
   private data class PendingPerm(
-    val originalName: String,
-    val vid: Int,
-    val pid: Int,
-    val deviceClass: Int,
-    val result: MethodChannel.Result,
-    @Volatile var completed: Boolean = false
+    val deviceName: String,
+    val vendorId: Int?,
+    val productId: Int?,
+    val deviceClass: Int?,
+    val checkGrant: () -> Boolean?,
+    val intent: PendingIntent,
+    val timeout: Runnable,
+    val results: MutableList<MethodChannel.Result>
   )
-  private val permissionByName = ConcurrentHashMap<String, PendingPerm>()
-  private val permissionByVidPid = ConcurrentHashMap<String, PendingPerm>()
+  private val pendingUsbPermissions = mutableMapOf<Uri, PendingPerm>()
   private val permissionAction = "${ctx.packageName}.USB_PERMISSION"
+  private val permissionScheme = "usbdevinfo-permission"
 
   private val usbDeviceChangeReceiver = object : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
       val action = intent.action ?: return
-      if (action != UsbManager.ACTION_USB_DEVICE_ATTACHED && action != UsbManager.ACTION_USB_DEVICE_DETACHED) return
-      val device: UsbDevice? = intent.getParcelableExtraCompat(UsbManager.EXTRA_DEVICE, UsbDevice::class.java)
-      emitUsbDeviceChange(action, device?.deviceName)
+      val deviceName = when (action) {
+        UsbManager.ACTION_USB_DEVICE_ATTACHED, UsbManager.ACTION_USB_DEVICE_DETACHED ->
+          intent.getParcelableExtraCompat(UsbManager.EXTRA_DEVICE, UsbDevice::class.java)?.deviceName
+        UsbManager.ACTION_USB_ACCESSORY_ATTACHED, UsbManager.ACTION_USB_ACCESSORY_DETACHED ->
+          intent.getParcelableExtraCompat(UsbManager.EXTRA_ACCESSORY, UsbAccessory::class.java)?.let(::accessoryKey)
+        else -> return
+      }
+      if (deviceName != null && (action == UsbManager.ACTION_USB_DEVICE_DETACHED ||
+          action == UsbManager.ACTION_USB_ACCESSORY_DETACHED)) {
+        val cameraRequests = pendingCameraPermissionResults.filter { it.device.deviceName == deviceName }
+        pendingCameraPermissionResults.removeAll(cameraRequests)
+        for (request in cameraRequests) reportDisconnected(request.result)
+        for ((uri, _) in pendingUsbPermissions.filterValues { it.deviceName == deviceName }) {
+          finishUsbPermission(uri, false, "device_disconnected")
+        }
+      }
+      emitUsbDeviceChange(action, deviceName)
     }
   }
 
   private val usbPermissionReceiver = object : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
       if (intent.action != permissionAction) return
-      val device: UsbDevice? = intent.getParcelableExtraCompat(UsbManager.EXTRA_DEVICE, UsbDevice::class.java)
-      var granted = intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
-      val newName = device?.deviceName
-      val vid = device?.vendorId ?: -1
-      val pid = device?.productId ?: -1
-      val key = if (vid >= 0 && pid >= 0) "$vid:$pid" else null
+      val uri = intent.data ?: return
+      val request = pendingUsbPermissions[uri] ?: return
+      val device = intent.getParcelableExtraCompat(UsbManager.EXTRA_DEVICE, UsbDevice::class.java)
+      val accessory = intent.getParcelableExtraCompat(UsbManager.EXTRA_ACCESSORY, UsbAccessory::class.java)
+      if (device != null && (device.deviceName != request.deviceName ||
+          device.vendorId != request.vendorId || device.productId != request.productId)) return
+      if (accessory != null && accessoryKey(accessory) != request.deviceName) return
 
-      var pending: PendingPerm? = null
-      if (newName != null) pending = permissionByName.remove(newName)
-      if (pending == null && key != null) pending = permissionByVidPid.remove(key)
-
-      // Re-check actual hasPermission on any current instance of this VID:PID
-      if (granted && vid >= 0 && pid >= 0) {
-        val anyOk = try { usbManager.deviceList.values.any { it.vendorId == vid && it.productId == pid && usbManager.hasPermission(it) } } catch (_: Throwable) { false }
-        if (!anyOk) granted = false
-      }
-
-      if (pending != null) {
-        if (newName != null && newName != pending.originalName) {
-          recordUsbFailure(
-            deviceName = pending.originalName,
-            vid = pending.vid,
-            pid = pending.pid,
-            reasonCode = "usb_reenumerated",
-            message = "The USB device re-enumerated under a new Android path during permission flow."
-          )
-          emitEvent(mapOf(
-            "type" to "permission_instance_changed",
-            "originalName" to pending.originalName,
-            "newName" to newName,
-            "vid" to pending.vid,
-            "pid" to pending.pid
-          ))
-        }
-        if (!granted) {
-          recordUsbFailure(
-            deviceName = pending.originalName,
-            vid = pending.vid,
-            pid = pending.pid,
-            reasonCode = "usb_permission_denied",
-            message = "USB permission was denied or interrupted by Android."
-          )
-        }
-        val finalState = when {
-          newName != null && newName != pending.originalName -> "reenumerated"
-          granted -> "granted"
-          else -> "temporarily_denied"
-        }
-        logPermissionEvent(
-          phase = "callback",
-          permissionType = "usb",
-          deviceName = pending.originalName,
-          vid = pending.vid,
-          pid = pending.pid,
-          deviceClass = pending.deviceClass,
-          callbackResult = granted,
-          finalState = finalState
-        )
-        completePending(pending, granted)
-      }
-
-      emitEvent(mapOf("type" to "permission_result", "deviceName" to newName, "granted" to granted))
-      emitUsbDeviceChange("permission_result", newName)
+      // Android's current grant, rather than the extras in the callback, is authoritative.
+      finishFromCurrentUsbPermission(uri, "usb_permission_denied")
     }
   }
+
 
   private val inputListener = object : InputManager.InputDeviceListener {
     override fun onInputDeviceAdded(deviceId: Int) {
@@ -188,16 +157,30 @@ class UsbBridge(
   fun stop() {
     methodChannel.setMethodCallHandler(null)
     eventChannel.setStreamHandler(null)
+    eventSink = null
+    for (uri in pendingUsbPermissions.keys.toList()) finishUsbPermission(uri, false, "usb_permission_interrupted")
+    for (request in pendingCameraPermissionResults) request.result.success(false)
+    pendingCameraPermissionResults.clear()
+    cameraPromptInFlight = false
     unregisterReceiver()
     unregisterInputListener()
+    usbReadExecutor.shutdownNow()
   }
 
   fun handleIntent(intent: Intent?) {
-    if (intent == null) return
-    val action = intent.action ?: return
-    if (action == UsbManager.ACTION_USB_DEVICE_ATTACHED || action == UsbManager.ACTION_USB_DEVICE_DETACHED) {
-      val device: UsbDevice? = intent.getParcelableExtraCompat(UsbManager.EXTRA_DEVICE, UsbDevice::class.java)
-      emitUsbDeviceChange("activity_intent:$action", device?.deviceName)
+    when (intent?.action) {
+      UsbManager.ACTION_USB_DEVICE_ATTACHED -> {
+        val device = intent.getParcelableExtraCompat(UsbManager.EXTRA_DEVICE, UsbDevice::class.java) ?: return
+        val connected = currentUsbDevice(device.deviceName, device.vendorId, device.productId) ?: return
+        emitUsbDeviceChange("activity_intent:${UsbManager.ACTION_USB_DEVICE_ATTACHED}", connected.deviceName)
+      }
+      UsbManager.ACTION_USB_ACCESSORY_ATTACHED -> {
+        val accessory = intent.getParcelableExtraCompat(UsbManager.EXTRA_ACCESSORY, UsbAccessory::class.java) ?: return
+        val name = accessoryKey(accessory)
+        if (currentAccessory(name) != null) {
+          emitUsbDeviceChange("activity_intent:${UsbManager.ACTION_USB_ACCESSORY_ATTACHED}", name)
+        }
+      }
     }
   }
 
@@ -205,9 +188,12 @@ class UsbBridge(
     val deviceFilter = IntentFilter().apply {
       addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED)
       addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
+      addAction(UsbManager.ACTION_USB_ACCESSORY_ATTACHED)
+      addAction(UsbManager.ACTION_USB_ACCESSORY_DETACHED)
     }
     val permissionFilter = IntentFilter().apply {
       addAction(permissionAction)
+      addDataScheme(permissionScheme)
     }
     if (Build.VERSION.SDK_INT >= 33) {
       ctx.registerReceiver(usbDeviceChangeReceiver, deviceFilter, Context.RECEIVER_NOT_EXPORTED)
@@ -260,15 +246,72 @@ class UsbBridge(
     eventSink = null
   }
 
-  private fun completePending(p: PendingPerm, granted: Boolean) {
-    p.completed = true
-    try { p.result.success(granted) } catch (_: Throwable) {}
+  private fun currentUsbDevice(deviceName: String?, vid: Int?, pid: Int?): UsbDevice? {
+    if (deviceName.isNullOrBlank()) return null
+    return safeGet { findUsbByName(deviceName) }?.takeIf {
+      (vid == null || it.vendorId == vid) && (pid == null || it.productId == pid)
+    }
+  }
+
+  private fun finishFromCurrentUsbPermission(uri: Uri, failureIfConnected: String) {
+    val request = pendingUsbPermissions[uri] ?: return
+    val granted = request.checkGrant()
+    val failure = when (granted) {
+      null -> "device_disconnected"
+      false -> failureIfConnected
+      true -> null
+    }
+    finishUsbPermission(uri, granted == true, failure)
+  }
+
+  private fun reportDisconnected(result: MethodChannel.Result) {
+    result.error("device_disconnected", "The selected USB device is no longer connected.", null)
+  }
+
+  private fun finishUsbPermission(uri: Uri, granted: Boolean, failure: String?) {
+    val request = pendingUsbPermissions.remove(uri) ?: return
+    mainHandler.removeCallbacks(request.timeout)
+    request.intent.cancel()
+    if (failure != null) {
+      val message = when (failure) {
+        "device_disconnected" -> "The device disconnected while Android was asking for USB access."
+        "usb_permission_timeout" -> "Android did not report a USB permission result before timeout."
+        "usb_permission_denied" -> "USB permission was denied or interrupted by Android."
+        else -> "Android could not complete the USB permission request."
+      }
+      recordUsbFailure(request.deviceName, request.vendorId, request.productId, failure, message)
+    }
+    logPermissionEvent(
+      phase = "callback",
+      permissionType = "usb",
+      deviceName = request.deviceName,
+      vid = request.vendorId,
+      pid = request.productId,
+      deviceClass = request.deviceClass,
+      callbackResult = granted,
+      finalState = failure ?: "granted"
+    )
+    for (result in request.results) {
+      if (failure == "device_disconnected") reportDisconnected(result) else result.success(granted)
+    }
+    emitEvent(mapOf("type" to "permission_result", "deviceName" to request.deviceName, "granted" to granted))
+    emitUsbDeviceChange("permission_result", request.deviceName)
+  }
+
+  private fun readUsbData(result: MethodChannel.Result, read: () -> Any) {
+    usbReadExecutor.execute {
+      try {
+        result.success(read())
+      } catch (error: Exception) {
+        result.error("usb_read_failed", error.message, null)
+      }
+    }
   }
 
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     try {
       when (call.method) {
-        "listDevices" -> result.success(listDevices())
+        "listDevices" -> readUsbData(result, ::listDevices)
         "getRuntimePermissionDiagnostics" -> result.success(
           getRuntimePermissionDiagnostics(
             deviceName = call.argument<String>("deviceName"),
@@ -287,22 +330,22 @@ class UsbBridge(
           result = result,
           deviceName = call.argument<String>("deviceName"),
           vid = call.argument<Int>("vendorId"),
-          pid = call.argument<Int>("productId"),
-          deviceClass = call.argument<Int>("deviceClass")
+          pid = call.argument<Int>("productId")
         )
         "requestPermission" -> {
           val deviceName = call.argument<String>("deviceName") ?: ""
           val vid = call.argument<Int>("vendorId")
           val pid = call.argument<Int>("productId")
-          val serialNumber = call.argument<String>("serialNumber")
-          val physicalLocationKey = call.argument<String>("physicalLocationKey")
-          val interfaceFingerprint = call.argument<String>("interfaceFingerprint")
-          val stableIdentityKey = call.argument<String>("stableIdentityKey")
-          requestPermission(deviceName, result, vid, pid, serialNumber, physicalLocationKey, interfaceFingerprint, stableIdentityKey)
+          requestPermission(deviceName, result, vid, pid)
         }
         "getDeviceDetails" -> {
           val deviceName = call.argument<String>("deviceName") ?: ""
-          result.success(getDeviceDetails(deviceName))
+          readUsbData(result) { getDeviceDetails(deviceName) }
+        }
+        "openAppSettings" -> {
+          val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", ctx.packageName, null))
+          activity.startActivity(intent)
+          result.success(null)
         }
         "setUsbAttachComponentEnabled" -> {
           val enabled = call.argument<Boolean>("enabled") ?: false
@@ -331,33 +374,37 @@ class UsbBridge(
   }
 
   fun onRuntimePermissionResult(permission: String, granted: Boolean) {
-    when (permission) {
-      Manifest.permission.CAMERA -> {
-        val pending = pendingCameraPermissionResults.toList()
-        pendingCameraPermissionResults.clear()
-        val callbackDevice = pending.firstOrNull()
-        emitEvent(mapOf("type" to "camera_permission_result", "granted" to granted))
-        for (entry in pending) {
-          try { entry.result.success(granted) } catch (_: Throwable) { }
-        }
-        logPermissionEvent(
-          phase = "callback",
-          permissionType = "camera",
-          deviceName = callbackDevice?.deviceName,
-          vid = callbackDevice?.vid,
-          pid = callbackDevice?.pid,
-          deviceClass = callbackDevice?.deviceClass,
-          callbackResult = granted,
-          finalState = runtimePermissionState(permission)["runtimeStatus"] as? String
-        )
-        if (!granted) {
-          recordRuntimeFailure(
-            permission = Manifest.permission.CAMERA,
-            reasonCode = "camera_permission_denied",
-            message = "Camera runtime permission was denied or interrupted by Android."
-          )
-        }
+    if (permission != Manifest.permission.CAMERA || !cameraPromptInFlight) return
+    cameraPromptInFlight = false
+    val pending = pendingCameraPermissionResults.toList()
+    pendingCameraPermissionResults.clear()
+    val cameraGranted = granted &&
+      ContextCompat.checkSelfPermission(ctx, permission) == PackageManager.PERMISSION_GRANTED
+    emitEvent(mapOf("type" to "camera_permission_result", "granted" to cameraGranted))
+    for (entry in pending) {
+      val device = entry.device
+      if (currentUsbDevice(device.deviceName, device.vendorId, device.productId) == null) {
+        reportDisconnected(entry.result)
+        continue
       }
+      logPermissionEvent(
+        phase = "callback",
+        permissionType = "camera",
+        deviceName = device.deviceName,
+        vid = device.vendorId,
+        pid = device.productId,
+        deviceClass = device.deviceClass,
+        callbackResult = cameraGranted,
+        finalState = runtimePermissionState(permission)["runtimeStatus"] as? String
+      )
+      entry.result.success(cameraGranted)
+    }
+    if (!cameraGranted && pending.isNotEmpty()) {
+      recordRuntimeFailure(
+        permission = permission,
+        reasonCode = "camera_permission_denied",
+        message = "Camera runtime permission was denied or interrupted by Android."
+      )
     }
   }
 
@@ -373,20 +420,23 @@ class UsbBridge(
     deviceClass: Int? = null,
     hasUsbPermissionHint: Boolean? = null
   ): Map<String, Any?> {
-    val device = findUsbDevice(deviceName, vid, pid)
+    val isAccessory = deviceName?.let(::isAccessoryKey) == true
+    val accessory = if (isAccessory) deviceName?.let(::currentAccessory) else null
+    val device = currentUsbDevice(deviceName, vid, pid)
     val hasUsbPermission = when {
       isInputDevice -> true
       isHiddenDevice -> false
+      accessory != null -> safeGet { usbManager.hasPermission(accessory) } == true
       device != null -> safeGet { usbManager.hasPermission(device) } == true
       hasUsbPermissionHint != null -> hasUsbPermissionHint
       else -> false
     }
     val devicePresent = when {
       isInputDevice || isHiddenDevice -> true
-      device != null -> true
+      device != null || accessory != null -> true
       else -> false
     }
-    val usbLastFailure = readUsbFailure(deviceName, vid, pid)
+    val usbLastFailure = readUsbFailure(deviceName, vid.takeUnless { isAccessory }, pid.takeUnless { isAccessory })
     val runtimeLastFailure = when {
       isVideo -> readRuntimeFailure(Manifest.permission.CAMERA)
       needsMicrophonePermission -> readRuntimeFailure(Manifest.permission.RECORD_AUDIO)
@@ -454,87 +504,53 @@ class UsbBridge(
 
   private fun requestCameraPermission(
     result: MethodChannel.Result,
-    deviceName: String? = null,
-    vid: Int? = null,
-    pid: Int? = null,
-    deviceClass: Int? = null
+    deviceName: String?,
+    vid: Int?,
+    pid: Int?
   ) {
-    if (!isPermissionDeclared(Manifest.permission.CAMERA) || Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      logPermissionEvent(
-        phase = "attempt",
-        permissionType = "camera",
-        deviceName = deviceName,
-        vid = vid,
-        pid = pid,
-        deviceClass = deviceClass,
-        finalState = "not_required_or_not_declared"
-      )
+    val device = currentUsbDevice(deviceName, vid, pid)
+    if (device == null) {
+      reportDisconnected(result)
+      return
+    }
+    val permission = Manifest.permission.CAMERA
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P || !hasVideoClass(device) ||
+      ContextCompat.checkSelfPermission(ctx, permission) == PackageManager.PERMISSION_GRANTED) {
       result.success(true)
       return
     }
-    val granted = try {
-      ContextCompat.checkSelfPermission(ctx, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-    } catch (_: Throwable) {
-      false
-    }
-    if (granted) {
-      logPermissionEvent(
-        phase = "attempt",
-        permissionType = "camera",
-        deviceName = deviceName,
-        vid = vid,
-        pid = pid,
-        deviceClass = deviceClass,
-        finalState = "already_granted"
-      )
-      result.success(true)
+    if (!isPermissionDeclared(permission)) {
+      result.success(false)
       return
     }
 
-    pendingCameraPermissionResults.add(
-      PendingRuntimePerm(
-        permission = Manifest.permission.CAMERA,
-        result = result,
-        deviceName = deviceName,
-        vid = vid,
-        pid = pid,
-        deviceClass = deviceClass
-      )
-    )
-    if (pendingCameraPermissionResults.size > 1) return
-
-    markPermissionRequested(Manifest.permission.CAMERA)
+    pendingCameraPermissionResults.add(PendingCameraPermission(device, result))
+    // A system dialog can outlive the device that caused it to open.
+    if (cameraPromptInFlight) return
+    cameraPromptInFlight = true
     logPermissionEvent(
       phase = "attempt",
       permissionType = "camera",
-      deviceName = deviceName,
-      vid = vid,
-      pid = pid,
-      deviceClass = deviceClass,
+      deviceName = device.deviceName,
+      vid = device.vendorId,
+      pid = device.productId,
+      deviceClass = device.deviceClass,
       finalState = "requested"
     )
     try {
-      requestRuntimePermission(Manifest.permission.CAMERA)
-    } catch (_: Throwable) {
-      logPermissionEvent(
-        phase = "final",
-        permissionType = "camera",
-        deviceName = deviceName,
-        vid = vid,
-        pid = pid,
-        deviceClass = deviceClass,
-        finalState = "request_failed"
-      )
+      requestRuntimePermission(permission)
+      markPermissionRequested(permission)
+    } catch (error: RuntimeException) {
+      Log.w(tag, "Could not start camera permission request", error)
+      cameraPromptInFlight = false
       recordRuntimeFailure(
-        permission = Manifest.permission.CAMERA,
+        permission = permission,
         reasonCode = "camera_permission_request_failed",
         message = "Android failed to start the camera permission request."
       )
       val pending = pendingCameraPermissionResults.toList()
       pendingCameraPermissionResults.clear()
-      for (entry in pending) {
-        try { entry.result.success(false) } catch (_: Throwable) { }
-      }
+      for (entry in pending) entry.result.success(false)
     }
   }
 
@@ -653,8 +669,8 @@ class UsbBridge(
 
   private fun permissionFailureKey(deviceName: String?, vid: Int?, pid: Int?): String {
     return when {
+      !deviceName.isNullOrBlank() -> "name:$deviceName:$vid:$pid"
       vid != null && pid != null && vid > 0 && pid > 0 -> "vidpid:$vid:$pid"
-      !deviceName.isNullOrBlank() -> "name:$deviceName"
       else -> "global"
     }
   }
@@ -725,15 +741,7 @@ class UsbBridge(
   }
 
   private fun readUsbFailure(deviceName: String?, vid: Int?, pid: Int?): Map<String, Any?>? {
-    val keys = linkedSetOf<String>()
-    keys.add(permissionFailureKey(deviceName, vid, pid))
-    if (!deviceName.isNullOrBlank()) keys.add("name:$deviceName")
-    if (vid != null && pid != null && vid > 0 && pid > 0) keys.add("vidpid:$vid:$pid")
-    for (key in keys) {
-      val out = readFailure("usb", key)
-      if (out != null) return out
-    }
-    return null
+    return readFailure("usb", permissionFailureKey(deviceName, vid, pid))
   }
 
   private fun readRuntimeFailure(permission: String): Map<String, Any?>? {
@@ -754,63 +762,23 @@ class UsbBridge(
     }
   }
 
-  private fun findUsbDevice(
-    deviceName: String?,
-    vidArg: Int?,
-    pidArg: Int?,
-    serialHint: String? = null,
-    physicalLocationKeyHint: String? = null,
-    interfaceFingerprintHint: String? = null,
-    stableIdentityKeyHint: String? = null
-  ): UsbDevice? {
-    val byName = if (!deviceName.isNullOrBlank()) findUsbByName(deviceName) else null
-    if (byName != null) return byName
-    val candidates = try {
-      val all = usbManager.deviceList.values.toList()
-      if (vidArg != null && pidArg != null && vidArg > 0 && pidArg > 0) {
-        all.filter { it.vendorId == vidArg && it.productId == pidArg }
-      } else {
-        all
-      }
-    } catch (_: Throwable) {
-      emptyList()
-    }
-    if (candidates.isEmpty()) return null
-    if (candidates.size == 1) return candidates.first()
-
-    val serialNorm = normalizeIdentityPart(serialHint)
-    val stableHint = stableIdentityKeyHint?.trim()?.takeIf { it.isNotEmpty() }
-    var bestScore = Int.MIN_VALUE
-    var best: UsbDevice? = null
-    for (candidate in candidates) {
-      val summary = deviceSummaryUsb(candidate)
-      var score = 0
-      if (stableHint != null && stableHint == (summary["stableIdentityKey"] as? String)) score += 1000
-      val continuityKeys = (summary["continuityKeys"] as? List<*>)?.filterIsInstance<String>() ?: emptyList()
-      if (stableHint != null && continuityKeys.contains(stableHint)) score += 700
-      if (serialNorm != null && serialNorm == normalizeIdentityPart(summary["serialNumber"] as? String)) score += 600
-      if (!physicalLocationKeyHint.isNullOrBlank() && physicalLocationKeyHint == summary["physicalLocationKey"] as? String) score += 450
-      if (!interfaceFingerprintHint.isNullOrBlank() && interfaceFingerprintHint == summary["interfaceFingerprint"] as? String) score += 250
-      if (!deviceName.isNullOrBlank() && deviceName == summary["deviceName"] as? String) score += 2000
-      if (score > bestScore) {
-        bestScore = score
-        best = candidate
-      }
-    }
-    return best ?: candidates.firstOrNull()
-  }
-
   private fun listDevices(): List<Map<String, Any?>> {
     val usb = usbManager.deviceList.values.toList()
     val out = ArrayList<Map<String, Any?>>(usb.size + 16)
     val usbVidPid = HashSet<String>(usb.size * 2)
-    val frameworkPaths = HashSet<String>(usb.size * 2)
-    for (d in usb) {
-      usbVidPid.add("${d.vendorId}:${d.productId}")
-      frameworkPaths.add(d.deviceName)
-      out.add(deviceSummaryUsb(d))
+    val sysfsDevices = listUsbSysfsDevices()
+    val frameworkPaths = usb.mapTo(HashSet()) { it.deviceName }
+    out.addAll(connectedAccessories().map(::accessorySummary))
+    for (device in usb) {
+      usbVidPid.add("${device.vendorId}:${device.productId}")
+      val sysfs = sysfsDevices.matchUsbDevice(device.deviceName, device.vendorId, device.productId)
+      out.add(deviceSummaryUsb(device, sysfs = sysfs))
     }
-    out.addAll(listSysfsHiddenDevices(frameworkPaths, usbVidPid))
+    for (sysfs in sysfsDevices) {
+      if (sysfs.devicePath in frameworkPaths) continue
+      val entry = readSysfsDeviceEntry(sysfs) ?: continue
+      out.add(entry.summary)
+    }
     out.addAll(listExternalInputDevices(usbVidPid))
     return out
   }
@@ -821,16 +789,10 @@ class UsbBridge(
     val out = ArrayList<Map<String, Any?>>()
     for (id in ids) {
       val dev = safeGet { im.getInputDevice(id) } ?: continue
-      val isExternal = inputIsExternal(dev)
-      if (!isExternal) continue
-      val sourcesMask = dev.sources
-      val isKb = (sourcesMask and InputDevice.SOURCE_KEYBOARD) == InputDevice.SOURCE_KEYBOARD
-      val isMouse = (sourcesMask and InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE
-      if (!isKb && !isMouse) continue
+      if (dev.isVirtual || !inputIsExternal(dev) || inputSources(dev).isEmpty()) continue
       val vid = inputVendorId(dev)
       val pid = inputProductId(dev)
-      if (vid <= 0 || pid <= 0) continue
-      if (usbVidPid.contains("$vid:$pid")) continue
+      if (vid > 0 && pid > 0 && "$vid:$pid" in usbVidPid) continue
       out.add(deviceSummaryInput(dev, vid, pid))
     }
     return out
@@ -840,12 +802,21 @@ class UsbBridge(
     deviceName: String,
     result: MethodChannel.Result,
     vidArg: Int?,
-    pidArg: Int?,
-    serialNumber: String?,
-    physicalLocationKey: String?,
-    interfaceFingerprint: String?,
-    stableIdentityKey: String?
+    pidArg: Int?
   ) {
+    if (isAccessoryKey(deviceName)) {
+      val accessory = currentAccessory(deviceName)
+      if (accessory == null) {
+        reportDisconnected(result)
+      } else if (usbManager.hasPermission(accessory)) {
+        result.success(true)
+      } else {
+        launchUsbPermission(deviceName, null, null, null, result,
+          checkGrant = { currentAccessory(deviceName)?.let { safeGet { usbManager.hasPermission(it) } == true } },
+          requestGrant = { usbManager.requestPermission(accessory, it) })
+      }
+      return
+    }
     if (isInputKey(deviceName)) {
       logPermissionEvent(
         phase = "attempt",
@@ -878,15 +849,7 @@ class UsbBridge(
       result.success(false)
       return
     }
-    val device = findUsbDevice(
-      deviceName,
-      vidArg,
-      pidArg,
-      serialHint = serialNumber,
-      physicalLocationKeyHint = physicalLocationKey,
-      interfaceFingerprintHint = interfaceFingerprint,
-      stableIdentityKeyHint = stableIdentityKey
-    )
+    val device = currentUsbDevice(deviceName, vidArg, pidArg)
     if (device == null) {
       logPermissionEvent(
         phase = "attempt",
@@ -903,7 +866,7 @@ class UsbBridge(
         reasonCode = "device_disconnected",
         message = "The USB device is no longer present, so Android cannot request USB permission."
       )
-      result.success(false)
+      reportDisconnected(result)
       return
     }
     val deviceClass = device.deviceClass
@@ -921,73 +884,90 @@ class UsbBridge(
       return
     }
 
-    val vid = device.vendorId
-    val pid = device.productId
-    val key = "$vid:$pid"
+    launchUsbPermission(device.deviceName, device.vendorId, device.productId, deviceClass, result,
+      checkGrant = {
+        currentUsbDevice(device.deviceName, device.vendorId, device.productId)
+          ?.let { safeGet { usbManager.hasPermission(it) } == true }
+      },
+      requestGrant = { usbManager.requestPermission(device, it) })
+  }
 
-    // Replace any existing pending entries for this device
-    permissionByName.remove(deviceName)?.let { /* drop */ }
-    permissionByVidPid.remove(key)?.let { /* drop */ }
+  private fun launchUsbPermission(
+    deviceName: String,
+    vendorId: Int?,
+    productId: Int?,
+    deviceClass: Int?,
+    result: MethodChannel.Result,
+    checkGrant: () -> Boolean?,
+    requestGrant: (PendingIntent) -> Unit
+  ) {
+    val existing = pendingUsbPermissions.values.firstOrNull { it.deviceName == deviceName && it.vendorId == vendorId && it.productId == productId }
+    if (existing != null) {
+      existing.results.add(result)
+      return
+    }
 
-    val pending = PendingPerm(deviceName, vid, pid, deviceClass, result)
-    permissionByName[deviceName] = pending
-    permissionByVidPid[key] = pending
-    logPermissionEvent(
-      phase = "attempt",
-      permissionType = "usb",
-      deviceName = device.deviceName,
-      vid = vid,
-      pid = pid,
-      deviceClass = deviceClass,
-      finalState = "requested"
+    val uri = Uri.fromParts(permissionScheme, UUID.randomUUID().toString(), null)
+    val intent = Intent(permissionAction, uri).setPackage(ctx.packageName)
+    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0
+    val pendingIntent = PendingIntent.getBroadcast(ctx, 0, intent, flags)
+    val timeout = Runnable { finishFromCurrentUsbPermission(uri, "usb_permission_timeout") }
+    pendingUsbPermissions[uri] = PendingPerm(deviceName, vendorId, productId, deviceClass, checkGrant, pendingIntent, timeout, mutableListOf(result))
+    try {
+      requestGrant(pendingIntent)
+      mainHandler.postDelayed(timeout, 60_000L)
+    } catch (error: RuntimeException) {
+      Log.w(tag, "Could not start USB permission request", error)
+      finishUsbPermission(uri, false, "usb_permission_request_failed")
+    }
+  }
+
+  private fun isAccessoryKey(name: String): Boolean = name.startsWith("accessory:")
+
+  private fun connectedAccessories(): List<UsbAccessory> =
+    safeGet { usbManager.accessoryList?.toList() }.orEmpty()
+
+  private fun accessoryKey(accessory: UsbAccessory): String {
+    val identity = listOf(accessory.manufacturer, accessory.model, accessory.version)
+      .joinToString("") { value -> if (value == null) "-1:" else "${value.length}:$value" }
+    val digest = MessageDigest.getInstance("SHA-256").digest(identity.toByteArray(Charsets.UTF_8))
+    return "accessory:${toHex(digest, digest.size)}"
+  }
+
+  private fun currentAccessory(deviceName: String): UsbAccessory? =
+    connectedAccessories().singleOrNull { accessoryKey(it) == deviceName }
+
+  private fun accessorySummary(accessory: UsbAccessory): Map<String, Any?> {
+    val hasPermission = safeGet { usbManager.hasPermission(accessory) } == true
+    return mapOf(
+      "deviceName" to accessoryKey(accessory),
+      "manufacturerName" to accessory.manufacturer,
+      "productName" to accessory.model,
+      "deviceRelease" to accessory.version,
+      "hasPermission" to hasPermission,
+      "serialNumber" to if (hasPermission) safeGet { accessory.serial } else null
     )
+  }
 
-    val baseFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0
-    val flags = baseFlags or PendingIntent.FLAG_UPDATE_CURRENT
-    val intent = Intent(permissionAction).setPackage(ctx.packageName)
-    val pendingIntent = PendingIntent.getBroadcast(ctx, deviceName.hashCode(), intent, flags)
-    usbManager.requestPermission(device, pendingIntent)
-
-    // Fallback timeout: if broadcast is lost or device re-enumerates, re-check hasPermission shortly
-    mainHandler.postDelayed({
-      if (pending.completed) return@postDelayed
-      val still = permissionByVidPid.remove(key)
-      if (still != null && !still.completed) {
-        // Look for any connected device with the same VID:PID that already has permission
-        val match = usbManager.deviceList.values.firstOrNull { it.vendorId == vid && it.productId == pid && usbManager.hasPermission(it) }
-        val ok = match != null
-        permissionByName.remove(still.originalName)
-        completePending(still, ok)
-        logPermissionEvent(
-          phase = "final",
-          permissionType = "usb",
-          deviceName = still.originalName,
-          vid = vid,
-          pid = pid,
-          deviceClass = still.deviceClass,
-          callbackResult = ok,
-          finalState = if (ok) "granted_after_timeout_recheck" else "timeout"
+  private fun accessoryDetails(deviceName: String): Map<String, Any?> {
+    val accessory = currentAccessory(deviceName)
+    return if (accessory == null) {
+      mapOf(
+        "summary" to mapOf("deviceName" to deviceName, "hasPermission" to false),
+        "availabilityIssues" to listOf(
+          availabilityIssue("device", "device_disconnected", "The USB accessory is no longer connected.")
         )
-        if (!ok) {
-          recordUsbFailure(
-            deviceName = still.originalName,
-            vid = vid,
-            pid = pid,
-            reasonCode = "usb_permission_timeout",
-            message = "Android did not deliver a stable USB permission result before timeout."
-          )
-        }
-        emitEvent(mapOf(
-          "type" to if (ok) "permission_timeout_granted" else "permission_timeout_failed",
-          "originalName" to still.originalName,
-          "vid" to vid,
-          "pid" to pid
-        ))
-      }
-    }, 1500L)
+      )
+    } else {
+      mapOf(
+        "summary" to accessorySummary(accessory),
+        "accessory" to mapOf("description" to accessory.description, "uri" to accessory.uri)
+      )
+    }
   }
 
   private fun getDeviceDetails(deviceName: String): Map<String, Any?> {
+    if (isAccessoryKey(deviceName)) return accessoryDetails(deviceName)
     if (isInputKey(deviceName)) {
       val id = parseInputId(deviceName)
       val dev = if (id == null) null else safeGet { inputManager?.getInputDevice(id) }
@@ -1146,13 +1126,16 @@ class UsbBridge(
     }
 
     val hasPerm = usbManager.hasPermission(device)
-    val summary0 = deviceSummaryUsb(device)
-    val interfaces0 = buildInterfaces(device)
-    val configurations0 = buildConfigurations(device)
     val deviceDescriptor0 = readDeviceDescriptor(device)
+    val sysfs = listUsbSysfsDevices()
+      .matchUsbDevice(device.deviceName, device.vendorId, device.productId)
+      ?.let(::readSysfsDeviceEntry)
+    val summary0 = deviceSummaryUsb(device, deviceDescriptor0, sysfs?.device)
+    val interfaces0 = buildInterfaces(device)
+    val configurations0 = buildConfigurations(device, deviceDescriptor0)
     val audio0 = buildAudioDetails(device, summary0)
     val midi0 = buildMidiDetails(device, summary0)
-    val topology0 = topologyFromUsbSummary(summary0)
+    val topology0 = sysfs?.topology ?: topologyFromUsbSummary(summary0)
     val baseIssues = buildDeviceAdvisories(device)
 
     if (!hasPerm) {
@@ -1215,15 +1198,48 @@ class UsbBridge(
       }
 
       val raw = tryGetRawDescriptors(conn)
-      val tree = if (raw == null) null else parseDescriptorTree(raw)
-      val dd = deviceDescriptor0 ?: (if (raw == null) null else parseDeviceDescriptorFromRaw(raw))
-
+      val dd = deviceDescriptor0 ?: raw?.let(::parseDeviceDescriptorFromRaw)
       val controlTransfers = ArrayList<Map<String, Any?>>()
+      val nodes = raw?.let(::parseDescriptorTree).orEmpty().toMutableList()
+      val usbVersion = dd?.get("bcdUsb") as? Int ?: 0
+      if (usbVersion >= 0x0201 && nodes.none { it["descriptorType"] == 0x0F }) {
+        val bos = readBosDescriptors(conn, controlTransfers)
+        nodes.addAll(bos.orEmpty().map { it + ("source" to "get_descriptor_bos") })
+      }
+      if (device.deviceClass == UsbConstants.USB_CLASS_HUB &&
+          nodes.none {
+            val type = it["descriptorType"]
+            (type == USB_HUB_DESCRIPTOR || type == USB_SUPERSPEED_HUB_DESCRIPTOR) && it["fields"] != null
+          }) {
+        val type = if (usbVersion >= 0x0300 || device.deviceProtocol == 3) {
+          USB_SUPERSPEED_HUB_DESCRIPTOR
+        } else {
+          USB_HUB_DESCRIPTOR
+        }
+        readHubDescriptor(conn, type, controlTransfers)?.let(nodes::add)
+      }
       val languages = readStringLanguageIds(conn, controlTransfers)
       val preferredLang = pickPreferredLangId(languages)
+      val stringsByIndex = HashMap<Int, String?>()
+      fun readString(index: Int, label: String): String? {
+        if (index !in 1..255) return null
+        if (!stringsByIndex.containsKey(index)) {
+          stringsByIndex[index] = readStringDescriptor(conn, index, preferredLang, controlTransfers, label)
+        }
+        return stringsByIndex[index]
+      }
 
-      val deviceStrings = if (dd == null) null else readDeviceStrings(conn, dd, preferredLang, controlTransfers)
-      val interfaceStrings = if (tree == null) null else readInterfaceStrings(conn, tree, preferredLang, controlTransfers)
+      val deviceStrings = dd?.let { readDeviceStrings(it, ::readString) }
+      val descriptors = nodes.takeIf { it.isNotEmpty() }
+      val interfaceStrings = descriptors?.let { readInterfaceStrings(it, ::readString) }
+      val tree = descriptors?.map { node ->
+        if (node["descriptorType"] != 0x0B) return@map node
+        val fields = node["fields"] as? Map<*, *> ?: return@map node
+        val index = fields["iFunction"] as? Int ?: return@map node
+        val name = readString(index, "GET_DESCRIPTOR iFunction")?.takeIf { it.isNotEmpty() }
+          ?: return@map node
+        node + ("fields" to (fields + ("functionName" to name)))
+      }
 
       val stringsBlock = mapOf(
         "languageIds" to languages,
@@ -1334,28 +1350,6 @@ class UsbBridge(
 
   private fun buildDeviceAdvisories(device: UsbDevice): List<Map<String, Any?>> {
     val issues = ArrayList<Map<String, Any?>>()
-    if (hasAudioClass(device)) {
-      val mic = runtimePermissionState(Manifest.permission.RECORD_AUDIO)
-      if (mic["declared"] != true) {
-        issues.add(
-          availabilityIssue(
-            scope = "direct_audio_capture",
-            reasonCode = "record_audio_not_declared",
-            status = "advisory",
-            message = "Requires RECORD_AUDIO for direct audio capture device access. This build does not request microphone permission."
-          )
-        )
-      } else if (mic["granted"] != true) {
-        issues.add(
-          availabilityIssue(
-            scope = "direct_audio_capture",
-            reasonCode = "record_audio_not_granted",
-            status = "advisory",
-            message = "Requires RECORD_AUDIO for direct audio capture device access. Microphone permission is not currently granted."
-          )
-        )
-      }
-    }
     if (hasVideoClass(device) && Build.VERSION.SDK_INT >= 28) {
       val camera = runtimePermissionState(Manifest.permission.CAMERA)
       if (camera["declared"] != true) {
@@ -1394,7 +1388,10 @@ class UsbBridge(
     return out
   }
 
+  private val usbSysfsRoot = File("/sys/bus/usb/devices")
+
   private data class SysfsDeviceEntry(
+    val device: UsbSysfsDevice,
     val summary: Map<String, Any?>,
     val topology: Map<String, Any?>
   )
@@ -1402,47 +1399,21 @@ class UsbBridge(
   private fun isSysfsDeviceName(deviceName: String): Boolean = deviceName.startsWith(sysfsDevicePrefix)
 
   private fun findSysfsEntryByDeviceName(deviceName: String): SysfsDeviceEntry? {
-    val sysfsName = deviceName.removePrefix(sysfsDevicePrefix)
-    val dir = File("/sys/bus/usb/devices", sysfsName)
-    return readSysfsDeviceEntry(dir, emptySet(), emptySet())
+    val name = deviceName.removePrefix(sysfsDevicePrefix)
+    if (!isUsbSysfsDeviceName(name)) return null
+    return readUsbSysfsDevice(File(usbSysfsRoot, name))?.let(::readSysfsDeviceEntry)
   }
 
-  private fun listSysfsHiddenDevices(
-    frameworkPaths: Set<String>,
-    usbVidPid: Set<String>
-  ): List<Map<String, Any?>> {
-    val root = File("/sys/bus/usb/devices")
-    val dirs = safeGet { root.listFiles()?.toList() } ?: return emptyList()
-    val out = ArrayList<Map<String, Any?>>()
-    for (dir in dirs) {
-      val entry = readSysfsDeviceEntry(dir, frameworkPaths, usbVidPid) ?: continue
-      out.add(entry.summary)
-    }
-    return out
-  }
+  private fun listUsbSysfsDevices(): List<UsbSysfsDevice> =
+    safeGet { usbSysfsRoot.listFiles()?.mapNotNull(::readUsbSysfsDevice) } ?: emptyList()
 
-  private fun readSysfsDeviceEntry(
-    dir: File,
-    frameworkPaths: Set<String>,
-    usbVidPid: Set<String>
-  ): SysfsDeviceEntry? {
+  private fun readSysfsDeviceEntry(device: UsbSysfsDevice): SysfsDeviceEntry? {
+    val dir = device.directory
     val name = dir.name
-    if (!dir.isDirectory) return null
-    if (name.contains(":")) return null
-    if (name == "usbmon0") return null
-
-    val vendor = readHexFile(dir, "idVendor")
-    val product = readHexFile(dir, "idProduct")
-    val busNum = readIntFile(dir, "busnum")
-    val devNum = readIntFile(dir, "devnum")
-    val devPath = if (busNum != null && devNum != null) {
-      "/dev/bus/usb/${busNum.toString().padStart(3, '0')}/${devNum.toString().padStart(3, '0')}"
-    } else {
-      null
-    }
-    if (devPath != null && frameworkPaths.contains(devPath)) return null
-    if (vendor != null && product != null && devPath == null && usbVidPid.contains("$vendor:$product")) return null
-
+    val vendor = device.vendorId
+    val product = device.productId
+    val busNum = device.busNumber
+    val devNum = device.deviceNumber
     val deviceClass = readHexFile(dir, "bDeviceClass") ?: 0
     val deviceSubclass = readHexFile(dir, "bDeviceSubClass") ?: 0
     val deviceProtocol = readHexFile(dir, "bDeviceProtocol") ?: 0
@@ -1452,15 +1423,14 @@ class UsbBridge(
     val productName = readTextFile(dir, "product")
     val serial = readTextFile(dir, "serial")
     val usbVersion = readTextFile(dir, "version")
-    val speed = readTextFile(dir, "speed")
+    val speed = device.negotiatedSpeed
     val maxPowerMa = readSysfsPowerMa(dir)
     val parentName = safeGet { dir.canonicalFile.parentFile?.name }
-      ?.takeIf { it.isNotBlank() && it != "devices" && !it.contains(":") }
+      ?.takeIf(::isUsbSysfsDeviceName)
     val devpath = readTextFile(dir, "devpath")
-    val portChain = parsePortChain(devpath, name)
+    val portChain = device.portChain
     val treeDepth = portChain.size
     val upstreamHub = when {
-      parentName.isNullOrBlank() && busNum != null -> "Root hub usb$busNum"
       parentName.isNullOrBlank() -> null
       parentName.startsWith("usb") -> "Root hub $parentName"
       else -> parentName
@@ -1468,7 +1438,7 @@ class UsbBridge(
     val children = safeGet {
       dir.listFiles()?.mapNotNull { child ->
         val childName = child.name
-        if (!child.isDirectory || childName.contains(":")) null else childName
+        if (!child.isDirectory || !isUsbSysfsDeviceName(childName)) null else childName
       }?.sorted()
     } ?: emptyList()
     val siblings = if (parentName == null) {
@@ -1477,7 +1447,7 @@ class UsbBridge(
       safeGet {
         dir.canonicalFile.parentFile?.listFiles()?.mapNotNull { child ->
           val childName = child.name
-          if (!child.isDirectory || childName == name || childName.contains(":")) null else childName
+          if (!child.isDirectory || childName == name || !isUsbSysfsDeviceName(childName)) null else childName
         }?.sorted()
       } ?: emptyList()
     }
@@ -1485,8 +1455,8 @@ class UsbBridge(
     val interfaceFingerprint = "sysfs:$deviceClass:$deviceSubclass:$deviceProtocol:$interfaceCount"
     val identity = buildStableIdentityMap(
       deviceName = "$sysfsDevicePrefix$name",
-      vendorId = vendor ?: 0,
-      productId = product ?: 0,
+      vendorId = vendor,
+      productId = product,
       deviceClass = deviceClass,
       deviceSubclass = deviceSubclass,
       deviceProtocol = deviceProtocol,
@@ -1508,8 +1478,8 @@ class UsbBridge(
       "deviceName" to "$sysfsDevicePrefix$name",
       "deviceId" to null,
       "portNumber" to null,
-      "vendorId" to (vendor ?: 0),
-      "productId" to (product ?: 0),
+      "vendorId" to vendor,
+      "productId" to product,
       "deviceClass" to deviceClass,
       "deviceSubclass" to deviceSubclass,
       "deviceProtocol" to deviceProtocol,
@@ -1537,7 +1507,7 @@ class UsbBridge(
       "sysfsPath" to dir.absolutePath,
       "busNumber" to busNum,
       "deviceNumber" to devNum,
-      "devPath" to devPath,
+      "devPath" to device.devicePath,
       "parentSysfsName" to parentName,
       "upstreamHub" to upstreamHub,
       "children" to children,
@@ -1552,18 +1522,8 @@ class UsbBridge(
       "removable" to readTextFile(dir, "removable"),
       "authorized" to readIntFile(dir, "authorized")
     )
-    return SysfsDeviceEntry(summary, topology)
-  }
-
-  private fun parsePortChain(devpath: String?, sysfsName: String): List<Int> {
-    val raw = when {
-      !devpath.isNullOrBlank() -> devpath
-      sysfsName.contains('-') -> sysfsName.substringAfter('-', "")
-      else -> ""
-    }.trim()
-    if (raw.isEmpty()) return emptyList()
-    return raw.split('.')
-      .mapNotNull { it.trim().toIntOrNull() }
+    if (readUsbSysfsDevice(dir) != device) return null
+    return SysfsDeviceEntry(device, summary, topology)
   }
 
   private fun readTextFile(dir: File, name: String): String? {
@@ -1602,8 +1562,6 @@ class UsbBridge(
       "devPath" to deviceName,
       "busNumber" to busNum,
       "deviceNumber" to devNum,
-      "upstreamHub" to if (busNum == null) null else "Root hub usb$busNum",
-      "treeDepth" to portChain.size,
       "portChain" to portChain,
       "speed" to summary["speed"],
       "usbVersion" to summary["usbVersion"],
@@ -2160,7 +2118,11 @@ class UsbBridge(
     )
   }
 
-  private fun deviceSummaryUsb(device: UsbDevice): Map<String, Any?> {
+  private fun deviceSummaryUsb(
+    device: UsbDevice,
+    descriptor: Map<String, Any?>? = readDeviceDescriptor(device),
+    sysfs: UsbSysfsDevice? = null
+  ): Map<String, Any?> {
     val hasPerm = usbManager.hasPermission(device)
     var manufacturer: String? = null
     var product: String? = null
@@ -2170,12 +2132,14 @@ class UsbBridge(
       product = safeGet { device.productName }
       serial = safeReadSerial(device)
     }
-    val usbVersionStr = readUsbVersion(device)
-    val speedStr = readSpeed(device)
-    val maxPower = readMaxPowerMa(device)
-    val portNumber = readPortNumber(device)
-    val busNumber = parseBusNumber(device.deviceName)
-    val portChain = if (portNumber == null || portNumber <= 0) emptyList() else listOf(portNumber)
+    val sysfsDir = sysfs?.directory
+    val usbVersionStr = descriptor?.get("usbVersion") as? String
+      ?: sysfsDir?.let { readTextFile(it, "version") }
+    val speedStr = sysfs?.negotiatedSpeed ?: readSpeed(device)
+    val maxPower = readMaxPowerMa(device, descriptor)
+    val portNumber = sysfs?.portChain?.lastOrNull() ?: readPortNumber(device)
+    val busNumber = sysfs?.busNumber ?: parseBusNumber(device.deviceName)
+    val portChain = sysfs?.portChain ?: listOfNotNull(portNumber?.takeIf { it > 0 })
     val interfaceFingerprint = interfaceFingerprintForUsbDevice(device)
     val identity = buildStableIdentityMap(
       deviceName = device.deviceName,
@@ -2214,6 +2178,7 @@ class UsbBridge(
       "productName" to product,
       "serialNumber" to serial,
       "usbVersion" to usbVersionStr,
+      "deviceRelease" to (descriptor?.get("deviceRelease") ?: device.version),
       "speed" to speedStr,
       "maxPowerMa" to maxPower,
       "isInputDevice" to false,
@@ -2327,7 +2292,10 @@ class UsbBridge(
     return out
   }
 
-  private fun buildConfigurations(device: UsbDevice): List<Map<String, Any?>> {
+  private fun buildConfigurations(
+    device: UsbDevice,
+    descriptor: Map<String, Any?>?
+  ): List<Map<String, Any?>> {
     val out = ArrayList<Map<String, Any?>>()
     val count = device.configurationCount
     if (count <= 0) return out
@@ -2342,7 +2310,7 @@ class UsbBridge(
           "id" to cfg.id,
           "name" to safeGet { cfg.name },
           "attributes" to getUsbConfigurationAttributes(cfg),
-          "maxPowerMa" to cfg.maxPower,
+          "maxPowerMa" to configurationPowerMa(cfg, descriptor),
           "interfaceCount" to cfg.interfaceCount,
           "interfaces" to ifaces
         )
@@ -2396,26 +2364,28 @@ class UsbBridge(
   }
 
   private fun buildInputDetails(dev: InputDevice, vid: Int, pid: Int): Map<String, Any?> {
-    val ranges = ArrayList<Map<String, Any?>>()
-    val motionRanges: List<Any> = inputMotionRanges(dev)
-    for (r in motionRanges) {
-      val axis = callInt(r, "getAxis") ?: 0
-      val minV = callFloat(r, "getMin") ?: 0f
-      val maxV = callFloat(r, "getMax") ?: 0f
-      val flat = callFloat(r, "getFlat") ?: 0f
-      val fuzz = callFloat(r, "getFuzz") ?: 0f
-      val res = callFloat(r, "getResolution") ?: 0f
-      ranges.add(
-        mapOf(
-          "axis" to axis,
-          "min" to minV.toDouble(),
-          "max" to maxV.toDouble(),
-          "flat" to flat.toDouble(),
-          "fuzz" to fuzz.toDouble(),
-          "resolution" to res.toDouble()
-        )
+    val sources = inputSources(dev)
+    val ranges = dev.motionRanges.map { range ->
+      mapOf(
+        "axis" to range.axis,
+        "axisName" to MotionEvent.axisToString(range.axis).removePrefix("AXIS_").replace('_', ' '),
+        "source" to inputSources(range.source).firstOrNull(),
+        "min" to range.min.toDouble(),
+        "max" to range.max.toDouble(),
+        "flat" to range.flat.toDouble(),
+        "fuzz" to range.fuzz.toDouble(),
+        "resolution" to range.resolution.toDouble()
       )
     }
+    val buttons = if (sources.any { it == "gamepad" || it == "joystick" || it == "dpad" }) {
+      val supported = safeGet { dev.hasKeys(*controllerButtonCodes) }
+      controllerButtonCodes.indices.mapNotNull { index ->
+        if (supported?.getOrNull(index) == true) {
+          val code = controllerButtonCodes[index]
+          KeyEvent.keyCodeToString(code).removePrefix("KEYCODE_").removePrefix("BUTTON_").replace('_', ' ')
+        } else null
+      }
+    } else emptyList()
     return mapOf(
       "id" to dev.id,
       "name" to safeGet { dev.name },
@@ -2423,21 +2393,39 @@ class UsbBridge(
       "isExternal" to inputIsExternal(dev),
       "vendorId" to vid,
       "productId" to pid,
-      "sources" to inputSources(dev),
+      "sources" to sources,
+      "supportedButtons" to buttons,
       "keyboardType" to inputKeyboardType(dev),
       "motionRanges" to ranges
     )
   }
 
-  private fun inputSources(dev: InputDevice): List<String> {
-    val s = dev.sources
-    val out = ArrayList<String>(4)
-    if ((s and InputDevice.SOURCE_KEYBOARD) == InputDevice.SOURCE_KEYBOARD) out.add("keyboard")
-    if ((s and InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE) out.add("mouse")
-    if ((s and InputDevice.SOURCE_TOUCHPAD) == InputDevice.SOURCE_TOUCHPAD) out.add("touchpad")
-    if ((s and InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK) out.add("joystick")
-    if (out.isEmpty()) out.add("unknown")
-    return out
+  private val controllerButtonCodes = intArrayOf(
+    KeyEvent.KEYCODE_BUTTON_A, KeyEvent.KEYCODE_BUTTON_B, KeyEvent.KEYCODE_BUTTON_C,
+    KeyEvent.KEYCODE_BUTTON_X, KeyEvent.KEYCODE_BUTTON_Y, KeyEvent.KEYCODE_BUTTON_Z,
+    KeyEvent.KEYCODE_BUTTON_L1, KeyEvent.KEYCODE_BUTTON_R1, KeyEvent.KEYCODE_BUTTON_L2,
+    KeyEvent.KEYCODE_BUTTON_R2, KeyEvent.KEYCODE_BUTTON_THUMBL, KeyEvent.KEYCODE_BUTTON_THUMBR,
+    KeyEvent.KEYCODE_BUTTON_START, KeyEvent.KEYCODE_BUTTON_SELECT, KeyEvent.KEYCODE_BUTTON_MODE,
+    KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_DPAD_LEFT,
+    KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_DPAD_CENTER,
+    *(KeyEvent.KEYCODE_BUTTON_1..KeyEvent.KEYCODE_BUTTON_16).toList().toIntArray()
+  )
+
+  private fun inputSources(dev: InputDevice): List<String> = inputSources(dev.sources)
+
+  private fun inputSources(mask: Int): List<String> = buildList {
+    fun addSource(source: Int, name: String) {
+      if ((mask and source) == source) add(name)
+    }
+    addSource(InputDevice.SOURCE_GAMEPAD, "gamepad")
+    addSource(InputDevice.SOURCE_JOYSTICK, "joystick")
+    addSource(InputDevice.SOURCE_TOUCHPAD, "touchpad")
+    addSource(InputDevice.SOURCE_STYLUS, "stylus")
+    addSource(InputDevice.SOURCE_TOUCHSCREEN, "touchscreen")
+    addSource(InputDevice.SOURCE_MOUSE, "mouse")
+    addSource(InputDevice.SOURCE_TRACKBALL, "trackball")
+    addSource(InputDevice.SOURCE_DPAD, "dpad")
+    addSource(InputDevice.SOURCE_KEYBOARD, "keyboard")
   }
 
   private fun findUsbByName(deviceName: String): UsbDevice? {
@@ -2449,22 +2437,13 @@ class UsbBridge(
   }
 
   private fun safeReadSerial(device: UsbDevice): String? {
+    val serial = safeGet { device.serialNumber }
+    if (!serial.isNullOrBlank()) return serial
     return try {
       val conn: UsbDeviceConnection? = usbManager.openDevice(device)
       val s = safeGet { conn?.serial }
       conn?.close()
       s ?: safeGet { device.serialNumber }
-    } catch (_: Throwable) {
-      null
-    }
-  }
-
-  private fun readUsbVersion(device: UsbDevice): String? {
-    val fromRaw = readDeviceDescriptor(device)?.get("usbVersion") as? String
-    if (!fromRaw.isNullOrBlank()) return fromRaw
-    return try {
-      val m = UsbDevice::class.java.getMethod("getVersion")
-      (m.invoke(device) as? String)?.trim()
     } catch (_: Throwable) {
       null
     }
@@ -2487,14 +2466,21 @@ class UsbBridge(
     }
   }
 
-  private fun readMaxPowerMa(device: UsbDevice): Int? {
+  private fun readMaxPowerMa(device: UsbDevice, descriptor: Map<String, Any?>?): Int? {
     return try {
       if (device.configurationCount <= 0) return null
       val cfg: UsbConfiguration = device.getConfiguration(0)
-      cfg.maxPower
+      configurationPowerMa(cfg, descriptor)
     } catch (_: Throwable) {
       null
     }
+  }
+
+  private fun configurationPowerMa(cfg: UsbConfiguration, descriptor: Map<String, Any?>?): Int? {
+    val usbVersion = descriptor?.get("bcdUsb") as? Int ?: return null
+    // AOSP's getMaxPower() uses 2 mA units even for SuperSpeed descriptors.
+    val rawUnits = (cfg.maxPower / 2) and 0xFF
+    return rawUnits * if (usbVersion >= 0x0300) 8 else 2
   }
 
   private fun readPortNumber(device: UsbDevice): Int? {
@@ -2642,34 +2628,6 @@ class UsbBridge(
     }
   }
 
-  private fun inputMotionRanges(dev: InputDevice): List<Any> {
-    return try {
-      val m = InputDevice::class.java.getMethod("getMotionRanges")
-      @Suppress("UNCHECKED_CAST")
-      (m.invoke(dev) as? List<Any>) ?: emptyList()
-    } catch (_: Throwable) {
-      emptyList()
-    }
-  }
-
-  private fun callInt(target: Any, method: String): Int? {
-    return try {
-      val m = target::class.java.getMethod(method)
-      (m.invoke(target) as? Int)
-    } catch (_: Throwable) {
-      null
-    }
-  }
-
-  private fun callFloat(target: Any, method: String): Float? {
-    return try {
-      val m = target::class.java.getMethod(method)
-      (m.invoke(target) as? Float)
-    } catch (_: Throwable) {
-      null
-    }
-  }
-
   private fun isInputKey(name: String): Boolean = name.startsWith("input:")
   private fun inputKey(id: Int): String = "input:$id"
 
@@ -2704,10 +2662,10 @@ class UsbBridge(
     val out = ArrayList<Map<String, Any?>>()
     var i = 0
     var context = DescriptorContext()
+    var usbVersion = 0
     while (i + 2 <= raw.size) {
       val len = u8(raw[i])
-      if (len <= 0) break
-      if (i + len > raw.size) break
+      if (len < 2 || i + len > raw.size) break
       val type = u8(raw[i + 1])
       val bytes = raw.copyOfRange(i, i + len)
       val base = HashMap<String, Any?>()
@@ -2719,11 +2677,12 @@ class UsbBridge(
       if (type == 0x24 || type == 0x25) {
         base["context"] = descriptorContextToMap(context)
       }
-      val parsed = parseKnownDescriptor(bytes, context)
+      val parsed = parseKnownDescriptor(bytes, context, usbVersion)
+      if (type == 0x01) usbVersion = parsed?.get("bcdUsb") as? Int ?: 0
       if (parsed != null) base["fields"] = parsed
       out.add(base)
       when (type) {
-        0x01, 0x02 -> context = DescriptorContext()
+        0x01, 0x02, 0x07, 0x0B -> context = DescriptorContext()
         0x04 -> {
           val fields = parsed
           context = DescriptorContext(
@@ -2765,34 +2724,50 @@ class UsbBridge(
     0x06 -> "Device Qualifier"
     0x07 -> "Other Speed Configuration"
     0x08 -> "Interface Power"
+    0x0B -> "Interface Association"
     0x0F -> "BOS"
     0x10 -> "Device Capability"
     0x21 -> "HID"
     0x22 -> "HID Report"
     0x24 -> "Class-specific Interface"
     0x25 -> "Class-specific Endpoint"
-    0x29 -> "Hub"
-    0x2A -> "SuperSpeed Endpoint Companion"
-    0x30 -> "SuperSpeedPlus Isoch Endpoint Companion"
+    USB_HUB_DESCRIPTOR -> "Hub"
+    USB_SUPERSPEED_HUB_DESCRIPTOR -> "SuperSpeed Hub"
+    USB_SUPERSPEED_ENDPOINT_COMPANION -> "SuperSpeed Endpoint Companion"
+    USB_SUPERSPEEDPLUS_ISOCH_ENDPOINT_COMPANION -> "SuperSpeedPlus Isochronous Endpoint Companion"
     else -> "Unknown"
   }
 
-  private fun parseKnownDescriptor(bytes: ByteArray, context: DescriptorContext): Map<String, Any?>? {
+  private fun parseKnownDescriptor(bytes: ByteArray, context: DescriptorContext, usbVersion: Int): Map<String, Any?>? {
     val type = u8(bytes[1])
     return when (type) {
       0x01 -> parseDeviceDesc(bytes)
-      0x02 -> parseConfigDesc(bytes)
+      0x02 -> parseConfigDesc(bytes, usbVersion)
       0x04 -> parseInterfaceDesc(bytes)
       0x05 -> parseEndpointDesc(bytes)
+      0x0B -> parseInterfaceAssociationDesc(bytes)
       0x21 -> parseHidDesc(bytes)
       0x0F -> parseBosDesc(bytes)
       0x10 -> parseDeviceCapabilityDesc(bytes)
-      0x2A -> parseSsEndpointCompanion(bytes)
+      USB_HUB_DESCRIPTOR, USB_SUPERSPEED_HUB_DESCRIPTOR -> parseUsbHubDescriptor(bytes)
+      USB_SUPERSPEED_ENDPOINT_COMPANION -> parseSuperSpeedEndpointCompanion(bytes)
+      USB_SUPERSPEEDPLUS_ISOCH_ENDPOINT_COMPANION -> parseSuperSpeedPlusEndpointCompanion(bytes)
       0x24 -> parseClassSpecificInterface(bytes, context)
       0x25 -> parseClassSpecificEndpoint(bytes, context)
-      0x29 -> parseHubDesc(bytes)
       else -> null
     }
+  }
+
+  private fun parseInterfaceAssociationDesc(b: ByteArray): Map<String, Any?>? {
+    if (b.size != 8) return null
+    return mapOf(
+      "bFirstInterface" to u8(b[2]),
+      "bInterfaceCount" to u8(b[3]),
+      "bFunctionClass" to u8(b[4]),
+      "bFunctionSubClass" to u8(b[5]),
+      "bFunctionProtocol" to u8(b[6]),
+      "iFunction" to u8(b[7])
+    )
   }
 
   private fun parseDeviceDesc(b: ByteArray): Map<String, Any?>? {
@@ -2819,7 +2794,7 @@ class UsbBridge(
     )
   }
 
-  private fun parseConfigDesc(b: ByteArray): Map<String, Any?>? {
+  private fun parseConfigDesc(b: ByteArray, usbVersion: Int): Map<String, Any?>? {
     if (b.size < 9) return null
     val totalLength = le16(b[2], b[3])
     val numInterfaces = u8(b[4])
@@ -2827,7 +2802,7 @@ class UsbBridge(
     val iCfg = u8(b[6])
     val attrs = u8(b[7])
     val maxPowerUnits = u8(b[8])
-    val maxPowerMa = maxPowerUnits * 2
+    val maxPowerMa = maxPowerUnits * if (usbVersion >= 0x0300) 8 else 2
     val selfPowered = (attrs and 0x40) != 0
     val remoteWake = (attrs and 0x20) != 0
     return mapOf(
@@ -2959,18 +2934,6 @@ class UsbBridge(
     return out
   }
 
-  private fun parseSsEndpointCompanion(b: ByteArray): Map<String, Any?>? {
-    if (b.size < 6) return null
-    val maxBurst = u8(b[2])
-    val attrs = u8(b[3])
-    val bytesPerInterval = le16(b[4], b[5])
-    return mapOf(
-      "bMaxBurst" to maxBurst,
-      "bmAttributes" to attrs,
-      "wBytesPerInterval" to bytesPerInterval
-    )
-  }
-
   private fun parseClassSpecificInterface(b: ByteArray, context: DescriptorContext): Map<String, Any?>? {
     if (b.size < 3) return null
     val sub = u8(b[2])
@@ -3004,40 +2967,31 @@ class UsbBridge(
     return base
   }
 
-  private fun parseHubDesc(b: ByteArray): Map<String, Any?>? {
-    if (b.size < 7) return null
-    val ports = u8(b[2])
-    val characteristics = le16(b[3], b[4])
-    val powerOnToPowerGood = u8(b[5])
-    val maxCurrent = u8(b[6])
-    return mapOf(
-      "bNbrPorts" to ports,
-      "wHubCharacteristics" to characteristics,
-      "powerSwitchingMode" to (characteristics and 0x03),
-      "powerSwitchingModeName" to hubPowerSwitchingModeName(characteristics and 0x03),
-      "compoundDevice" to (((characteristics shr 2) and 0x01) == 1),
-      "overCurrentProtectionMode" to ((characteristics shr 3) and 0x03),
-      "overCurrentProtectionModeName" to hubOverCurrentModeName((characteristics shr 3) and 0x03),
-      "ttThinkTime" to ((characteristics shr 5) and 0x03),
-      "ttThinkTimeName" to hubThinkTimeName((characteristics shr 5) and 0x03),
-      "portIndicatorsSupported" to (((characteristics shr 7) and 0x01) == 1),
-      "bPwrOn2PwrGood" to powerOnToPowerGood,
-      "powerGoodMs" to powerOnToPowerGood * 2,
-      "bHubContrCurrent" to maxCurrent
-    )
-  }
-
   private fun parseAudioClassSpecificInterface(
     b: ByteArray,
     context: DescriptorContext,
     base: MutableMap<String, Any?>
   ) {
     val subtype = u8(b[2])
-    base["descriptorSubtypeName"] = audioDescriptorSubtypeName(subtype, context.interfaceSubclass, false)
+    base["descriptorSubtypeName"] = when {
+      context.interfaceSubclass == 1 && context.interfaceProtocol == USB_AUDIO_CLASS_2 && subtype == 7 -> "Effect Unit"
+      context.interfaceSubclass == 1 && context.interfaceProtocol == USB_AUDIO_CLASS_2 && subtype == 8 -> "Processing Unit"
+      context.interfaceSubclass == 1 && context.interfaceProtocol == USB_AUDIO_CLASS_2 && subtype == 9 -> "Extension Unit"
+      else -> audioDescriptorSubtypeName(subtype, context.interfaceSubclass, false)
+    }
     base["audioSubclassName"] = audioSubclassName(context.interfaceSubclass)
     when (context.interfaceSubclass) {
-      0x01 -> parseAudioControlDescriptor(b, subtype, base)
-      0x02 -> parseAudioStreamingDescriptor(b, subtype, base)
+      0x01 -> when (context.interfaceProtocol) {
+        USB_AUDIO_CLASS_1 -> parseAudioControlDescriptor(b, subtype, base)
+        USB_AUDIO_CLASS_2 -> {
+          val fields = parseAudioV2ControlFields(b)
+          base.putAll(fields)
+          if (subtype == 1 && fields.isNotEmpty()) base["bcdADC"] = bcdToVersionString(le16(b[3], b[4]))
+          (fields["wTerminalType"] as? Int)?.let { base["terminalTypeName"] = audioTerminalTypeName(it) }
+        }
+        else -> Unit
+      }
+      0x02 -> base.putAll(parseAudioStreamingFields(context.interfaceProtocol, b))
       0x03 -> parseMidiStreamingDescriptor(b, subtype, base)
     }
   }
@@ -3051,11 +3005,7 @@ class UsbBridge(
     base["descriptorSubtypeName"] = audioDescriptorSubtypeName(subtype, context.interfaceSubclass, true)
     base["audioSubclassName"] = audioSubclassName(context.interfaceSubclass)
     when (context.interfaceSubclass) {
-      0x02 -> if (b.size >= 4) {
-        base["bmAttributes"] = u8(b[3])
-        if (b.size >= 5) base["bLockDelayUnits"] = u8(b[4])
-        if (b.size >= 7) base["wLockDelay"] = le16(b[5], b[6])
-      }
+      0x02 -> base.putAll(parseAudioEndpointFields(context.interfaceProtocol, b))
       0x03 -> if (subtype == 0x01 && b.size >= 4) {
         val jackCount = u8(b[3])
         base["bNumEmbMIDIJack"] = jackCount
@@ -3148,43 +3098,6 @@ class UsbBridge(
         base["bClockID"] = u8(b[3])
         base["bSourceID"] = u8(b[4])
         base["bSourceInID"] = u8(b[5])
-      }
-    }
-  }
-
-  private fun parseAudioStreamingDescriptor(
-    b: ByteArray,
-    subtype: Int,
-    base: MutableMap<String, Any?>
-  ) {
-    when (subtype) {
-      0x01 -> {
-        if (b.size >= 4) base["bTerminalLink"] = u8(b[3])
-        if (b.size >= 5) base["bDelay"] = u8(b[4])
-        if (b.size >= 7) base["wFormatTag"] = le16(b[5], b[6])
-        if (b.size >= 6) base["bFormatType"] = u8(b[5])
-      }
-      0x02 -> {
-        if (b.size >= 4) base["bFormatType"] = u8(b[3])
-        if (b.size >= 5) base["bNrChannels"] = u8(b[4])
-        if (b.size >= 6) base["bSubframeSize"] = u8(b[5])
-        if (b.size >= 7) base["bBitResolution"] = u8(b[6])
-        if (b.size >= 8) {
-          val freqCount = u8(b[7])
-          base["bSamFreqType"] = freqCount
-          if (freqCount > 0 && b.size >= 8 + (freqCount * 3)) {
-            val rates = ArrayList<Int>(freqCount)
-            var off = 8
-            repeat(freqCount) {
-              rates.add(le24(b, off))
-              off += 3
-            }
-            base["sampleRates"] = rates
-          }
-        }
-      }
-      0x03 -> if (b.size > 3) {
-        base["formatSpecificHex"] = hexSlice(b, 3, b.size - 3)
       }
     }
   }
@@ -3361,7 +3274,7 @@ class UsbBridge(
         base["bSourceID"] = u8(b[4])
         if (b.size >= 7) base["wMaxMultiplier"] = le16(b[5], b[6])
       }
-      0x06 -> if (b.size >= 20) {
+      0x06 -> if (b.size >= 21) {
         base["bUnitID"] = u8(b[3])
         base["guidExtensionCode"] = littleEndianGuid(b, 4)
         base["bNumControls"] = u8(b[20])
@@ -3598,35 +3511,6 @@ class UsbBridge(
     }
   }
 
-  private fun hubPowerSwitchingModeName(value: Int): String = when (value) {
-    0 -> "Ganged"
-    1 -> "Individual"
-    2 -> "No switching"
-    else -> "$value"
-  }
-
-  private fun hubOverCurrentModeName(value: Int): String = when (value) {
-    0 -> "Global"
-    1 -> "Individual"
-    2 -> "None"
-    else -> "$value"
-  }
-
-  private fun hubThinkTimeName(value: Int): String = when (value) {
-    0 -> "8 FS bit times"
-    1 -> "16 FS bit times"
-    2 -> "24 FS bit times"
-    3 -> "32 FS bit times"
-    else -> "$value"
-  }
-
-  private fun le24(bytes: ByteArray, offset: Int): Int {
-    if (offset + 2 >= bytes.size) return 0
-    return u8(bytes[offset]) or
-      (u8(bytes[offset + 1]) shl 8) or
-      (u8(bytes[offset + 2]) shl 16)
-  }
-
   private fun le32(bytes: ByteArray, offset: Int): Int {
     if (offset + 3 >= bytes.size) return 0
     return u8(bytes[offset]) or
@@ -3659,6 +3543,68 @@ class UsbBridge(
     }
     if (bytes.size > maxBytes) sb.append("…")
     return sb.toString()
+  }
+
+  private fun readHubDescriptor(
+    conn: UsbDeviceConnection,
+    type: Int,
+    controlTransfers: MutableList<Map<String, Any?>>
+  ): Map<String, Any?>? {
+    val buffer = ByteArray(if (type == USB_SUPERSPEED_HUB_DESCRIPTOR) 12 else 255)
+    val value = type shl 8
+    val actual = safeGet { conn.controlTransfer(0xA0, 0x06, value, 0, buffer, buffer.size, 500) } ?: -1
+    val bytes = if (actual in 1..buffer.size) buffer.copyOf(actual) else null
+    controlTransfers.add(controlTransferResult(
+      label = "GET_DESCRIPTOR ${descriptorTypeName(type)}",
+      requestType = 0xA0,
+      request = 0x06,
+      value = value,
+      index = 0,
+      requestedLength = buffer.size,
+      actualLength = actual,
+      response = bytes
+    ))
+    if (bytes == null || bytes.size < 2 || u8(bytes[1]) != type) return null
+    val fields = parseUsbHubDescriptor(bytes) ?: return null
+    return mapOf(
+      "offset" to 0,
+      "length" to bytes.size,
+      "descriptorType" to type,
+      "descriptorTypeName" to descriptorTypeName(type),
+      "rawHex" to toHex(bytes, 255),
+      "source" to "get_descriptor_hub",
+      "fields" to fields
+    )
+  }
+
+  private fun readBosDescriptors(
+    conn: UsbDeviceConnection,
+    controlTransfers: MutableList<Map<String, Any?>>
+  ): List<Map<String, Any?>>? {
+    fun read(length: Int): ByteArray? {
+      val buffer = ByteArray(length)
+      val actual = conn.controlTransfer(0x80, 0x06, 0x0F00, 0, buffer, length, 500)
+      val response = if (actual in 1..length) buffer.copyOf(actual) else null
+      controlTransfers.add(controlTransferResult(
+        label = "GET_DESCRIPTOR BOS",
+        requestType = 0x80,
+        request = 0x06,
+        value = 0x0F00,
+        index = 0,
+        requestedLength = length,
+        actualLength = actual,
+        response = response
+      ))
+      return response
+    }
+
+    val header = read(5) ?: return null
+    if (header.size != 5 || u8(header[0]) != 5 || u8(header[1]) != 0x0F) return null
+    val total = le16(header[2], header[3])
+    if (total !in 5..4096) return null
+    val bytes = if (total == 5) header else read(total) ?: return null
+    if (bytes.size != total || !bytes.take(5).toByteArray().contentEquals(header)) return null
+    return parseDescriptorTree(bytes)
   }
 
   private fun readStringLanguageIds(
@@ -3731,25 +3677,21 @@ class UsbBridge(
   }
 
   private fun readDeviceStrings(
-    conn: UsbDeviceConnection,
     dd: Map<String, Any?>,
-    langId: Int,
-    controlTransfers: MutableList<Map<String, Any?>>? = null
+    readString: (Int, String) -> String?
   ): Map<String, Any?> {
     val iMan = (dd["iManufacturer"] as? Int) ?: 0
     val iProd = (dd["iProduct"] as? Int) ?: 0
     val iSer = (dd["iSerialNumber"] as? Int) ?: 0
-    val man = readStringDescriptor(conn, iMan, langId, controlTransfers, "GET_DESCRIPTOR iManufacturer")
-    val prod = readStringDescriptor(conn, iProd, langId, controlTransfers, "GET_DESCRIPTOR iProduct")
-    val ser = readStringDescriptor(conn, iSer, langId, controlTransfers, "GET_DESCRIPTOR iSerialNumber")
+    val man = readString(iMan, "GET_DESCRIPTOR iManufacturer")
+    val prod = readString(iProd, "GET_DESCRIPTOR iProduct")
+    val ser = readString(iSer, "GET_DESCRIPTOR iSerialNumber")
     return mapOf("manufacturer" to man, "product" to prod, "serial" to ser, "iManufacturer" to iMan, "iProduct" to iProd, "iSerialNumber" to iSer)
   }
 
   private fun readInterfaceStrings(
-    conn: UsbDeviceConnection,
     tree: List<Map<String, Any?>>,
-    langId: Int,
-    controlTransfers: MutableList<Map<String, Any?>>? = null
+    readString: (Int, String) -> String?
   ): List<Map<String, Any?>> {
     val out = ArrayList<Map<String, Any?>>()
     for (node in tree) {
@@ -3760,13 +3702,7 @@ class UsbBridge(
       val alt = (fields["bAlternateSetting"] as? Int) ?: 0
       val idx = (fields["iInterface"] as? Int) ?: 0
       if (idx <= 0) continue
-      val value = readStringDescriptor(
-        conn,
-        idx,
-        langId,
-        controlTransfers,
-        "GET_DESCRIPTOR iInterface IF $ifNum alt $alt"
-      )
+      val value = readString(idx, "GET_DESCRIPTOR iInterface IF $ifNum alt $alt")
       out.add(mapOf("interfaceNumber" to ifNum, "alternateSetting" to alt, "iInterface" to idx, "value" to value))
     }
     return out
@@ -3913,12 +3849,15 @@ class UsbBridge(
 
     for ((ifNum, repLen) in hidByInterface.entries.sortedBy { it.key }) {
       val intf = findUsbInterfaceByNumber(device, ifNum)
-      if (intf != null) {
-        try { conn.claimInterface(intf, true) } catch (_: Throwable) { }
-      }
-      val bytes = ctrlGetHidReportDescriptor(conn, ifNum, repLen, controlTransfers)
-      if (intf != null) {
-        try { conn.releaseInterface(intf) } catch (_: Throwable) { }
+      // Never detach the system's input driver to inspect a report.
+      val bytes = if (intf != null && safeGet { conn.claimInterface(intf, false) } == true) {
+        try {
+          ctrlGetHidReportDescriptor(conn, ifNum, repLen, controlTransfers)
+        } finally {
+          safeGet { conn.releaseInterface(intf) }
+        }
+      } else {
+        null
       }
       val hex = if (bytes == null) null else toHex(bytes, 4096)
       val summary = if (bytes == null) null else parseHidReportSummary(bytes)

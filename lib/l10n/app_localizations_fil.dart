@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -6304,4 +6305,53 @@ class AppLocalizationsFil extends AppLocalizations {
   @override
   String get historyUnableToOpenDetail =>
       'Hindi mabuksan ang detalye ng history.';
+
+  @override
+  String get deviceTechnicalDetailsTitle => 'Mga teknikal na detalye';
+
+  @override
+  String get deviceDisconnectedTitle => 'Nadiskonekta ang device';
+
+  @override
+  String get deviceDisconnectedReconnect =>
+      'Ikonekta muli ang device at buksan ito mula sa listahan.';
+
+  @override
+  String get deviceVideoModesTitle => 'Mga video mode ng camera';
+
+  @override
+  String get deviceVideoModesDescription =>
+      'Mga resolusyon at frame rate na iniulat ng device.';
+
+  @override
+  String deviceVideoModesCount(int count) {
+    return '$count video mode';
+  }
+
+  @override
+  String deviceVideoFrameRates(String rates) {
+    return '$rates fps';
+  }
+
+  @override
+  String get usbAccessoryTitle => 'USB accessory';
+
+  @override
+  String get usbAccessoryVersionLabel => 'Bersyon';
+
+  @override
+  String get usbAccessoryUriLabel => 'URI ng accessory';
+
+  @override
+  String get usbAccessoryPermissionBody =>
+      'Payagan ang pag-access sa USB para mabasa ang serial number ng accessory.';
+
+  @override
+  String get deviceSupportedButtonsLabel => 'Mga suportadong button';
+
+  @override
+  String get deviceAudioStreamFormatsTitle => 'Mga format ng audio stream';
+
+  @override
+  String get deviceUsbFunctionsTitle => 'Mga function ng USB';
 }

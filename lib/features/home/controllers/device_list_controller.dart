@@ -4,7 +4,9 @@ import '../../../data/usb/providers.dart';
 import '../../../data/usb/usb_repository.dart';
 
 final deviceSearchQueryProvider =
-    NotifierProvider<DeviceSearchQueryController, String>(DeviceSearchQueryController.new);
+    NotifierProvider<DeviceSearchQueryController, String>(
+      DeviceSearchQueryController.new,
+    );
 
 class DeviceSearchQueryController extends Notifier<String> {
   @override
@@ -14,43 +16,52 @@ class DeviceSearchQueryController extends Notifier<String> {
 }
 
 final deviceListControllerProvider =
-    AsyncNotifierProvider<DeviceListController, List<UsbDeviceListItem>>(DeviceListController.new);
+    AsyncNotifierProvider<DeviceListController, List<UsbDeviceListItem>>(
+      DeviceListController.new,
+    );
 
 class DeviceListController extends AsyncNotifier<List<UsbDeviceListItem>> {
   @override
   Future<List<UsbDeviceListItem>> build() async {
+    final repo = ref.watch(usbRepositoryProvider);
     await ref.watch(usbIdsDbProvider.future);
-    return _load();
-  }
-
-  Future<List<UsbDeviceListItem>> _load() async {
-    final repo = ref.read(usbRepositoryProvider);
-    final items = await repo.listDevicesEnriched();
-
-    final q = ref.read(deviceSearchQueryProvider).trim().toLowerCase();
-    if (q.isEmpty) return items;
-
-    return items.where((it) {
-      final s = it.device;
-      final vendor = (it.vendorName ?? s.manufacturerName ?? '').toLowerCase();
-      final product = (it.productName ?? s.productName ?? '').toLowerCase();
-      final id = '${s.vendorId}:${s.productId}'.toLowerCase();
-      return vendor.contains(q) || product.contains(q) || id.contains(q) || s.deviceName.toLowerCase().contains(q);
-    }).toList(growable: false);
+    return repo.listDevicesEnriched();
   }
 
   Future<void> refresh() async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(_load);
+    ref.invalidateSelf();
+    await AsyncValue.guard(() => future);
   }
+}
 
-  Future<void> setQuery(String q) async {
-    ref.read(deviceSearchQueryProvider.notifier).setQuery(q);
-    final current = state.asData?.value;
-    if (current == null) {
-      await refresh();
-      return;
-    }
-    state = AsyncValue.data(await _load());
-  }
+List<UsbDeviceListItem> filterUsbDeviceList(
+  List<UsbDeviceListItem> items,
+  String query,
+) {
+  final terms = query.trim().toLowerCase().split(RegExp(r'\s+'));
+  if (terms.singleOrNull == '') return items;
+  return items
+      .where((item) {
+        final device = item.device;
+        final vid = device.vendorId.toRadixString(16).padLeft(4, '0');
+        final pid = device.productId.toRadixString(16).padLeft(4, '0');
+        final searchable = [
+          item.vendorName,
+          device.manufacturerName,
+          item.productName,
+          device.productName,
+          item.deviceClassName,
+          item.likelyFunction?.label,
+          device.deviceName,
+          ...?device.capabilities,
+          ...?device.inputSources,
+          if (!device.isAccessory) ...[
+            '$vid:$pid',
+            '0x$vid:0x$pid',
+            '${device.vendorId}:${device.productId}',
+          ],
+        ].whereType<String>().join(' ').toLowerCase();
+        return terms.every(searchable.contains);
+      })
+      .toList(growable: false);
 }

@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -6043,4 +6044,50 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get historyUnableToOpenDetail => '无法打开历史详情。';
+
+  @override
+  String get deviceTechnicalDetailsTitle => '技术详情';
+
+  @override
+  String get deviceDisconnectedTitle => '设备已断开连接';
+
+  @override
+  String get deviceDisconnectedReconnect => '重新连接设备，然后从设备列表中打开它。';
+
+  @override
+  String get deviceVideoModesTitle => '摄像头视频模式';
+
+  @override
+  String get deviceVideoModesDescription => '设备报告的分辨率和帧率。';
+
+  @override
+  String deviceVideoModesCount(int count) {
+    return '$count 种视频模式';
+  }
+
+  @override
+  String deviceVideoFrameRates(String rates) {
+    return '$rates 帧/秒';
+  }
+
+  @override
+  String get usbAccessoryTitle => 'USB 配件';
+
+  @override
+  String get usbAccessoryVersionLabel => '版本';
+
+  @override
+  String get usbAccessoryUriLabel => '配件 URI';
+
+  @override
+  String get usbAccessoryPermissionBody => '允许 USB 访问以读取配件的序列号。';
+
+  @override
+  String get deviceSupportedButtonsLabel => '支持的按键';
+
+  @override
+  String get deviceAudioStreamFormatsTitle => '音频流格式';
+
+  @override
+  String get deviceUsbFunctionsTitle => 'USB 功能';
 }

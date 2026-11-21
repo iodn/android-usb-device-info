@@ -1,0 +1,5 @@
+- Added 147 offline SVG brand logos, covering 263 USB vendor IDs.
+- Added webcam formats, audio stream details, USB hub and connection data, and named functions for composite devices.
+- Added USB accessory support and more details for controllers and other input devices.
+- Improved device search, simplified the details screen, and made USB permission handling more reliable when devices disconnect.
+- Updated Flutter and Android build dependencies.

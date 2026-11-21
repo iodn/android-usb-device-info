@@ -30,16 +30,17 @@ final usbEventCoordinatorProvider = Provider<void>((ref) {
 
       final type = event.type.toLowerCase().trim();
       final reason = (event.reason ?? '').toLowerCase().trim();
-      final isAttach = reason.contains('usb_device_attached') ||
+      final usbAttach = reason.endsWith('usb_device_attached') || reason.endsWith('usb_accessory_attached');
+      final isAttach = usbAttach ||
           type.contains('attach') ||
           type.contains('connect') ||
           type == 'added';
-      final isDetach = reason.contains('usb_device_detached') ||
+      final isDetach = reason.endsWith('usb_device_detached') ||
+          reason.endsWith('usb_accessory_detached') ||
           type.contains('detach') ||
           type.contains('disconnect') ||
           type == 'removed';
-      final launchedFromChooser = reason.startsWith('activity_intent:') &&
-          reason.contains('usb_device_attached');
+      final launchedFromChooser = reason.startsWith('activity_intent:') && usbAttach;
 
       await ref.read(deviceListControllerProvider.notifier).refresh();
 

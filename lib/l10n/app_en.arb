@@ -2976,5 +2976,33 @@
   "deviceReportHexTitle": "Report hex",
   "historyEntryNotFoundTitle": "Entry not found",
   "historyEntryNotFoundBody": "This history item no longer exists.",
-  "historyUnableToOpenDetail": "Unable to open history detail."
+  "historyUnableToOpenDetail": "Unable to open history detail.",
+  "deviceTechnicalDetailsTitle": "Technical details",
+  "deviceDisconnectedTitle": "Device disconnected",
+  "deviceDisconnectedReconnect": "Reconnect the device, then open it from the device list.",
+  "deviceVideoModesTitle": "Camera video modes",
+  "deviceVideoModesDescription": "Resolutions and frame rates advertised by the device.",
+  "deviceVideoModesCount": "{count, plural, one{1 video mode} other{{count} video modes}}",
+  "deviceVideoFrameRates": "{rates} fps",
+  "@deviceVideoModesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@deviceVideoFrameRates": {
+    "placeholders": {
+      "rates": {
+        "type": "String"
+      }
+    }
+  },
+  "usbAccessoryTitle": "USB accessory",
+  "usbAccessoryVersionLabel": "Version",
+  "usbAccessoryUriLabel": "Accessory URI",
+  "usbAccessoryPermissionBody": "Allow USB access to read the accessory’s serial number.",
+  "deviceSupportedButtonsLabel": "Supported buttons",
+  "deviceAudioStreamFormatsTitle": "Audio stream formats",
+  "deviceUsbFunctionsTitle": "USB functions"
 }

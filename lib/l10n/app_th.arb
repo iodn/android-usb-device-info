@@ -2791,5 +2791,19 @@
   "homeCapabilityHub": "ฮับ",
   "homeCapabilityCdc": "อุปกรณ์ CDC",
   "homeCapabilityComposite": "คอมโพสิต",
-  "homeCapabilityInput": "อินพุต"
+  "homeCapabilityInput": "อินพุต",
+  "deviceTechnicalDetailsTitle": "รายละเอียดทางเทคนิค",
+  "deviceDisconnectedTitle": "อุปกรณ์ถูกตัดการเชื่อมต่อ",
+  "deviceDisconnectedReconnect": "เชื่อมต่ออุปกรณ์อีกครั้ง แล้วเปิดจากรายการอุปกรณ์",
+  "deviceVideoModesTitle": "โหมดวิดีโอของกล้อง",
+  "deviceVideoModesDescription": "ความละเอียดและอัตราเฟรมที่อุปกรณ์รายงาน",
+  "deviceVideoModesCount": "{count} โหมดวิดีโอ",
+  "deviceVideoFrameRates": "{rates} เฟรม/วินาที",
+  "usbAccessoryTitle": "อุปกรณ์เสริม USB",
+  "usbAccessoryVersionLabel": "เวอร์ชัน",
+  "usbAccessoryUriLabel": "URI ของอุปกรณ์เสริม",
+  "usbAccessoryPermissionBody": "อนุญาตการเข้าถึง USB เพื่ออ่านหมายเลขซีเรียลของอุปกรณ์เสริม",
+  "deviceSupportedButtonsLabel": "ปุ่มที่รองรับ",
+  "deviceAudioStreamFormatsTitle": "รูปแบบสตรีมเสียง",
+  "deviceUsbFunctionsTitle": "ฟังก์ชัน USB"
 }

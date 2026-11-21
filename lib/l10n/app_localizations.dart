@@ -11351,6 +11351,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unable to open history detail.'**
   String get historyUnableToOpenDetail;
+
+  /// No description provided for @deviceTechnicalDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Technical details'**
+  String get deviceTechnicalDetailsTitle;
+
+  /// No description provided for @deviceDisconnectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Device disconnected'**
+  String get deviceDisconnectedTitle;
+
+  /// No description provided for @deviceDisconnectedReconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnect the device, then open it from the device list.'**
+  String get deviceDisconnectedReconnect;
+
+  /// No description provided for @deviceVideoModesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera video modes'**
+  String get deviceVideoModesTitle;
+
+  /// No description provided for @deviceVideoModesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolutions and frame rates advertised by the device.'**
+  String get deviceVideoModesDescription;
+
+  /// No description provided for @deviceVideoModesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 video mode} other{{count} video modes}}'**
+  String deviceVideoModesCount(int count);
+
+  /// No description provided for @deviceVideoFrameRates.
+  ///
+  /// In en, this message translates to:
+  /// **'{rates} fps'**
+  String deviceVideoFrameRates(String rates);
+
+  /// No description provided for @usbAccessoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'USB accessory'**
+  String get usbAccessoryTitle;
+
+  /// No description provided for @usbAccessoryVersionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get usbAccessoryVersionLabel;
+
+  /// No description provided for @usbAccessoryUriLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessory URI'**
+  String get usbAccessoryUriLabel;
+
+  /// No description provided for @usbAccessoryPermissionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow USB access to read the accessory’s serial number.'**
+  String get usbAccessoryPermissionBody;
+
+  /// No description provided for @deviceSupportedButtonsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Supported buttons'**
+  String get deviceSupportedButtonsLabel;
+
+  /// No description provided for @deviceAudioStreamFormatsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio stream formats'**
+  String get deviceAudioStreamFormatsTitle;
+
+  /// No description provided for @deviceUsbFunctionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'USB functions'**
+  String get deviceUsbFunctionsTitle;
 }
 
 class _AppLocalizationsDelegate

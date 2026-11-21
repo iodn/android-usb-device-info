@@ -2791,5 +2791,19 @@
   "homeCapabilityHub": "허브",
   "homeCapabilityCdc": "CDC 장치",
   "homeCapabilityComposite": "복합",
-  "homeCapabilityInput": "입력"
+  "homeCapabilityInput": "입력",
+  "deviceTechnicalDetailsTitle": "기술 정보",
+  "deviceDisconnectedTitle": "기기 연결이 끊겼습니다",
+  "deviceDisconnectedReconnect": "기기를 다시 연결한 후 목록에서 여세요.",
+  "deviceVideoModesTitle": "카메라 동영상 모드",
+  "deviceVideoModesDescription": "기기가 알린 해상도와 프레임 속도입니다.",
+  "deviceVideoModesCount": "동영상 모드 {count}개",
+  "deviceVideoFrameRates": "{rates} fps",
+  "usbAccessoryTitle": "USB 액세서리",
+  "usbAccessoryVersionLabel": "버전",
+  "usbAccessoryUriLabel": "액세서리 URI",
+  "usbAccessoryPermissionBody": "액세서리의 일련번호를 읽으려면 USB 액세스를 허용하세요.",
+  "deviceSupportedButtonsLabel": "지원되는 버튼",
+  "deviceAudioStreamFormatsTitle": "오디오 스트림 형식",
+  "deviceUsbFunctionsTitle": "USB 기능"
 }

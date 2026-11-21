@@ -3,7 +3,6 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -31,16 +30,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
-
-    sourceSets {
-        getByName("main") {
-            java.srcDir("src/main/kotlin")
-        }
     }
 
     defaultConfig {
@@ -78,7 +67,7 @@ android {
             } else {
                 signingConfigs.getByName("debug")
             }
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
             isMinifyEnabled = true
             isShrinkResources = true
         }
@@ -92,6 +81,12 @@ android {
 
     lint {
         checkReleaseBuilds = false
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
 

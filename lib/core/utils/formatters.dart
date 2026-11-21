@@ -38,6 +38,11 @@ class Fmt {
     return parts.join(' • ');
   }
 
+  static String inputAxisLabel(int axis, String? axisName, String? source) {
+    final name = axisName ?? axisLabel(axis);
+    return source == null ? name : '$name · $source';
+  }
+
   static String axisLabel(int axis) {
     const map = <int, String>{
       0: 'X',

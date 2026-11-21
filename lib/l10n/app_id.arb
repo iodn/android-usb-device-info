@@ -2791,5 +2791,19 @@
   "homeCapabilityHub": "Hub USB",
   "homeCapabilityCdc": "Perangkat CDC",
   "homeCapabilityComposite": "Komposit",
-  "homeCapabilityInput": "Perangkat input"
+  "homeCapabilityInput": "Perangkat input",
+  "deviceTechnicalDetailsTitle": "Detail teknis",
+  "deviceDisconnectedTitle": "Perangkat terputus",
+  "deviceDisconnectedReconnect": "Sambungkan kembali perangkat, lalu buka dari daftar.",
+  "deviceVideoModesTitle": "Mode video kamera",
+  "deviceVideoModesDescription": "Resolusi dan laju bingkai yang dilaporkan perangkat.",
+  "deviceVideoModesCount": "{count} mode video",
+  "deviceVideoFrameRates": "{rates} fps",
+  "usbAccessoryTitle": "Aksesori USB",
+  "usbAccessoryVersionLabel": "Versi",
+  "usbAccessoryUriLabel": "URI aksesori",
+  "usbAccessoryPermissionBody": "Izinkan akses USB untuk membaca nomor seri aksesori.",
+  "deviceSupportedButtonsLabel": "Tombol yang didukung",
+  "deviceAudioStreamFormatsTitle": "Format aliran audio",
+  "deviceUsbFunctionsTitle": "Fungsi USB"
 }

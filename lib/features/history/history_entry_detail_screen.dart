@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
@@ -209,6 +209,16 @@ class _HistoryResolved {
 }
 
 final _historyResolvedProvider = FutureProvider.family<_HistoryResolved, DeviceHistoryEntry>((ref, entry) async {
+  if (entry.isAccessory) {
+    return _HistoryResolved(
+      vendorName: entry.vendorName ?? entry.manufacturerNameRaw,
+      productName: entry.productNameResolved ?? entry.productNameRaw,
+      className: null,
+      subclassName: null,
+      protocolName: null,
+      interfaceResolved: const [],
+    );
+  }
   final db = await ref.watch(usbIdsDbProvider.future);
 
   final v0 = (entry.vendorName ?? '').trim();
@@ -288,6 +298,10 @@ class HistoryEntryDetailScreen extends ConsumerWidget {
   }
 
   static bool _matchesEntry(DeviceHistoryEntry entry, UsbDeviceListItem item) {
+    if (entry.isAccessory || item.device.isAccessory) {
+      return entry.deviceName == item.device.deviceName &&
+          (entry.serialNumber == null || entry.serialNumber == item.device.serialNumber);
+    }
     if (_entryMatchKey(entry) == _deviceMatchKey(item)) return true;
     final entryKeys = (entry.continuityKeys ?? const <String>[]).toSet();
     final itemKeys = (item.device.continuityKeys ?? const <String>[]).toSet();
@@ -420,7 +434,7 @@ class _Body extends StatelessWidget {
 
     final title = (resolved.productName ?? entry.productNameRaw ?? '').trim().isNotEmpty
         ? (resolved.productName ?? entry.productNameRaw)!
-        : (entry.isInputDevice ? l10n.homeInputDeviceLabel : l10n.homeUsbDeviceLabel);
+        : (entry.isAccessory ? l10n.usbAccessoryTitle : entry.isInputDevice ? l10n.homeInputDeviceLabel : l10n.homeUsbDeviceLabel);
 
     final subtitle = (resolved.vendorName ?? entry.manufacturerNameRaw ?? '').trim().isNotEmpty
         ? (resolved.vendorName ?? entry.manufacturerNameRaw)!
@@ -438,7 +452,7 @@ class _Body extends StatelessWidget {
     final hasTree = adv.descriptorTree.isNotEmpty;
     final hasHid = adv.hidReports.isNotEmpty;
 
-    final showPermissionHint = !isInput && !entry.isHiddenDevice && !entry.hasPermission && !(hasDescriptor || hasStrings || hasTree || hasHid || hasState);
+    final showPermissionHint = !entry.isAccessory && !isInput && !entry.isHiddenDevice && !entry.hasPermission && !(hasDescriptor || hasStrings || hasTree || hasHid || hasState);
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -472,13 +486,15 @@ class _Body extends StatelessWidget {
                         subtitle,
                         style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        entry.deviceName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                      ),
+                      if (!entry.isAccessory) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          entry.deviceName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                        ),
+                      ],
                       const SizedBox(height: 10),
                       Wrap(
                         spacing: 8,
@@ -533,11 +549,13 @@ class _Body extends StatelessWidget {
           const SizedBox(height: 12),
         ],
         _identitySection(context),
-        const SizedBox(height: 12),
-        _usbSpecSection(context),
-        const SizedBox(height: 12),
-        _locationSection(context),
-        if (!isInput) ...[
+        if (!entry.isAccessory) ...[
+          const SizedBox(height: 12),
+          _usbSpecSection(context),
+          const SizedBox(height: 12),
+          _locationSection(context),
+        ],
+        if (!isInput && !entry.isAccessory) ...[
           if (hasDescriptor) ...[
             const SizedBox(height: 12),
             _deviceDescriptorSection(context, adv.deviceDescriptor),
@@ -588,11 +606,18 @@ class _Body extends StatelessWidget {
       leading: const Icon(Icons.badge_outlined),
       child: Column(
         children: [
-          KeyValueRow(label: l10n.deviceVendorIdLabel, value: Fmt.decAndHex16(entry.vendorId)),
-          KeyValueRow(label: l10n.deviceProductIdLabel, value: Fmt.decAndHex16(entry.productId)),
+          if (!entry.isAccessory) ...[
+            KeyValueRow(label: l10n.deviceVendorIdLabel, value: Fmt.decAndHex16(entry.vendorId)),
+            KeyValueRow(label: l10n.deviceProductIdLabel, value: Fmt.decAndHex16(entry.productId)),
+          ],
           KeyValueRow(label: l10n.deviceVendorLabel, value: Fmt.formatNullable(resolved.vendorName ?? entry.manufacturerNameRaw)),
           KeyValueRow(label: l10n.deviceProductLabel, value: Fmt.formatNullable(resolved.productName ?? entry.productNameRaw)),
           KeyValueRow(label: l10n.deviceSerialLabel, value: Fmt.formatNullable(entry.serialNumber)),
+          if (entry.accessory?['version'] case final String version)
+            KeyValueRow(label: l10n.usbAccessoryVersionLabel, value: version),
+          if (entry.accessory?['description'] case final String description) Text(description),
+          if (entry.accessory?['uri'] case final String uri)
+            KeyValueRow(label: l10n.usbAccessoryUriLabel, value: uri),
         ],
       ),
     );
@@ -756,12 +781,14 @@ class _Body extends StatelessWidget {
     final sources = _asList(input['sources']).map((e) => '$e').where((s) => s.trim().isNotEmpty).toList(growable: false);
     final keyboardType = _asInt(input['keyboardType']);
     final motionRanges = _asList(input['motionRanges']);
+    final buttons = _asList(input['supportedButtons']).whereType<String>().toList();
 
     final hasAny = (name != null && name.isNotEmpty) ||
         (descriptor != null && descriptor.isNotEmpty) ||
         sources.isNotEmpty ||
         keyboardType != null ||
         motionRanges.isNotEmpty ||
+        buttons.isNotEmpty ||
         input.containsKey('isExternal');
 
     if (!hasAny) return const SizedBox.shrink();
@@ -777,6 +804,7 @@ class _Body extends StatelessWidget {
           if (input.containsKey('isExternal')) KeyValueRow(label: l10n.deviceExternalLabel, value: isExternal ? l10n.deviceYes : l10n.deviceNo),
           if (sources.isNotEmpty) KeyValueRow(label: l10n.deviceSourcesLabel, value: sources.join(', ')),
           if (keyboardType != null) KeyValueRow(label: l10n.deviceKeyboardTypeLabel, value: '$keyboardType'),
+          if (buttons.isNotEmpty) KeyValueRow(label: l10n.deviceSupportedButtonsLabel, value: buttons.join(', ')),
           if (motionRanges.isNotEmpty) ...[
             KeyValueRow(label: l10n.deviceMotionRangesLabel, value: '${motionRanges.length}'),
             const SizedBox(height: 8),
@@ -786,7 +814,11 @@ class _Body extends StatelessWidget {
                 children: [
                   for (final r in motionRanges.take(16)) ...[
                     KeyValueRow(
-                      label: Fmt.axisLabel(_asInt(_asMap(r)['axis']) ?? 0),
+                      label: Fmt.inputAxisLabel(
+                        _asInt(_asMap(r)['axis']) ?? 0,
+                        _asMap(r)['axisName'] is String ? _asMap(r)['axisName'] as String : null,
+                        _asMap(r)['source'] is String ? _asMap(r)['source'] as String : null,
+                      ),
                       value:
                           '${(_asMap(r)['min'] as num?)?.toDouble().toStringAsFixed(2) ?? '0.00'} → ${(_asMap(r)['max'] as num?)?.toDouble().toStringAsFixed(2) ?? '0.00'} (res ${(_asMap(r)['resolution'] as num?)?.toDouble().toStringAsFixed(2) ?? '0.00'})',
                     ),
@@ -1071,6 +1103,16 @@ Map<String, dynamic> _buildHistoryExportPayload(
   _HistoryResolved resolved,
   Map<String, dynamic> raw,
 ) {
+  if (entry.isAccessory) {
+    return {
+      'schema': 'usb_accessory_history_export_v1',
+      'testedAt': entry.testedAt.toIso8601String(),
+      'manufacturer': entry.manufacturerNameRaw,
+      'model': entry.productNameRaw,
+      'serialNumber': entry.serialNumber,
+      ...?entry.accessory,
+    };
+  }
   final adv = _HistoryAdvanced.fromEntry(entry);
   return <String, dynamic>{
     'schema': 'device_history_raw_dump_export_v1',
@@ -1137,6 +1179,17 @@ String _buildHistoryPlainTextReport(
   _HistoryResolved resolved,
   Map<String, dynamic> raw,
 ) {
+  if (entry.isAccessory) {
+    return [
+      'USBDevInfo USB accessory history report',
+      'Captured: ${entry.testedAt.toIso8601String()}',
+      'Manufacturer: ${entry.manufacturerNameRaw ?? "Unknown"}',
+      'Model: ${entry.productNameRaw ?? "Unknown"}',
+      if (entry.serialNumber case final serial?) 'Serial: $serial',
+      for (final field in (entry.accessory ?? const {}).entries)
+        if (field.value != null) '${field.key}: ${field.value}',
+    ].join('\n');
+  }
   final adv = _HistoryAdvanced.fromEntry(entry);
   final buffer = StringBuffer()
     ..writeln('USBDevInfo History Device Report')

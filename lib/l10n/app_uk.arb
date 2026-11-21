@@ -2791,5 +2791,19 @@
   "homeCapabilityHub": "Хаб",
   "homeCapabilityCdc": "CDC-пристрій",
   "homeCapabilityComposite": "Складений",
-  "homeCapabilityInput": "Ввід"
+  "homeCapabilityInput": "Ввід",
+  "deviceTechnicalDetailsTitle": "Технічні відомості",
+  "deviceDisconnectedTitle": "Пристрій від’єднано",
+  "deviceDisconnectedReconnect": "Під’єднайте пристрій знову й відкрийте його зі списку.",
+  "deviceVideoModesTitle": "Відеорежими камери",
+  "deviceVideoModesDescription": "Роздільні здатності та частоти кадрів, заявлені пристроєм.",
+  "deviceVideoModesCount": "Відеорежими: {count}",
+  "deviceVideoFrameRates": "{rates} кадр/с",
+  "usbAccessoryTitle": "USB-аксесуар",
+  "usbAccessoryVersionLabel": "Версія",
+  "usbAccessoryUriLabel": "URI аксесуара",
+  "usbAccessoryPermissionBody": "Дозвольте доступ через USB, щоб прочитати серійний номер аксесуара.",
+  "deviceSupportedButtonsLabel": "Підтримувані кнопки",
+  "deviceAudioStreamFormatsTitle": "Формати аудіопотоку",
+  "deviceUsbFunctionsTitle": "Функції USB"
 }

@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../l10n/l10n.dart';
 import '../../core/utils/formatters.dart';
+import '../../core/widgets/device_vendor_avatar.dart';
 import '../../data/usb/usb_repository.dart';
 import '../device/device_detail_screen.dart';
 import '../history/controllers/device_history_controller.dart';
@@ -20,10 +21,21 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  final _searchController = TextEditingController();
+  late final _searchController = TextEditingController(text: ref.read(deviceSearchQueryProvider));
+
+  late final AppLifecycleListener _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(
+      onResume: () => ref.read(deviceListControllerProvider.notifier).refresh(),
+    );
+  }
 
   @override
   void dispose() {
+    _lifecycle.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -31,6 +43,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final devicesAsync = ref.watch(deviceListControllerProvider);
+    final query = ref.watch(deviceSearchQueryProvider);
+    void clearSearch() {
+      _searchController.clear();
+      ref.read(deviceSearchQueryProvider.notifier).setQuery('');
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -53,15 +70,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           children: [
             _SearchBar(
               controller: _searchController,
-              onChanged: (q) => ref.read(deviceListControllerProvider.notifier).setQuery(q),
-              onClear: () {
-                _searchController.clear();
-                ref.read(deviceListControllerProvider.notifier).setQuery('');
-              },
+              onChanged: ref.read(deviceSearchQueryProvider.notifier).setQuery,
+              onClear: clearSearch,
             ),
             Expanded(
               child: devicesAsync.when(
-                data: (items) => _DeviceList(items: items),
+                data: (items) {
+                  final visibleItems = filterUsbDeviceList(items, query);
+                  if (items.isNotEmpty && visibleItems.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(context.l10n.globalSearchNoResults),
+                          TextButton(
+                            onPressed: clearSearch,
+                            child: Text(context.l10n.homeClearSearchTooltip),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  return _DeviceList(items: visibleItems);
+                },
                 loading: () => const _LoadingState(),
                 error: (e, st) => _ErrorState(error: e.toString()),
               ),
@@ -152,7 +183,7 @@ class _DeviceTile extends ConsumerWidget {
     final l10n = context.l10n;
     final title = item.productName ??
         d.productName ??
-        (d.isInputDevice ? l10n.homeInputDeviceLabel : l10n.homeUsbDeviceLabel);
+        (d.isAccessory ? l10n.usbAccessoryTitle : d.isInputDevice ? l10n.homeInputDeviceLabel : l10n.homeUsbDeviceLabel);
     final subtitle = item.vendorName ??
         d.manufacturerName ??
         item.deviceClassName ??
@@ -204,6 +235,7 @@ class _DeviceTile extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _DeviceAvatar(
+                vendorId: d.isAccessory ? 0 : d.vendorId,
                 deviceClass: d.deviceClass,
                 isInput: isInput,
                 sources: sources,
@@ -245,10 +277,11 @@ class _DeviceTile extends ConsumerWidget {
                       runSpacing: 8,
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        _InfoPill(icon: Icons.fingerprint_rounded, label: idLine),
+                        if (!d.isAccessory && (!isInput || d.vendorId != 0 || d.productId != 0))
+                          _InfoPill(icon: Icons.fingerprint_rounded, label: idLine),
                         _InfoPill(
                           icon: Icons.usb_rounded,
-                          label: isHidden
+                          label: d.isAccessory ? l10n.usbAccessoryTitle : isHidden
                               ? l10n.homeHiddenTopology
                               : isInput
                                   ? l10n.homeInputPath
@@ -271,15 +304,17 @@ class _DeviceTile extends ConsumerWidget {
                         ],
                       ),
                     ],
-                    const SizedBox(height: 10),
-                    Text(
-                      d.deviceName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                    ),
+                    if (!d.isAccessory) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        d.deviceName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -346,17 +381,22 @@ IconData _capabilityIcon(String capability) {
 
 class _DeviceAvatar extends StatelessWidget {
   const _DeviceAvatar({
+    required this.vendorId,
     required this.deviceClass,
     required this.isInput,
     required this.sources,
   });
 
+  final int vendorId;
   final int deviceClass;
   final bool isInput;
   final List<String> sources;
 
   IconData _iconForClass() {
     if (isInput) {
+      if (sources.contains('gamepad') || sources.contains('joystick')) return Icons.sports_esports_rounded;
+      if (sources.contains('stylus')) return Icons.draw_rounded;
+      if (sources.contains('touchpad')) return Icons.touch_app_rounded;
       if (sources.contains('mouse')) return Icons.mouse_rounded;
       if (sources.contains('keyboard')) return Icons.keyboard_alt_rounded;
       return Icons.input_rounded;
@@ -385,16 +425,9 @@ class _DeviceAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final icon = _iconForClass();
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Icon(icon, color: theme.colorScheme.onPrimaryContainer),
+    return DeviceVendorAvatar(
+      vendorId: vendorId,
+      fallbackIcon: _iconForClass(),
     );
   }
 }

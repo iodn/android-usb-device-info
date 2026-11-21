@@ -2791,5 +2791,19 @@
   "homeCapabilityHub": "Hub aygıtı",
   "homeCapabilityCdc": "CDC aygıtı",
   "homeCapabilityComposite": "Bileşik",
-  "homeCapabilityInput": "Giriş"
+  "homeCapabilityInput": "Giriş",
+  "deviceTechnicalDetailsTitle": "Teknik ayrıntılar",
+  "deviceDisconnectedTitle": "Cihazın bağlantısı kesildi",
+  "deviceDisconnectedReconnect": "Cihazı yeniden bağlayıp listeden açın.",
+  "deviceVideoModesTitle": "Kamera video modları",
+  "deviceVideoModesDescription": "Cihazın bildirdiği çözünürlükler ve kare hızları.",
+  "deviceVideoModesCount": "{count} video modu",
+  "deviceVideoFrameRates": "{rates} kare/sn",
+  "usbAccessoryTitle": "USB aksesuarı",
+  "usbAccessoryVersionLabel": "Sürüm",
+  "usbAccessoryUriLabel": "Aksesuar URI’si",
+  "usbAccessoryPermissionBody": "Aksesuarın seri numarasını okumak için USB erişimine izin verin.",
+  "deviceSupportedButtonsLabel": "Desteklenen düğmeler",
+  "deviceAudioStreamFormatsTitle": "Ses akışı biçimleri",
+  "deviceUsbFunctionsTitle": "USB işlevleri"
 }

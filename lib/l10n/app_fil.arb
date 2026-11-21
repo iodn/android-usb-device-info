@@ -2791,5 +2791,19 @@
   "homeCapabilityHub": "Hub",
   "homeCapabilityCdc": "CDC",
   "homeCapabilityComposite": "Composite",
-  "homeCapabilityInput": "Input"
+  "homeCapabilityInput": "Input",
+  "deviceTechnicalDetailsTitle": "Mga teknikal na detalye",
+  "deviceDisconnectedTitle": "Nadiskonekta ang device",
+  "deviceDisconnectedReconnect": "Ikonekta muli ang device at buksan ito mula sa listahan.",
+  "deviceVideoModesTitle": "Mga video mode ng camera",
+  "deviceVideoModesDescription": "Mga resolusyon at frame rate na iniulat ng device.",
+  "deviceVideoModesCount": "{count} video mode",
+  "deviceVideoFrameRates": "{rates} fps",
+  "usbAccessoryTitle": "USB accessory",
+  "usbAccessoryVersionLabel": "Bersyon",
+  "usbAccessoryUriLabel": "URI ng accessory",
+  "usbAccessoryPermissionBody": "Payagan ang pag-access sa USB para mabasa ang serial number ng accessory.",
+  "deviceSupportedButtonsLabel": "Mga suportadong button",
+  "deviceAudioStreamFormatsTitle": "Mga format ng audio stream",
+  "deviceUsbFunctionsTitle": "Mga function ng USB"
 }

@@ -2791,5 +2791,19 @@
   "homeCapabilityHub": "Hub",
   "homeCapabilityCdc": "CDC",
   "homeCapabilityComposite": "Composito",
-  "homeCapabilityInput": "Input"
+  "homeCapabilityInput": "Input",
+  "deviceTechnicalDetailsTitle": "Dettagli tecnici",
+  "deviceDisconnectedTitle": "Dispositivo disconnesso",
+  "deviceDisconnectedReconnect": "Ricollega il dispositivo e aprilo dall’elenco.",
+  "deviceVideoModesTitle": "Modalità video della fotocamera",
+  "deviceVideoModesDescription": "Risoluzioni e frequenze dei fotogrammi dichiarate dal dispositivo.",
+  "deviceVideoModesCount": "{count} modalità video",
+  "deviceVideoFrameRates": "{rates} fps",
+  "usbAccessoryTitle": "Accessorio USB",
+  "usbAccessoryVersionLabel": "Versione",
+  "usbAccessoryUriLabel": "URI dell’accessorio",
+  "usbAccessoryPermissionBody": "Consenti l’accesso USB per leggere il numero di serie dell’accessorio.",
+  "deviceSupportedButtonsLabel": "Pulsanti supportati",
+  "deviceAudioStreamFormatsTitle": "Formati del flusso audio",
+  "deviceUsbFunctionsTitle": "Funzioni USB"
 }

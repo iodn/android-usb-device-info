@@ -2777,5 +2777,19 @@
   "homeCapabilityHub": "Hub",
   "homeCapabilityCdc": "CDC",
   "homeCapabilityComposite": "Verbundgerät",
-  "homeCapabilityInput": "Eingabe"
+  "homeCapabilityInput": "Eingabe",
+  "deviceTechnicalDetailsTitle": "Technische Details",
+  "deviceDisconnectedTitle": "Gerät getrennt",
+  "deviceDisconnectedReconnect": "Schließe das Gerät erneut an und öffne es in der Geräteliste.",
+  "deviceVideoModesTitle": "Videomodi der Kamera",
+  "deviceVideoModesDescription": "Vom Gerät gemeldete Auflösungen und Bildraten.",
+  "deviceVideoModesCount": "{count} Videomodi",
+  "deviceVideoFrameRates": "{rates} Bilder/s",
+  "usbAccessoryTitle": "USB-Zubehör",
+  "usbAccessoryVersionLabel": "Version",
+  "usbAccessoryUriLabel": "Zubehör-URI",
+  "usbAccessoryPermissionBody": "Erlaube den USB-Zugriff, um die Seriennummer des Zubehörs zu lesen.",
+  "deviceSupportedButtonsLabel": "Unterstützte Tasten",
+  "deviceAudioStreamFormatsTitle": "Audio-Streaming-Formate",
+  "deviceUsbFunctionsTitle": "USB-Funktionen"
 }

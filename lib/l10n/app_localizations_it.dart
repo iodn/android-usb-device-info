@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -6319,4 +6320,53 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get historyUnableToOpenDetail =>
       'Impossibile aprire il dettaglio della cronologia.';
+
+  @override
+  String get deviceTechnicalDetailsTitle => 'Dettagli tecnici';
+
+  @override
+  String get deviceDisconnectedTitle => 'Dispositivo disconnesso';
+
+  @override
+  String get deviceDisconnectedReconnect =>
+      'Ricollega il dispositivo e aprilo dall’elenco.';
+
+  @override
+  String get deviceVideoModesTitle => 'Modalità video della fotocamera';
+
+  @override
+  String get deviceVideoModesDescription =>
+      'Risoluzioni e frequenze dei fotogrammi dichiarate dal dispositivo.';
+
+  @override
+  String deviceVideoModesCount(int count) {
+    return '$count modalità video';
+  }
+
+  @override
+  String deviceVideoFrameRates(String rates) {
+    return '$rates fps';
+  }
+
+  @override
+  String get usbAccessoryTitle => 'Accessorio USB';
+
+  @override
+  String get usbAccessoryVersionLabel => 'Versione';
+
+  @override
+  String get usbAccessoryUriLabel => 'URI dell’accessorio';
+
+  @override
+  String get usbAccessoryPermissionBody =>
+      'Consenti l’accesso USB per leggere il numero di serie dell’accessorio.';
+
+  @override
+  String get deviceSupportedButtonsLabel => 'Pulsanti supportati';
+
+  @override
+  String get deviceAudioStreamFormatsTitle => 'Formati del flusso audio';
+
+  @override
+  String get deviceUsbFunctionsTitle => 'Funzioni USB';
 }

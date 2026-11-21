@@ -2793,5 +2793,19 @@
   "homeCapabilityHub": "Koncentrator",
   "homeCapabilityCdc": "Urządzenie CDC",
   "homeCapabilityComposite": "Złożone",
-  "homeCapabilityInput": "Wejście"
+  "homeCapabilityInput": "Wejście",
+  "deviceTechnicalDetailsTitle": "Szczegóły techniczne",
+  "deviceDisconnectedTitle": "Urządzenie odłączone",
+  "deviceDisconnectedReconnect": "Podłącz urządzenie ponownie, a następnie otwórz je z listy.",
+  "deviceVideoModesTitle": "Tryby wideo kamery",
+  "deviceVideoModesDescription": "Rozdzielczości i liczby klatek na sekundę zgłaszane przez urządzenie.",
+  "deviceVideoModesCount": "Liczba trybów wideo: {count}",
+  "deviceVideoFrameRates": "{rates} kl./s",
+  "usbAccessoryTitle": "Akcesorium USB",
+  "usbAccessoryVersionLabel": "Wersja",
+  "usbAccessoryUriLabel": "URI akcesorium",
+  "usbAccessoryPermissionBody": "Zezwól na dostęp przez USB, aby odczytać numer seryjny akcesorium.",
+  "deviceSupportedButtonsLabel": "Obsługiwane przyciski",
+  "deviceAudioStreamFormatsTitle": "Formaty strumienia audio",
+  "deviceUsbFunctionsTitle": "Funkcje USB"
 }

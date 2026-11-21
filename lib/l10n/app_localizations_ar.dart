@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -6233,6 +6234,55 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get historyUnableToOpenDetail => 'تعذر فتح تفاصيل السجل.';
+
+  @override
+  String get deviceTechnicalDetailsTitle => 'التفاصيل التقنية';
+
+  @override
+  String get deviceDisconnectedTitle => 'تم فصل الجهاز';
+
+  @override
+  String get deviceDisconnectedReconnect =>
+      'أعد توصيل الجهاز، ثم افتحه من قائمة الأجهزة.';
+
+  @override
+  String get deviceVideoModesTitle => 'أوضاع فيديو الكاميرا';
+
+  @override
+  String get deviceVideoModesDescription =>
+      'الدقات ومعدلات الإطارات التي يعلن عنها الجهاز.';
+
+  @override
+  String deviceVideoModesCount(int count) {
+    return '$count من أوضاع الفيديو';
+  }
+
+  @override
+  String deviceVideoFrameRates(String rates) {
+    return '$rates إطار/ث';
+  }
+
+  @override
+  String get usbAccessoryTitle => 'ملحق USB';
+
+  @override
+  String get usbAccessoryVersionLabel => 'الإصدار';
+
+  @override
+  String get usbAccessoryUriLabel => 'معرّف URI للملحق';
+
+  @override
+  String get usbAccessoryPermissionBody =>
+      'اسمح بالوصول عبر USB لقراءة الرقم التسلسلي للملحق.';
+
+  @override
+  String get deviceSupportedButtonsLabel => 'الأزرار المدعومة';
+
+  @override
+  String get deviceAudioStreamFormatsTitle => 'تنسيقات تدفق الصوت';
+
+  @override
+  String get deviceUsbFunctionsTitle => 'وظائف USB';
 }
 
 /// The translations for Arabic, as used in Egypt (`ar_EG`).
@@ -12464,4 +12514,26 @@ class AppLocalizationsArEg extends AppLocalizationsAr {
 
   @override
   String get historyUnableToOpenDetail => 'تعذر فتح تفاصيل السجل.';
+
+  @override
+  String get usbAccessoryTitle => 'ملحق USB';
+
+  @override
+  String get usbAccessoryVersionLabel => 'الإصدار';
+
+  @override
+  String get usbAccessoryUriLabel => 'معرّف URI للملحق';
+
+  @override
+  String get usbAccessoryPermissionBody =>
+      'اسمح بالوصول عبر USB لقراءة الرقم التسلسلي للملحق.';
+
+  @override
+  String get deviceSupportedButtonsLabel => 'الأزرار المدعومة';
+
+  @override
+  String get deviceAudioStreamFormatsTitle => 'تنسيقات تدفق الصوت';
+
+  @override
+  String get deviceUsbFunctionsTitle => 'وظائف USB';
 }

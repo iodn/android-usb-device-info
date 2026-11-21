@@ -60,6 +60,15 @@ class UsbRepository {
 
     final List<UsbDeviceListItem> out = [];
     for (final d in devices) {
+      if (d.isAccessory) {
+        out.add(UsbDeviceListItem(
+          device: d,
+          vendorName: d.manufacturerName,
+          productName: d.productName,
+          deviceClassName: null,
+        ));
+        continue;
+      }
       final v = await db.vendorName(d.vendorId);
       final p = await db.productName(d.vendorId, d.productId);
       final c = await db.usbClassName(d.deviceClass);
@@ -91,25 +100,27 @@ class UsbRepository {
     String deviceName, {
     int? vendorId,
     int? productId,
-    String? serialNumber,
-    String? physicalLocationKey,
-    String? interfaceFingerprint,
-    String? stableIdentityKey,
   }) =>
       _platform.requestPermission(
         deviceName,
         vendorId: vendorId,
         productId: productId,
-        serialNumber: serialNumber,
-        physicalLocationKey: physicalLocationKey,
-        interfaceFingerprint: interfaceFingerprint,
-        stableIdentityKey: stableIdentityKey,
       );
 
-  Future<UsbDeviceDetailViewData> getDeviceDetailsEnriched(String deviceName) async {
-    final db = await _dbFuture();
-    final details = await _platform.getDeviceDetails(deviceName);
+  Future<UsbDeviceDetailViewData> enrichDeviceDetails(UsbDeviceDetails details) async {
     final s = details.summary;
+    if (s.isAccessory) {
+      return UsbDeviceDetailViewData(
+        details: details,
+        vendorName: s.manufacturerName,
+        productName: s.productName,
+        deviceClassName: null,
+        deviceSubclassName: null,
+        deviceProtocolName: null,
+        interfaceClassNames: const [],
+      );
+    }
+    final db = await _dbFuture();
 
     final vendorName = await db.vendorName(s.vendorId);
     final productName = await db.productName(s.vendorId, s.productId);

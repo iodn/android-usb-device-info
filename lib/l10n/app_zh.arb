@@ -2791,5 +2791,19 @@
   "homeCapabilityHub": "集线器",
   "homeCapabilityCdc": "CDC",
   "homeCapabilityComposite": "复合",
-  "homeCapabilityInput": "输入"
+  "homeCapabilityInput": "输入",
+  "deviceTechnicalDetailsTitle": "技术详情",
+  "deviceDisconnectedTitle": "设备已断开连接",
+  "deviceDisconnectedReconnect": "重新连接设备，然后从设备列表中打开它。",
+  "deviceVideoModesTitle": "摄像头视频模式",
+  "deviceVideoModesDescription": "设备报告的分辨率和帧率。",
+  "deviceVideoModesCount": "{count} 种视频模式",
+  "deviceVideoFrameRates": "{rates} 帧/秒",
+  "usbAccessoryTitle": "USB 配件",
+  "usbAccessoryVersionLabel": "版本",
+  "usbAccessoryUriLabel": "配件 URI",
+  "usbAccessoryPermissionBody": "允许 USB 访问以读取配件的序列号。",
+  "deviceSupportedButtonsLabel": "支持的按键",
+  "deviceAudioStreamFormatsTitle": "音频流格式",
+  "deviceUsbFunctionsTitle": "USB 功能"
 }

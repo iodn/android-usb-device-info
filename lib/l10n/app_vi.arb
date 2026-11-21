@@ -2791,5 +2791,19 @@
   "homeCapabilityHub": "Bộ chia",
   "homeCapabilityCdc": "Thiết bị CDC",
   "homeCapabilityComposite": "Tổng hợp",
-  "homeCapabilityInput": "Đầu vào"
+  "homeCapabilityInput": "Đầu vào",
+  "deviceTechnicalDetailsTitle": "Chi tiết kỹ thuật",
+  "deviceDisconnectedTitle": "Thiết bị đã ngắt kết nối",
+  "deviceDisconnectedReconnect": "Kết nối lại thiết bị rồi mở thiết bị từ danh sách.",
+  "deviceVideoModesTitle": "Chế độ video của camera",
+  "deviceVideoModesDescription": "Độ phân giải và tốc độ khung hình do thiết bị công bố.",
+  "deviceVideoModesCount": "{count} chế độ video",
+  "deviceVideoFrameRates": "{rates} khung hình/giây",
+  "usbAccessoryTitle": "Phụ kiện USB",
+  "usbAccessoryVersionLabel": "Phiên bản",
+  "usbAccessoryUriLabel": "URI của phụ kiện",
+  "usbAccessoryPermissionBody": "Cho phép truy cập USB để đọc số sê-ri của phụ kiện.",
+  "deviceSupportedButtonsLabel": "Các nút được hỗ trợ",
+  "deviceAudioStreamFormatsTitle": "Định dạng luồng âm thanh",
+  "deviceUsbFunctionsTitle": "Chức năng USB"
 }

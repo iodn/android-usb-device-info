@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -6257,4 +6258,53 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get historyUnableToOpenDetail => 'Không thể mở chi tiết lịch sử.';
+
+  @override
+  String get deviceTechnicalDetailsTitle => 'Chi tiết kỹ thuật';
+
+  @override
+  String get deviceDisconnectedTitle => 'Thiết bị đã ngắt kết nối';
+
+  @override
+  String get deviceDisconnectedReconnect =>
+      'Kết nối lại thiết bị rồi mở thiết bị từ danh sách.';
+
+  @override
+  String get deviceVideoModesTitle => 'Chế độ video của camera';
+
+  @override
+  String get deviceVideoModesDescription =>
+      'Độ phân giải và tốc độ khung hình do thiết bị công bố.';
+
+  @override
+  String deviceVideoModesCount(int count) {
+    return '$count chế độ video';
+  }
+
+  @override
+  String deviceVideoFrameRates(String rates) {
+    return '$rates khung hình/giây';
+  }
+
+  @override
+  String get usbAccessoryTitle => 'Phụ kiện USB';
+
+  @override
+  String get usbAccessoryVersionLabel => 'Phiên bản';
+
+  @override
+  String get usbAccessoryUriLabel => 'URI của phụ kiện';
+
+  @override
+  String get usbAccessoryPermissionBody =>
+      'Cho phép truy cập USB để đọc số sê-ri của phụ kiện.';
+
+  @override
+  String get deviceSupportedButtonsLabel => 'Các nút được hỗ trợ';
+
+  @override
+  String get deviceAudioStreamFormatsTitle => 'Định dạng luồng âm thanh';
+
+  @override
+  String get deviceUsbFunctionsTitle => 'Chức năng USB';
 }

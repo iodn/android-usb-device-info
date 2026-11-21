@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -66,6 +66,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   }
 
   static bool _matchesEntry(DeviceHistoryEntry entry, UsbDeviceListItem item) {
+    if (entry.isAccessory || item.device.isAccessory) {
+      return entry.deviceName == item.device.deviceName &&
+          (entry.serialNumber == null || entry.serialNumber == item.device.serialNumber);
+    }
     if (_entryMatchKey(entry) == _deviceMatchKey(item)) return true;
     final entryKeys = (entry.continuityKeys ?? const <String>[]).toSet();
     final itemKeys = (item.device.continuityKeys ?? const <String>[]).toSet();
@@ -306,7 +310,7 @@ class _HistoryTile extends StatelessWidget {
     final l10n = context.l10n;
     final title = entry.productNameResolved ??
         entry.productNameRaw ??
-        (entry.isInputDevice ? l10n.homeInputDeviceLabel : l10n.homeUsbDeviceLabel);
+        (entry.isAccessory ? l10n.usbAccessoryTitle : entry.isInputDevice ? l10n.homeInputDeviceLabel : l10n.homeUsbDeviceLabel);
     final subtitle = entry.vendorName ?? entry.manufacturerNameRaw ?? l10n.homeUnknownVendor;
     final idLine = '${Fmt.hex16(entry.vendorId)} : ${Fmt.hex16(entry.productId)}';
     final dt = DateFormat('MMM d, HH:mm').format(entry.testedAt);
@@ -376,19 +380,24 @@ class _HistoryTile extends StatelessWidget {
                         runSpacing: 8,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          _Pill(icon: Icons.fingerprint_rounded, label: idLine),
+                          _Pill(
+                            icon: entry.isAccessory ? Icons.usb_rounded : Icons.fingerprint_rounded,
+                            label: entry.isAccessory ? l10n.usbAccessoryTitle : idLine,
+                          ),
                           _Pill(icon: Icons.schedule_rounded, label: dt),
                           connChip,
                           permChip,
                         ],
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                        entry.deviceName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                      ),
+                      if (!entry.isAccessory) ...[
+                        const SizedBox(height: 10),
+                        Text(
+                          entry.deviceName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                        ),
+                      ],
                     ],
                   ),
                 ),

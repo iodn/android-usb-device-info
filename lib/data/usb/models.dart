@@ -13,6 +13,7 @@ class UsbDeviceSummary {
     this.productName,
     this.serialNumber,
     this.usbVersion,
+    this.deviceRelease,
     this.speed,
     this.maxPowerMa,
     this.deviceId,
@@ -30,6 +31,7 @@ class UsbDeviceSummary {
   });
 
   final String deviceName;
+  bool get isAccessory => deviceName.startsWith('accessory:');
   final int vendorId;
   final int productId;
   final int deviceClass;
@@ -43,6 +45,7 @@ class UsbDeviceSummary {
   final String? productName;
   final String? serialNumber;
   final String? usbVersion;
+  final String? deviceRelease;
   final String? speed;
   final int? maxPowerMa;
 
@@ -77,6 +80,7 @@ class UsbDeviceSummary {
       productName: map['productName'] as String?,
       serialNumber: map['serialNumber'] as String?,
       usbVersion: map['usbVersion'] as String?,
+      deviceRelease: map['deviceRelease'] as String?,
       speed: map['speed'] as String?,
       maxPowerMa: map['maxPowerMa'] as int?,
       deviceId: map['deviceId'] as int?,
@@ -249,6 +253,8 @@ class UsbDeviceDescriptorInfo {
 class InputMotionRangeInfo {
   InputMotionRangeInfo({
     required this.axis,
+    this.axisName,
+    this.source,
     required this.min,
     required this.max,
     required this.flat,
@@ -257,6 +263,8 @@ class InputMotionRangeInfo {
   });
 
   final int axis;
+  final String? axisName;
+  final String? source;
   final double min;
   final double max;
   final double flat;
@@ -267,6 +275,8 @@ class InputMotionRangeInfo {
     double asD(Object? v) => (v is num) ? v.toDouble() : 0.0;
     return InputMotionRangeInfo(
       axis: (map['axis'] as int?) ?? 0,
+      axisName: map['axisName'] is String ? map['axisName'] as String : null,
+      source: map['source'] is String ? map['source'] as String : null,
       min: asD(map['min']),
       max: asD(map['max']),
       flat: asD(map['flat']),
@@ -287,6 +297,7 @@ class InputDeviceInfo {
     required this.sources,
     required this.keyboardType,
     required this.motionRanges,
+    this.supportedButtons = const [],
   });
 
   final int id;
@@ -298,10 +309,37 @@ class InputDeviceInfo {
   final List<String> sources;
   final int keyboardType;
   final List<InputMotionRangeInfo> motionRanges;
+  final List<String> supportedButtons;
+
+  Map<String, Object?> toMap() => {
+    'id': id,
+    'name': name,
+    'descriptor': descriptor,
+    'isExternal': isExternal,
+    'vendorId': vendorId,
+    'productId': productId,
+    'sources': sources,
+    'keyboardType': keyboardType,
+    if (supportedButtons.isNotEmpty) 'supportedButtons': supportedButtons,
+    'motionRanges': [
+      for (final range in motionRanges)
+        {
+          'axis': range.axis,
+          if (range.axisName != null) 'axisName': range.axisName,
+          if (range.source != null) 'source': range.source,
+          'min': range.min,
+          'max': range.max,
+          'flat': range.flat,
+          'fuzz': range.fuzz,
+          'resolution': range.resolution,
+        },
+    ],
+  };
 
   factory InputDeviceInfo.fromMap(Map<Object?, Object?> map) {
     final rawSources = map['sources'];
     final rawRanges = map['motionRanges'];
+    final rawButtons = map['supportedButtons'];
     return InputDeviceInfo(
       id: (map['id'] as int?) ?? 0,
       name: map['name'] as String?,
@@ -311,6 +349,7 @@ class InputDeviceInfo {
       productId: (map['productId'] as int?) ?? 0,
       sources: rawSources is List ? rawSources.whereType<String>().toList() : const [],
       keyboardType: (map['keyboardType'] as int?) ?? 0,
+      supportedButtons: rawButtons is List ? rawButtons.whereType<String>().toList() : const [],
       motionRanges: rawRanges is List
           ? rawRanges
               .whereType<Map<Object?, Object?>>()

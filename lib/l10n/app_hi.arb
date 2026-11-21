@@ -2791,5 +2791,19 @@
   "homeCapabilityHub": "हब",
   "homeCapabilityCdc": "CDC डिवाइस",
   "homeCapabilityComposite": "कम्पोज़िट",
-  "homeCapabilityInput": "इनपुट"
+  "homeCapabilityInput": "इनपुट",
+  "deviceTechnicalDetailsTitle": "तकनीकी जानकारी",
+  "deviceDisconnectedTitle": "डिवाइस डिस्कनेक्ट हो गया",
+  "deviceDisconnectedReconnect": "डिवाइस दोबारा कनेक्ट करें और उसे सूची से खोलें।",
+  "deviceVideoModesTitle": "कैमरे के वीडियो मोड",
+  "deviceVideoModesDescription": "डिवाइस द्वारा बताए गए रिज़ॉल्यूशन और फ़्रेम दरें।",
+  "deviceVideoModesCount": "{count} वीडियो मोड",
+  "deviceVideoFrameRates": "{rates} fps",
+  "usbAccessoryTitle": "USB एक्सेसरी",
+  "usbAccessoryVersionLabel": "संस्करण",
+  "usbAccessoryUriLabel": "एक्सेसरी का URI",
+  "usbAccessoryPermissionBody": "एक्सेसरी का सीरियल नंबर पढ़ने के लिए USB एक्सेस की अनुमति दें।",
+  "deviceSupportedButtonsLabel": "समर्थित बटन",
+  "deviceAudioStreamFormatsTitle": "ऑडियो स्ट्रीम फ़ॉर्मैट",
+  "deviceUsbFunctionsTitle": "USB फ़ंक्शन"
 }

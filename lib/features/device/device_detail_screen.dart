@@ -1,16 +1,20 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
 import '../../core/utils/formatters.dart';
+import '../../core/widgets/device_vendor_avatar.dart';
 import '../../core/widgets/key_value_row.dart';
 import '../../core/widgets/section_card.dart';
 import '../../data/usb/models.dart';
 import '../../data/usb/providers.dart';
+import '../../data/usb/usb_interface_associations.dart';
 import '../../data/usb/usb_repository.dart';
+import '../../data/usb/usb_video_modes.dart';
 import '../history/controllers/device_history_controller.dart';
 import '../history/models/device_history_entry.dart';
 import 'controllers/device_detail_controller.dart';
@@ -27,27 +31,16 @@ class DeviceDetailScreen extends ConsumerStatefulWidget {
 
 class _DeviceDetailScreenState extends ConsumerState<DeviceDetailScreen> {
   ProviderSubscription<AsyncValue<UsbDeviceDetailViewData>>? _sub;
-  ProviderSubscription<AsyncValue<Map<String, dynamic>>>? _rawSub;
-  UsbDeviceDetailViewData? _lastView;
-  Map<String, dynamic>? _lastRaw;
-  bool _microphonePermissionWasGranted = false;
-  bool _cameraPermissionWasGranted = false;
-
   @override
   void initState() {
     super.initState();
     void recordView(UsbDeviceDetailViewData data) {
-      _lastView = data;
-      final raw = _lastRaw;
-      ref.read(deviceHistoryControllerProvider.notifier).recordFromView(data, raw: raw);
-    }
-
-    void recordRaw(Map<String, dynamic> raw) {
-      _lastRaw = raw;
-      final view = _lastView;
-      if (view != null) {
-        ref.read(deviceHistoryControllerProvider.notifier).recordFromView(view, raw: raw);
+      final raw = ref.read(deviceDetailRawControllerProvider(widget.deviceName)).asData?.value;
+      if (_asList(raw?['availabilityIssues']).map(_asMap).any(
+          (issue) => issue['reasonCode'] == 'device_disconnected')) {
+        return;
       }
+      ref.read(deviceHistoryControllerProvider.notifier).recordFromView(data, raw: raw);
     }
 
     final firstView = ref.read(deviceDetailControllerProvider(widget.deviceName));
@@ -62,28 +55,24 @@ class _DeviceDetailScreenState extends ConsumerState<DeviceDetailScreen> {
       },
     );
 
-    final firstRaw = ref.read(deviceDetailRawControllerProvider(widget.deviceName));
-    final r0 = firstRaw.asData?.value;
-    if (r0 != null) recordRaw(r0);
-
-    _rawSub = ref.listenManual<AsyncValue<Map<String, dynamic>>>(
-      deviceDetailRawControllerProvider(widget.deviceName),
-      (prev, next) {
-        final data = next.asData?.value;
-        if (data != null) recordRaw(data);
-      },
-    );
   }
 
   @override
   void dispose() {
     _sub?.close();
-    _rawSub?.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(usbEventsProvider, (_, next) {
+      final event = next.asData?.value;
+      if (event?.deviceName == widget.deviceName &&
+          (event?.reason == 'android.hardware.usb.action.USB_DEVICE_DETACHED' ||
+              event?.reason == 'android.hardware.usb.action.USB_ACCESSORY_DETACHED')) {
+        ref.invalidate(deviceDetailRawControllerProvider(widget.deviceName));
+      }
+    });
     final async = ref.watch(deviceDetailControllerProvider(widget.deviceName));
     final rawAsync = ref.watch(deviceDetailRawControllerProvider(widget.deviceName));
     final exportView = async.asData?.value;
@@ -93,8 +82,14 @@ class _DeviceDetailScreenState extends ConsumerState<DeviceDetailScreen> {
         title: Text(context.l10n.deviceInfoTitle),
         actions: [
           IconButton(
+            tooltip: context.l10n.refresh,
+            onPressed: async.isLoading ? null : () =>
+                ref.invalidate(deviceDetailRawControllerProvider(widget.deviceName)),
+            icon: const Icon(Icons.refresh_rounded),
+          ),
+          IconButton(
             tooltip: context.l10n.deviceAdvancedRawViewTooltip,
-            onPressed: exportView == null
+            onPressed: exportView == null || exportView.details.summary.isAccessory
                 ? null
                 : () => Navigator.of(context).push(
                       MaterialPageRoute<void>(
@@ -121,11 +116,7 @@ class _DeviceDetailScreenState extends ConsumerState<DeviceDetailScreen> {
       ),
       body: SafeArea(
         child: async.when(
-          data: (data) => rawAsync.when(
-            data: (raw) => _DeviceDetailBody(view: data, raw: raw),
-            loading: () => _DeviceDetailBody(view: data, raw: null),
-            error: (e, st) => _DeviceDetailBody(view: data, raw: null),
-          ),
+          data: (data) => _DeviceDetailBody(view: data, raw: exportRaw),
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (e, st) => _ErrorBody(error: e.toString()),
         ),
@@ -181,11 +172,12 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
     final subtitle = view.vendorName ?? s.manufacturerName ?? l10n.homeUnknownVendor;
 
     final isInput = s.isInputDevice;
-    final needsPermission = !isInput && !s.isHiddenDevice && !s.hasPermission;
+
     final isAudio = _hasUsbClass(s, view.details.interfaces, 1);
     final isVideo = _hasUsbClass(s, view.details.interfaces, 14);
 
     final tree = _asList(raw?['descriptorTree']);
+    final associations = readUsbInterfaceAssociations(tree);
     final strings = _asMap(raw?['strings']);
     final hidReports = _asList(raw?['hidReports']);
     final deviceState = _asMap(raw?['deviceState']);
@@ -196,6 +188,9 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
         .map(_asMap)
         .where((issue) => issue.isNotEmpty)
         .toList(growable: false);
+    final disconnected = availabilityIssues.any((issue) =>
+        issue['scope'] == 'device' && issue['reasonCode'] == 'device_disconnected');
+    final needsPermission = !disconnected && !isInput && !s.isHiddenDevice && !s.hasPermission;
     final frameworkLimitations = _collectFrameworkLimitations(
       summary: s,
       availabilityIssues: availabilityIssues,
@@ -203,6 +198,15 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
       midi: midi,
     );
     final classSections = _buildClassDescriptorSections(tree);
+    final audioFormats = classSections.audio.where((descriptor) {
+      final fields = descriptor.fields;
+      return fields['audioSubclassName'] == 'AudioStreaming' &&
+          (fields.containsKey('bNrChannels') ||
+              fields.containsKey('bBitResolution') ||
+              fields.containsKey('wFormatTag') ||
+              fields.containsKey('wMaxBitRate'));
+    }).toList();
+    final videoModes = readUsbVideoModes(tree);
 
     final langs = _asList(strings['languageIds']).map((e) => _asInt(e)).whereType<int>().toList(growable: false);
     final devStrings = _asMap(strings['device']);
@@ -234,6 +238,43 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
       deviceClass: s.deviceClass,
       hasUsbPermission: s.hasPermission,
     );
+    if (s.isAccessory) {
+      final accessory = _asMap(raw?['accessory']);
+      return ListView(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        children: [
+          if (disconnected)
+            ListTile(
+              leading: const Icon(Icons.usb_off_rounded),
+              title: Text(l10n.deviceDisconnectedTitle),
+              subtitle: Text(l10n.deviceDisconnectedReconnect),
+            )
+          else ...[
+            SectionCard(
+              title: l10n.usbAccessoryTitle,
+              leading: const Icon(Icons.usb_rounded),
+              child: Column(
+                children: [
+                  KeyValueRow(label: l10n.deviceVendorLabel, value: Fmt.formatNullable(s.manufacturerName)),
+                  KeyValueRow(label: l10n.model, value: Fmt.formatNullable(s.productName)),
+                  if (s.deviceRelease case final version?)
+                    KeyValueRow(label: l10n.usbAccessoryVersionLabel, value: version),
+                  if (accessory['description'] case final String description) Text(description),
+                  if (accessory['uri'] case final String uri)
+                    KeyValueRow(label: l10n.usbAccessoryUriLabel, value: uri),
+                  if (s.hasPermission)
+                    KeyValueRow(label: l10n.deviceSerialLabel, value: Fmt.formatNullable(s.serialNumber)),
+                ],
+              ),
+            ),
+            if (needsPermission) ...[
+              const SizedBox(height: 12),
+              _PermissionBanner(diagnosticsArgs: diagnosticsArgs),
+            ],
+          ],
+        ],
+      );
+    }
     final diagnosticsAsync = ref.watch(runtimePermissionDiagnosticsProvider(diagnosticsArgs));
     final diagnostics = diagnosticsAsync.asData?.value ?? const <String, dynamic>{};
     if (runtimePermissionIsGranted(_asMap(diagnostics['microphone']))) {
@@ -254,17 +295,12 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Container(
-                  width: 52,
-                  height: 52,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Icon(
-                    isInput ? Icons.keyboard_alt_rounded : Icons.usb_rounded,
-                    color: theme.colorScheme.onPrimaryContainer,
-                  ),
+                DeviceVendorAvatar(
+                  vendorId: s.isAccessory ? 0 : s.vendorId,
+                  fallbackIcon: isInput
+                      ? Icons.keyboard_alt_rounded
+                      : Icons.usb_rounded,
+                  size: 52,
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -296,34 +332,14 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
           ),
         ),
         const SizedBox(height: 12),
-        if (needsPermission)
-          _PermissionBanner(
-            deviceName: s.deviceName,
-            vendorId: s.vendorId,
-            productId: s.productId,
-            serialNumber: s.serialNumber,
-            physicalLocationKey: s.physicalLocationKey,
-            interfaceFingerprint: s.interfaceFingerprint,
-            stableIdentityKey: s.stableIdentityKey,
-            needsMicrophonePermission: needsMicrophonePermission,
-            isVideo: isVideo,
-            diagnosticsArgs: diagnosticsArgs,
-            microphoneWasGranted: _microphonePermissionWasGranted,
-            cameraWasGranted: _cameraPermissionWasGranted,
+        if (disconnected)
+          ListTile(
+            leading: const Icon(Icons.usb_off_rounded),
+            title: Text(l10n.deviceDisconnectedTitle),
+            subtitle: Text(l10n.deviceDisconnectedReconnect),
           ),
-        if (needsPermission) const SizedBox(height: 12),
-        _permissionDiagnosticsSection(
-          context,
-          diagnostics,
-          availabilityIssues: availabilityIssues,
-          needsMicrophonePermission: needsMicrophonePermission,
-          isVideo: isVideo,
-          microphoneWasGranted: _microphonePermissionWasGranted,
-          cameraWasGranted: _cameraPermissionWasGranted,
-        ),
-        const SizedBox(height: 12),
-        if (frameworkLimitations.isNotEmpty) ...[
-          _frameworkLimitationsSection(context, frameworkLimitations),
+        if (needsPermission) ...[
+          _PermissionBanner(diagnosticsArgs: diagnosticsArgs),
           const SizedBox(height: 12),
         ],
         _identitySection(context, historyMatch),
@@ -334,98 +350,174 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
         ],
         _usbSpecSection(context),
         const SizedBox(height: 12),
-        _locationSection(context),
-        const SizedBox(height: 12),
-        if (topology.isNotEmpty) ...[
-          _topologySection(context, topology),
-          const SizedBox(height: 12),
-        ],
         if (!isInput) ...[
-          if (hasAudio) ...[
-            _audioSection(context, audio),
-            const SizedBox(height: 12),
-          ],
-          if (hasMidi) ...[
-            _midiSection(context, midi),
-            const SizedBox(height: 12),
-          ],
-          _descriptorSection(context),
-          const SizedBox(height: 12),
           _powerSection(context),
           const SizedBox(height: 12),
-          _configurationsSection(context),
+        ],
+        if (audioFormats.isNotEmpty) ...[
+          SectionCard(
+            title: l10n.deviceAudioStreamFormatsTitle,
+            leading: const Icon(Icons.headset_outlined),
+            child: _ExpandableBlock(
+              title: l10n.deviceDescriptorsCount(audioFormats.length),
+              child: Column(
+                children: [
+                  for (final format in audioFormats)
+                    KeyValueRow(label: format.title, value: format.summary ?? l10n.unavailable),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 12),
-          _interfacesSection(context),
-          if (classSections.audio.isNotEmpty) ...[
+        ],
+        if (videoModes.isNotEmpty) ...[
+          _videoModesSection(context, videoModes),
+          const SizedBox(height: 12),
+        ],
+        ExpansionTile(
+          title: Text(l10n.deviceTechnicalDetailsTitle),
+          leading: const Icon(Icons.tune_rounded),
+          children: [
+            _locationSection(context),
             const SizedBox(height: 12),
-            _classDescriptorSection(
-              context,
-              title: l10n.deviceAudioClassDescriptorsTitle,
-              subtitle: l10n.deviceDescriptorsCount(classSections.audio.length),
-              icon: Icons.headset_rounded,
-              descriptors: classSections.audio,
-            ),
+            if (topology.isNotEmpty) ...[
+              _topologySection(context, topology),
+              const SizedBox(height: 12),
+            ],
+            if (!isInput) ...[
+              if (hasAudio) ...[
+                _audioSection(context, audio),
+                const SizedBox(height: 12),
+              ],
+              if (hasMidi) ...[
+                _midiSection(context, midi),
+                const SizedBox(height: 12),
+              ],
+              _descriptorSection(context),
+              const SizedBox(height: 12),
+              _configurationsSection(context),
+              const SizedBox(height: 12),
+              if (associations.isNotEmpty) ...[
+                _functionsSection(context, associations),
+                const SizedBox(height: 12),
+              ],
+              _interfacesSection(context),
+              if (classSections.audio.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _classDescriptorSection(
+                  context,
+                  title: l10n.deviceAudioClassDescriptorsTitle,
+                  subtitle: l10n.deviceDescriptorsCount(classSections.audio.length),
+                  icon: Icons.headset_rounded,
+                  descriptors: classSections.audio,
+                ),
+              ],
+              if (classSections.video.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _classDescriptorSection(
+                  context,
+                  title: l10n.deviceVideoClassDescriptorsTitle,
+                  subtitle: l10n.deviceDescriptorsCount(classSections.video.length),
+                  icon: Icons.videocam_rounded,
+                  descriptors: classSections.video,
+                ),
+              ],
+              if (classSections.cdc.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _classDescriptorSection(
+                  context,
+                  title: l10n.deviceCdcSerialDescriptorsTitle,
+                  subtitle: l10n.deviceDescriptorsCount(classSections.cdc.length),
+                  icon: Icons.settings_ethernet_rounded,
+                  descriptors: classSections.cdc,
+                ),
+              ],
+              if (classSections.hub.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _classDescriptorSection(
+                  context,
+                  title: l10n.deviceHubDescriptorsTitle,
+                  subtitle: l10n.deviceDescriptorsCount(classSections.hub.length),
+                  icon: Icons.hub_rounded,
+                  descriptors: classSections.hub,
+                ),
+              ],
+              if (classSections.bos.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _classDescriptorSection(
+                  context,
+                  title: l10n.deviceBosCapabilitiesTitle,
+                  subtitle: l10n.deviceDescriptorsCount(classSections.bos.length),
+                  icon: Icons.extension_rounded,
+                  descriptors: classSections.bos,
+                ),
+              ],
+              if (hasState) ...[
+                const SizedBox(height: 12),
+                _advancedStatusSection(context, deviceState),
+              ],
+              if (hasStrings) ...[
+                const SizedBox(height: 12),
+                _advancedStringsSection(context, strings),
+              ],
+              if (hasTree) ...[
+                const SizedBox(height: 12),
+                _advancedDescriptorTreeSection(context, tree),
+              ],
+              if (hasHid) ...[
+                const SizedBox(height: 12),
+                _advancedHidReportsSection(context, hidReports),
+              ],
+            ] else ...[
+              _inputDeviceSection(context),
+            ],
           ],
-          if (classSections.video.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            _classDescriptorSection(
-              context,
-              title: l10n.deviceVideoClassDescriptorsTitle,
-              subtitle: l10n.deviceDescriptorsCount(classSections.video.length),
-              icon: Icons.videocam_rounded,
-              descriptors: classSections.video,
-            ),
-          ],
-          if (classSections.cdc.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            _classDescriptorSection(
-              context,
-              title: l10n.deviceCdcSerialDescriptorsTitle,
-              subtitle: l10n.deviceDescriptorsCount(classSections.cdc.length),
-              icon: Icons.settings_ethernet_rounded,
-              descriptors: classSections.cdc,
-            ),
-          ],
-          if (classSections.hub.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            _classDescriptorSection(
-              context,
-              title: l10n.deviceHubDescriptorsTitle,
-              subtitle: l10n.deviceDescriptorsCount(classSections.hub.length),
-              icon: Icons.hub_rounded,
-              descriptors: classSections.hub,
-            ),
-          ],
-          if (classSections.bos.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            _classDescriptorSection(
-              context,
-              title: l10n.deviceBosCapabilitiesTitle,
-              subtitle: l10n.deviceDescriptorsCount(classSections.bos.length),
-              icon: Icons.extension_rounded,
-              descriptors: classSections.bos,
-            ),
-          ],
-          if (hasState) ...[
-            const SizedBox(height: 12),
-            _advancedStatusSection(context, deviceState),
-          ],
-          if (hasStrings) ...[
-            const SizedBox(height: 12),
-            _advancedStringsSection(context, strings),
-          ],
-          if (hasTree) ...[
-            const SizedBox(height: 12),
-            _advancedDescriptorTreeSection(context, tree),
-          ],
-          if (hasHid) ...[
-            const SizedBox(height: 12),
-            _advancedHidReportsSection(context, hidReports),
-          ],
-        ] else ...[
-          _inputDeviceSection(context),
+        ),
+        const SizedBox(height: 12),
+        _permissionDiagnosticsSection(
+          context,
+          diagnostics,
+          availabilityIssues: availabilityIssues,
+          needsMicrophonePermission: needsMicrophonePermission,
+          isVideo: isVideo,
+          microphoneWasGranted: _microphonePermissionWasGranted,
+          cameraWasGranted: _cameraPermissionWasGranted,
+        ),
+        if (frameworkLimitations.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          _frameworkLimitationsSection(context, frameworkLimitations),
         ],
       ],
+    );
+  }
+
+  Widget _videoModesSection(BuildContext context, List<UsbVideoMode> modes) {
+    final l10n = context.l10n;
+    final numberFormat = NumberFormat('0.##', l10n.localeName);
+    String fps(int interval) => numberFormat.format(10000000 / interval);
+
+    return SectionCard(
+      title: l10n.deviceVideoModesTitle,
+      subtitle: l10n.deviceVideoModesDescription,
+      leading: const Icon(Icons.videocam_outlined),
+      child: _ExpandableBlock(
+        title: l10n.deviceVideoModesCount(modes.length),
+        child: Column(
+          children: [
+            for (final mode in modes)
+              KeyValueRow(
+                label: '${mode.format} · ${mode.width} × ${mode.height}',
+                value: mode.intervals.isEmpty
+                    ? l10n.unknown
+                    : l10n.deviceVideoFrameRates(
+                        mode.continuous && mode.intervals.length == 2
+                            ? '${fps(mode.intervals.last)}–${fps(mode.intervals.first)}'
+                            : mode.intervals.reversed.map(fps).join(', '),
+                      ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -452,6 +544,8 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
           KeyValueRow(label: l10n.deviceProductIdLabel, value: Fmt.decAndHex16(s.productId)),
           KeyValueRow(label: l10n.deviceVendorLabel, value: Fmt.formatNullable(vendor)),
           KeyValueRow(label: l10n.deviceProductLabel, value: Fmt.formatNullable(product)),
+          if (s.deviceRelease case final release?)
+            KeyValueRow(label: l10n.deviceReleaseBcdLabel, value: release),
           KeyValueRow(
             label: l10n.deviceChipsetFamilyLabel,
             value: chipsetFamily == null
@@ -756,6 +850,58 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
     );
   }
 
+  Widget _functionsSection(
+    BuildContext context,
+    List<UsbInterfaceAssociation> associations,
+  ) {
+    final l10n = context.l10n;
+    final classNames = <int, String>{
+      for (final (index, names) in view.interfaceClassNames.indexed)
+        if (index < view.details.interfaces.length && names.className != null)
+          view.details.interfaces[index].interfaceClass: names.className!,
+    };
+    return SectionCard(
+      title: l10n.deviceUsbFunctionsTitle,
+      leading: const Icon(Icons.account_tree_outlined),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (final (index, association) in associations.indexed) ...[
+            if (index > 0) const Divider(height: 24),
+            Text(
+              l10n.deviceConfigurationTitle('${association.configuration}', ''),
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            if (association.name case final String name)
+              KeyValueRow(label: l10n.deviceNameLabel, value: name),
+            KeyValueRow(
+              label: l10n.deviceInterfacesLabel,
+              value: association.interfaceCount == 1
+                  ? '${association.firstInterface}'
+                  : '${association.firstInterface}–${association.firstInterface + association.interfaceCount - 1}',
+            ),
+            KeyValueRow(
+              label: l10n.deviceClassLabel,
+              value: _joinNameAndIds(
+                context,
+                classNames[association.functionClass],
+                association.functionClass,
+              ),
+            ),
+            KeyValueRow(
+              label: l10n.deviceSubclassLabel,
+              value: Fmt.decAndHex8(association.functionSubclass),
+            ),
+            KeyValueRow(
+              label: l10n.deviceProtocolLabel,
+              value: Fmt.decAndHex8(association.functionProtocol),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   Widget _interfacesSection(BuildContext context) {
     final l10n = context.l10n;
     final ifaces = view.details.interfaces;
@@ -794,10 +940,12 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
           KeyValueRow(label: l10n.deviceNameLabel, value: Fmt.formatNullable(input.name)),
           KeyValueRow(label: l10n.deviceDescriptorLabel, value: Fmt.formatNullable(input.descriptor)),
           KeyValueRow(label: l10n.deviceExternalLabel, value: _yesNoLabel(context, input.isExternal)),
-          KeyValueRow(label: 'VID', value: Fmt.decAndHex16(s.vendorId)),
-          KeyValueRow(label: 'PID', value: Fmt.decAndHex16(s.productId)),
+          if (s.vendorId != 0) KeyValueRow(label: 'VID', value: Fmt.decAndHex16(s.vendorId)),
+          if (s.productId != 0) KeyValueRow(label: 'PID', value: Fmt.decAndHex16(s.productId)),
           KeyValueRow(label: l10n.deviceSourcesLabel, value: input.sources.isEmpty ? l10n.unknown : input.sources.join(', ')),
           KeyValueRow(label: l10n.deviceKeyboardTypeLabel, value: '${input.keyboardType}'),
+          if (input.supportedButtons.isNotEmpty)
+            KeyValueRow(label: l10n.deviceSupportedButtonsLabel, value: input.supportedButtons.join(', ')),
           KeyValueRow(label: l10n.deviceMotionRangesLabel, value: '${input.motionRanges.length}'),
           if (input.motionRanges.isNotEmpty) ...[
             const SizedBox(height: 8),
@@ -807,7 +955,7 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
                 children: [
                   for (final r in input.motionRanges.take(16)) ...[
                     KeyValueRow(
-                      label: Fmt.axisLabel(r.axis),
+                      label: Fmt.inputAxisLabel(r.axis, r.axisName, r.source),
                       value: '${r.min.toStringAsFixed(2)} → ${r.max.toStringAsFixed(2)} (res ${r.resolution.toStringAsFixed(2)})',
                     ),
                   ],
@@ -1284,150 +1432,127 @@ class _DeviceDetailBodyState extends ConsumerState<_DeviceDetailBody> {
   }
 }
 
-class _PermissionBanner extends ConsumerWidget {
-  static const EventChannel _events = EventChannel('usbdevinfo/events');
-  static const MethodChannel _methods = MethodChannel('usbdevinfo/methods');
+class _PermissionBanner extends ConsumerStatefulWidget {
+  const _PermissionBanner({required this.diagnosticsArgs});
 
-  const _PermissionBanner({
-    required this.deviceName,
-    required this.vendorId,
-    required this.productId,
-    required this.serialNumber,
-    required this.physicalLocationKey,
-    required this.interfaceFingerprint,
-    required this.stableIdentityKey,
-    required this.needsMicrophonePermission,
-    required this.isVideo,
-    required this.diagnosticsArgs,
-    required this.microphoneWasGranted,
-    required this.cameraWasGranted,
-  });
-  final int vendorId;
-  final int productId;
-  final String? serialNumber;
-  final String? physicalLocationKey;
-  final String? interfaceFingerprint;
-  final String? stableIdentityKey;
-  final bool needsMicrophonePermission;
-  final bool isVideo;
   final PermissionDiagnosticsArgs diagnosticsArgs;
-  final bool microphoneWasGranted;
-  final bool cameraWasGranted;
-
-  static Stream<Map<String, dynamic>> _eventStream() => _events.receiveBroadcastStream().map((e) {
-        if (e is Map) return e.cast<String, dynamic>();
-        return <String, dynamic>{};
-      });
-  final String deviceName;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final events = _eventStream();
-    final runtimeAsync = ref.watch(runtimePermissionDiagnosticsProvider(diagnosticsArgs));
-    final theme = Theme.of(context);
-    final l10n = context.l10n;
-    return Card(
-      elevation: 0,
-      color: theme.colorScheme.errorContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.lock_rounded, color: theme.colorScheme.onErrorContainer),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    l10n.devicePermissionRequiredTitle,
-                    style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onErrorContainer),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.devicePermissionRequiredBody,
-              style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onErrorContainer),
-            ),
-            const SizedBox(height: 12),
-            StreamBuilder<Map<String, dynamic>>(
-              stream: events,
-              builder: (context, snapshot) {
-                final data = snapshot.data ?? const {};
-                final statuses = buildPermissionBannerStatuses(
-                  runtimeDiagnostics: runtimeAsync.asData?.value ?? const {},
-                  event: data,
-                  needsMicrophonePermission: needsMicrophonePermission,
-                  isVideo: isVideo,
-                  microphoneWasGranted: microphoneWasGranted,
-                  cameraWasGranted: cameraWasGranted,
-                );
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (final status in statuses) ...[
-                      _PermissionStateRow(status: status),
-                      const SizedBox(height: 10),
-                    ],
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: FilledButton.icon(
-                        onPressed: () async {
-                          if (isVideo) {
-                            final cameraOk =
-                                (await _methods.invokeMethod<bool>('requestCameraPermission', {
-                              'deviceName': deviceName,
-                              'vendorId': vendorId,
-                              'productId': productId,
-                              'deviceClass': diagnosticsArgs.deviceClass,
-                            })) ??
-                                    false;
-                            if (!context.mounted) return;
-                            if (!cameraOk) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(l10n.deviceCameraPermissionRequiredForUsbVideo),
-                                ),
-                              );
-                              ref.invalidate(runtimePermissionDiagnosticsProvider(diagnosticsArgs));
-                              return;
-                            }
-                            ref.invalidate(runtimePermissionDiagnosticsProvider(diagnosticsArgs));
-                          }
+  ConsumerState<_PermissionBanner> createState() => _PermissionBannerState();
+}
 
-                          await ref.read(usbIdsDbProvider.future);
-                          final repo = ref.read(usbRepositoryProvider);
-                          final ok = await repo.requestPermission(
-                            deviceName,
-                            vendorId: vendorId,
-                            productId: productId,
-                            serialNumber: serialNumber,
-                            physicalLocationKey: physicalLocationKey,
-                            interfaceFingerprint: interfaceFingerprint,
-                            stableIdentityKey: stableIdentityKey,
-                          );
-                          if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(ok ? l10n.homePermissionGranted : l10n.devicePermissionNotGranted)),
-                          );
-                          ref.invalidate(runtimePermissionDiagnosticsProvider(diagnosticsArgs));
-                          if (ok) {
-                            ref.invalidate(deviceDetailControllerProvider(deviceName));
-                            ref.invalidate(deviceDetailRawControllerProvider(deviceName));
-                          }
-                        },
-                        icon: const Icon(Icons.vpn_key_rounded),
-                        label: Text(l10n.deviceGrantPermission),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
+class _PermissionBannerState extends ConsumerState<_PermissionBanner>
+    with WidgetsBindingObserver {
+  static const _methods = MethodChannel('usbdevinfo/methods');
+  bool _requesting = false;
+
+  bool _returningFromSettings = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && _returningFromSettings) {
+      _returningFromSettings = false;
+      ref.invalidate(runtimePermissionDiagnosticsProvider(widget.diagnosticsArgs));
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  Future<void> _requestAccess({required bool openSettings}) async {
+    if (_requesting) return;
+    setState(() => _requesting = true);
+    final args = widget.diagnosticsArgs;
+    final l10n = context.l10n;
+    final diagnostics = runtimePermissionDiagnosticsProvider(args);
+    try {
+      if (openSettings) {
+        _returningFromSettings = true;
+        await _methods.invokeMethod<void>('openAppSettings');
+        return;
+      }
+
+      if (args.isVideo) {
+        final cameraOk = await _methods.invokeMethod<bool>('requestCameraPermission', {
+          'deviceName': args.deviceName,
+          'vendorId': args.vendorId,
+          'productId': args.productId,
+        });
+        if (!mounted) return;
+        if (cameraOk != true) {
+          _showMessage(l10n.deviceCameraPermissionRequiredForUsbVideo);
+          return;
+        }
+      }
+
+      final ok = await ref.read(usbRepositoryProvider).requestPermission(
+        args.deviceName,
+        vendorId: args.vendorId,
+        productId: args.productId,
+      );
+      if (!mounted) return;
+      _showMessage(ok ? l10n.homePermissionGranted : l10n.devicePermissionNotGranted);
+      if (ok) ref.invalidate(deviceDetailRawControllerProvider(args.deviceName));
+    } on PlatformException catch (error) {
+      if (!mounted) return;
+      if (error.code == 'device_disconnected') {
+        _showMessage(l10n.deviceDisconnectedTitle);
+        ref.invalidate(deviceDetailRawControllerProvider(args.deviceName));
+      } else {
+        _showMessage(l10n.devicePermissionNotGranted);
+      }
+    } finally {
+      if (mounted) {
+        ref.invalidate(diagnostics);
+        setState(() => _requesting = false);
+      }
+    }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final args = widget.diagnosticsArgs;
+    final l10n = context.l10n;
+    final diagnostics = ref.watch(runtimePermissionDiagnosticsProvider(args)).asData?.value;
+    final camera = _asMap(diagnostics?['camera']);
+    final sdkInt = _asInt(_asMap(diagnostics?['android'])['sdkInt']);
+    final cameraRequired = args.isVideo && (sdkInt == null || sdkInt >= 28);
+    final needsCamera = cameraRequired && !runtimePermissionIsGranted(camera);
+    final openSettings = needsCamera && camera['runtimeStatus'] == 'permanently_denied';
+
+    return SectionCard(
+      title: l10n.devicePermissionRequiredTitle,
+      leading: const Icon(Icons.lock_outline_rounded),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(needsCamera
+              ? l10n.deviceCameraPermissionRequiredForUsbVideo
+              : args.deviceName.startsWith('accessory:')
+                  ? l10n.usbAccessoryPermissionBody
+                  : l10n.devicePermissionRequiredBody),
+          const SizedBox(height: 12),
+          FilledButton.icon(
+            onPressed: _requesting ? null : () => _requestAccess(openSettings: openSettings),
+            icon: _requesting
+                ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                : Icon(openSettings ? Icons.settings_rounded : Icons.vpn_key_rounded),
+            label: Text(openSettings ? l10n.settingsTitle : l10n.deviceGrantPermission),
+          ),
+        ],
       ),
     );
   }
@@ -1467,6 +1592,17 @@ Map<String, dynamic> _buildDeviceExportPayload(
   Map<String, dynamic>? raw,
 ) {
   final s = view.details.summary;
+  if (s.isAccessory) {
+    return {
+      'schema': 'usb_accessory_export_v1',
+      'exportedAt': DateTime.now().toIso8601String(),
+      'manufacturer': s.manufacturerName,
+      'model': s.productName,
+      'version': s.deviceRelease,
+      'serialNumber': s.serialNumber,
+      ..._asMap(raw?['accessory']),
+    };
+  }
   return <String, dynamic>{
     'schema': 'device_raw_dump_export_v1',
     'exportedAt': DateTime.now().toIso8601String(),
@@ -1507,6 +1643,7 @@ Map<String, dynamic> _buildDeviceExportPayload(
       'productName': s.productName,
       'serialNumber': s.serialNumber,
       'usbVersion': s.usbVersion,
+      'deviceRelease': s.deviceRelease,
       'speed': s.speed,
       'maxPowerMa': s.maxPowerMa,
       'isInputDevice': s.isInputDevice,
@@ -1579,29 +1716,31 @@ Map<String, dynamic> _buildDeviceExportPayload(
             'iProduct': view.details.deviceDescriptor!.iProduct,
             'iSerialNumber': view.details.deviceDescriptor!.iSerialNumber,
           },
-    'input': view.details.input == null
-        ? null
-        : <String, dynamic>{
-            'id': view.details.input!.id,
-            'name': view.details.input!.name,
-            'descriptor': view.details.input!.descriptor,
-            'isExternal': view.details.input!.isExternal,
-            'vendorId': view.details.input!.vendorId,
-            'productId': view.details.input!.productId,
-            'sources': view.details.input!.sources,
-            'keyboardType': view.details.input!.keyboardType,
-            'motionRanges': [
-              for (final range in view.details.input!.motionRanges)
-                <String, dynamic>{
-                  'axis': range.axis,
-                  'min': range.min,
-                  'max': range.max,
-                  'flat': range.flat,
-                  'fuzz': range.fuzz,
-                  'resolution': range.resolution,
-                },
-            ],
-          },
+    'input': view.details.input?.toMap(),
+    'interfaceAssociations': [
+      for (final association
+          in readUsbInterfaceAssociations(_asList(raw?['descriptorTree'])))
+        {
+          'configuration': association.configuration,
+          'firstInterface': association.firstInterface,
+          'interfaceCount': association.interfaceCount,
+          'functionClass': association.functionClass,
+          'functionSubclass': association.functionSubclass,
+          'functionProtocol': association.functionProtocol,
+          'stringIndex': association.stringIndex,
+          if (association.name != null) 'name': association.name,
+        },
+    ],
+    'videoModes': [
+      for (final mode in readUsbVideoModes(_asList(raw?['descriptorTree'])))
+        {
+          'format': mode.format,
+          'width': mode.width,
+          'height': mode.height,
+          'frameIntervals100ns': mode.intervals,
+          'continuous': mode.continuous,
+        },
+    ],
     'raw': raw ?? <String, dynamic>{},
   };
 }
@@ -1611,6 +1750,14 @@ String _buildDevicePlainTextReport(
   Map<String, dynamic>? raw,
 ) {
   final s = view.details.summary;
+  if (s.isAccessory) {
+    final export = _buildDeviceExportPayload(view, raw);
+    return [
+      'USBDevInfo USB accessory report',
+      for (final field in export.entries)
+        if (field.key != 'schema' && field.value != null) '${field.key}: ${field.value}',
+    ].join('\n');
+  }
   final buffer = StringBuffer()
     ..writeln('USBDevInfo Device Report')
     ..writeln('Exported: ${DateTime.now().toIso8601String()}')
@@ -1638,6 +1785,7 @@ String _buildDevicePlainTextReport(
     ..writeln('  Permission granted: ${s.hasPermission ? 'Yes' : 'No'}')
     ..writeln('  Interfaces: ${s.interfaceCount}')
     ..writeln('  Configurations: ${s.configurationCount}');
+  if (s.deviceRelease case final release?) buffer.writeln('  Device release: $release');
 
   if ((s.capabilities ?? const <String>[]).isNotEmpty) {
     buffer
@@ -3190,10 +3338,10 @@ _ClassDescriptorSections _buildClassDescriptorSections(List<dynamic> tree) {
       continue;
     }
 
-    if (type == 0x29) {
+    if ((type == 0x29 || type == 0x2a) && _asInt(fields['bNbrPorts']) != null) {
       hub.add(
         _ClassDescriptorView(
-          title: 'Hub descriptor',
+          title: type == 0x2a ? 'SuperSpeed hub descriptor' : 'Hub descriptor',
           node: node,
           fields: fields,
           summary: _hubSummary(fields),
@@ -3328,6 +3476,7 @@ String? _bosSummary(int? type, Map<String, dynamic> fields) {
 String? _hubSummary(Map<String, dynamic> fields) {
   final ports = _asInt(fields['bNbrPorts']);
   final powerGood = _asInt(fields['powerGoodMs']);
+  final current = _asInt(fields['hubControllerCurrentMa']);
   final indicators = fields['portIndicatorsSupported'] == true;
   final switchMode = (fields['powerSwitchingModeName'] as String?)?.trim();
   final overCurrent = (fields['overCurrentProtectionModeName'] as String?)?.trim();
@@ -3335,6 +3484,7 @@ String? _hubSummary(Map<String, dynamic> fields) {
   if (switchMode?.isNotEmpty == true) extras.add('power switching $switchMode');
   if (overCurrent?.isNotEmpty == true) extras.add('over-current $overCurrent');
   if (indicators) extras.add('indicators supported');
+  if (current != null) extras.add('controller current $current mA');
   final extraText = extras.isEmpty ? '' : ', ${extras.join(', ')}';
   return 'Hub with ${ports ?? '?'} downstream port(s), power-good delay ${powerGood ?? '?'} ms$extraText.';
 }
@@ -3581,8 +3731,21 @@ String? _audioClassSummary(int? interfaceSubclass, int? type, int? subtype, Map<
   final terminalLink = _asInt(fields['bTerminalLink']);
   if (terminalLink != null) parts.add('terminal link $terminalLink');
   if (terminalType?.isNotEmpty == true) parts.add(terminalType!);
+  final formats = _stringList(fields['formatNames']);
+  if (formats.isNotEmpty) parts.add(formats.join(', '));
+  final channels = _asInt(fields['bNrChannels']);
+  if (channels != null && channels > 0) parts.add('$channels ch');
+  final bitDepth = _asInt(fields['bBitResolution']);
+  if (bitDepth != null && bitDepth > 0) parts.add('$bitDepth-bit');
   final sampleRates = _asList(fields['sampleRates']).map(_asInt).whereType<int>().toList(growable: false);
-  if (sampleRates.isNotEmpty) parts.add('sample rates ${sampleRates.join(', ')} Hz');
+  if (sampleRates.isNotEmpty) parts.add('${sampleRates.join(', ')} Hz');
+  final minRate = _asInt(fields['sampleRateMinHz']);
+  final maxRate = _asInt(fields['sampleRateMaxHz']);
+  if (minRate != null && maxRate != null) parts.add('$minRate–$maxRate Hz');
+  final maxBitRate = _asInt(fields['wMaxBitRate']);
+  if (maxBitRate != null && maxBitRate > 0) parts.add('$maxBitRate kbps');
+  final clockSource = _asInt(fields['bCSourceID']);
+  if (clockSource != null) parts.add('clock source $clockSource');
   final sourceIds = _asList(fields['baSourceID']).map(_asInt).whereType<int>().toList(growable: false);
   if (sourceIds.isNotEmpty) parts.add('sources ${sourceIds.join(', ')}');
   final jackType = (fields['jackTypeName'] as String?)?.trim();

@@ -30,29 +30,23 @@ class UsbPlatformService {
     String deviceName, {
     int? vendorId,
     int? productId,
-    String? serialNumber,
-    String? physicalLocationKey,
-    String? interfaceFingerprint,
-    String? stableIdentityKey,
   }) async {
     final ok = await _method.invokeMethod<bool>('requestPermission', {
       'deviceName': deviceName,
       if (vendorId != null) 'vendorId': vendorId,
       if (productId != null) 'productId': productId,
-      if (serialNumber != null) 'serialNumber': serialNumber,
-      if (physicalLocationKey != null) 'physicalLocationKey': physicalLocationKey,
-      if (interfaceFingerprint != null) 'interfaceFingerprint': interfaceFingerprint,
-      if (stableIdentityKey != null) 'stableIdentityKey': stableIdentityKey,
     });
     return ok ?? false;
   }
 
-  Future<UsbDeviceDetails> getDeviceDetails(String deviceName) async {
-   final raw = await _method.invokeMethod<Map<dynamic, dynamic>>('getDeviceDetails', {
-     'deviceName': deviceName,
-   });
-   return UsbDeviceDetails.fromMap((raw ?? const <dynamic, dynamic>{}).cast<Object?, Object?>());
- }
+  Future<Map<String, dynamic>> getDeviceDetails(String deviceName) async {
+    final raw = await _method.invokeMapMethod<String, dynamic>(
+      'getDeviceDetails',
+      {'deviceName': deviceName},
+    );
+    if (raw == null) throw StateError('Android returned no USB device details');
+    return raw;
+  }
 
  Future<void> setUsbAttachComponentEnabled(bool enabled) async {
    try {

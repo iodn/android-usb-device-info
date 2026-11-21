@@ -2791,5 +2791,19 @@
   "homeCapabilityHub": "Hub",
   "homeCapabilityCdc": "CDC",
   "homeCapabilityComposite": "Samengesteld",
-  "homeCapabilityInput": "Invoer"
+  "homeCapabilityInput": "Invoer",
+  "deviceTechnicalDetailsTitle": "Technische details",
+  "deviceDisconnectedTitle": "Apparaat losgekoppeld",
+  "deviceDisconnectedReconnect": "Sluit het apparaat opnieuw aan en open het vanuit de lijst.",
+  "deviceVideoModesTitle": "Videomodi van de camera",
+  "deviceVideoModesDescription": "Resoluties en beeldsnelheden die het apparaat opgeeft.",
+  "deviceVideoModesCount": "{count} videomodi",
+  "deviceVideoFrameRates": "{rates} fps",
+  "usbAccessoryTitle": "USB-accessoire",
+  "usbAccessoryVersionLabel": "Versie",
+  "usbAccessoryUriLabel": "URI van accessoire",
+  "usbAccessoryPermissionBody": "Sta USB-toegang toe om het serienummer van het accessoire te lezen.",
+  "deviceSupportedButtonsLabel": "Ondersteunde knoppen",
+  "deviceAudioStreamFormatsTitle": "Audiostreamformaten",
+  "deviceUsbFunctionsTitle": "USB-functies"
 }

@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -6248,4 +6249,53 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get historyUnableToOpenDetail => 'ไม่สามารถเปิดรายละเอียดประวัติได้';
+
+  @override
+  String get deviceTechnicalDetailsTitle => 'รายละเอียดทางเทคนิค';
+
+  @override
+  String get deviceDisconnectedTitle => 'อุปกรณ์ถูกตัดการเชื่อมต่อ';
+
+  @override
+  String get deviceDisconnectedReconnect =>
+      'เชื่อมต่ออุปกรณ์อีกครั้ง แล้วเปิดจากรายการอุปกรณ์';
+
+  @override
+  String get deviceVideoModesTitle => 'โหมดวิดีโอของกล้อง';
+
+  @override
+  String get deviceVideoModesDescription =>
+      'ความละเอียดและอัตราเฟรมที่อุปกรณ์รายงาน';
+
+  @override
+  String deviceVideoModesCount(int count) {
+    return '$count โหมดวิดีโอ';
+  }
+
+  @override
+  String deviceVideoFrameRates(String rates) {
+    return '$rates เฟรม/วินาที';
+  }
+
+  @override
+  String get usbAccessoryTitle => 'อุปกรณ์เสริม USB';
+
+  @override
+  String get usbAccessoryVersionLabel => 'เวอร์ชัน';
+
+  @override
+  String get usbAccessoryUriLabel => 'URI ของอุปกรณ์เสริม';
+
+  @override
+  String get usbAccessoryPermissionBody =>
+      'อนุญาตการเข้าถึง USB เพื่ออ่านหมายเลขซีเรียลของอุปกรณ์เสริม';
+
+  @override
+  String get deviceSupportedButtonsLabel => 'ปุ่มที่รองรับ';
+
+  @override
+  String get deviceAudioStreamFormatsTitle => 'รูปแบบสตรีมเสียง';
+
+  @override
+  String get deviceUsbFunctionsTitle => 'ฟังก์ชัน USB';
 }
