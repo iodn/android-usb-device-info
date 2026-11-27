@@ -1,0 +1,1 @@
+- Fixed the F-Droid build by pinning the Flutter version required by USBDevInfo.
