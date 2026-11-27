@@ -1,6 +1,7 @@
 name: release
 
-flutter-version: '8b872868494e429d94fa06dca855c306438b22c0'
+# Keep this pin in sync with pubspec.yaml; F-Droid reads it during prebuild.
+# flutter-version: 'ae9b586f34a8443573f82ef57c3bf914a908cbf7'
 
 on:
   workflow_dispatch:
